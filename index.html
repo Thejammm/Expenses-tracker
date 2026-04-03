@@ -1,0 +1,3102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wages &amp; Expenses Manager</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="ahs.png">
+  <link rel="shortcut icon" href="ahs.png">
+
+  <!-- jsPDF for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- jsPDF AutoTable plugin for table formatting -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+  <style id="app-css">
+    /* ============================================
+       Wages & Expenses Manager - Custom CSS
+       Complete replacement for Tailwind
+       ============================================ */
+
+    /* ===== RESET & BASE STYLES ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #1f2937;
+      background-color: #f5f5f5;
+      min-height: 100vh;
+    }
+
+    /* ===== TYPOGRAPHY ===== */
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .text-xs { font-size: 12px; }
+    .text-sm { font-size: 14px; }
+    .text-base { font-size: 16px; }
+    .text-lg { font-size: 18px; }
+    .text-xl { font-size: 20px; }
+    .text-2xl { font-size: 24px; }
+
+    .font-semibold { font-weight: 600; }
+    .font-bold { font-weight: 700; }
+
+    .text-left { text-align: left; }
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+
+    .whitespace-nowrap { white-space: nowrap; }
+
+    /* ===== SPACING ===== */
+    .p-1 { padding: 4px; }
+    .p-2 { padding: 8px; }
+    .p-3 { padding: 12px; }
+    .p-4 { padding: 16px; }
+
+    .px-2 { padding-left: 8px; padding-right: 8px; }
+    .px-3 { padding-left: 12px; padding-right: 12px; }
+    .px-4 { padding-left: 16px; padding-right: 16px; }
+
+    .py-1 { padding-top: 4px; padding-bottom: 4px; }
+    .py-2 { padding-top: 8px; padding-bottom: 8px; }
+    .py-3 { padding-top: 12px; padding-bottom: 12px; }
+
+    .mb-1 { margin-bottom: 4px; }
+    .mb-3 { margin-bottom: 12px; }
+    .mt-2 { margin-top: 8px; }
+    .ml-auto { margin-left: auto; }
+
+    .space-y-1 > * + * { margin-top: 4px; }
+    .space-y-2 > * + * { margin-top: 8px; }
+    .space-y-4 > * + * { margin-top: 16px; }
+    .space-y-5 > * + * { margin-top: 20px; }
+
+    /* ===== LAYOUT ===== */
+    .flex {
+      display: flex;
+    }
+
+    .flex-wrap {
+      flex-wrap: wrap;
+    }
+
+    .flex-col {
+      flex-direction: column;
+    }
+
+    .items-stretch {
+      align-items: stretch;
+    }
+
+    .items-center {
+      align-items: center;
+    }
+
+    .items-end {
+      align-items: flex-end;
+    }
+
+    .justify-between {
+      justify-content: space-between;
+    }
+
+    .gap-1 { gap: 4px; }
+    .gap-2 { gap: 8px; }
+    .gap-3 { gap: 12px; }
+
+    .grid {
+      display: grid;
+    }
+
+    .grid-cols-1 {
+      grid-template-columns: 1fr;
+    }
+
+    .col-span-1 {
+      grid-column: span 1;
+    }
+
+    /* ===== COLORS ===== */
+    .bg-white {
+      background-color: white;
+    }
+
+    .bg-slate-50 {
+      background-color: #f9fafb;
+    }
+
+    .text-white {
+      color: white;
+    }
+
+    .text-slate-500 {
+      color: #6b7280;
+    }
+
+    .text-slate-600 {
+      color: #4b5563;
+    }
+
+    .text-slate-800 {
+      color: #1f2937;
+    }
+
+    .text-slate-900 {
+      color: #0f172a;
+    }
+
+    .text-teal {
+      color: #5BC0CB;
+    }
+
+    .text-red-600 { color: #dc2626; }
+    .text-red-800 { color: #991b1b; }
+
+    .opacity-80 {
+      opacity: 0.8;
+    }
+
+    .opacity-90 {
+      opacity: 0.9;
+    }
+
+    .opacity-95 {
+      opacity: 0.95;
+    }
+
+    /* ===== BORDERS & SHADOWS ===== */
+    .border {
+      border: 1px solid #d1d5db;
+    }
+
+    .border-b {
+      border-bottom: 1px solid #d1d5db;
+    }
+
+    .border-t {
+      border-top: 1px solid #d1d5db;
+    }
+
+    .border-red {
+      border-color: #dc2626 !important;
+    }
+
+    .shadow {
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+
+    .rounded-lg {
+      border-radius: 8px;
+    }
+
+    .rounded-xl {
+      border-radius: 12px;
+    }
+
+    .rounded-2xl {
+      border-radius: 16px;
+    }
+
+    .rounded-b-2xl {
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+    }
+
+    /* ===== BUTTONS ===== */
+    button {
+      cursor: pointer;
+      border: none;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    button:active {
+      opacity: 0.8;
+    }
+
+    .hover\:opacity-90:hover {
+      opacity: 0.9;
+    }
+
+    .hover\:text-red-800:hover {
+      color: #991b1b;
+    }
+
+    .hover\:underline:hover {
+      text-decoration: underline;
+    }
+
+    /* ===== FORM INPUTS ===== */
+    input, select {
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 10px 10px;
+      font-size: 14px;
+      font-family: inherit;
+      width: 100%;
+      background-color: white;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #5BC0CB;
+      box-shadow: 0 0 0 2px rgba(91, 192, 203, 0.15);
+    }
+
+    input:disabled {
+      background-color: #f0f5f7;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    input[type="date"] {
+      cursor: pointer;
+    }
+
+    input.error {
+      border-color: #dc2626 !important;
+      box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15) !important;
+    }
+
+    .bg-slate-100 {
+      background-color: #f3f4f6;
+    }
+
+    /* ===== TABLES ===== */
+    .overflow-x-auto {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.3px;
+    }
+
+    td {
+      font-size: 14px;
+    }
+
+    td input {
+      margin: 0;
+    }
+
+    /* Money input wrapper */
+    .money-input {
+      display: flex;
+      align-items: center;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background-color: white;
+      overflow: hidden;
+      height: 36px;
+    }
+
+    .money-input span {
+      background-color: #f0f5f7;
+      padding: 0 8px;
+      color: #64748b;
+      font-weight: 600;
+      font-size: 13px;
+      border-right: 1px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+    }
+
+    .money-input input {
+      border: none !important;
+      padding: 8px 8px !important;
+      flex: 1;
+      font-size: 14px;
+    }
+
+    .money-input input:focus {
+      box-shadow: none !important;
+      outline: none;
+    }
+
+    /* ===== STICKY HEADERS & COLUMNS ===== */
+    .sticky-col {
+      position: sticky;
+      left: 0;
+      background: white;
+      box-shadow: 2px 0 2px rgba(0, 0, 0, 0.03);
+    }
+
+    .table-sticky thead tr:first-child th {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: #5BC0CB;
+      color: white;
+      border-bottom: 2px solid #48a8b8;
+      padding: 12px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .table-sticky thead tr:nth-child(2) th {
+      position: sticky;
+      top: 46px;
+      z-index: 19;
+      background: #5BC0CB;
+      color: rgba(255, 255, 255, 0.85);
+      padding: 10px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .table-sticky tbody tr {
+      border-bottom: 1px solid #e2e8f0;
+      transition: background-color 0.15s ease;
+    }
+
+    .table-sticky tbody tr:hover {
+      background-color: #f8fafc;
+    }
+
+    /* ===== UTILITY CLASSES ===== */
+    .w-full {
+      width: 100%;
+    }
+
+    .w-20 {
+      width: 80px;
+    }
+
+    .min-h-screen {
+      min-height: 100vh;
+    }
+
+    .max-w-6xl {
+      max-width: 1280px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .mx-auto {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .flex-1 {
+      flex: 1;
+    }
+
+    .min-w-\[900px\] {
+      min-width: 900px;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      background-color: #555555;
+      color: white;
+      padding: 12px 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    header nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    header button {
+      padding: 8px 12px;
+      font-size: 12px;
+      color: white;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    header button[style*="5BC0CB"] {
+      background-color: #5BC0CB;
+    }
+
+    header button[style*="4f8f99"] {
+      background-color: #4f8f99;
+    }
+
+    .badge-pending {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background-color: #dc2626;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    /* ===== TAB STYLING ===== */
+    header button.is-active {
+      opacity: 1;
+    }
+
+    header button:not(.is-active) {
+      opacity: 0.7;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 16px 12px;
+    }
+
+    section {
+      display: block;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Toast notification animations */
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateX(-50%) translateY(0); }
+      to { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    }
+
+    /* Tab transitions */
+    section {
+      transition: opacity 0.3s ease;
+    }
+
+    section.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    section:not(.hidden) {
+      opacity: 1;
+    }
+
+    /* ===== CARDS ===== */
+    .bg-white.rounded-2xl {
+      border-radius: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    }
+
+    /* ===== RESPONSIVE GRID ===== */
+    .grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .grid-cols-1 {
+      grid-template-columns: 1fr;
+    }
+
+    /* ===== MODAL / OVERLAY STYLES ===== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      animation: slideUp 0.3s ease;
+    }
+
+    .modal-content h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #1f2937;
+    }
+
+    .modal-content p {
+      color: #6b7280;
+      margin-bottom: 16px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .modal-buttons button {
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .btn-modal-cancel {
+      background-color: #e5e7eb;
+      color: #1f2937;
+    }
+
+    .btn-modal-cancel:hover {
+      background-color: #d1d5db;
+    }
+
+    .btn-modal-confirm {
+      background-color: #5BC0CB;
+      color: white;
+    }
+
+    .btn-modal-confirm:hover {
+      background-color: #4ca8b9;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* ===== EMPTY STATE STYLES ===== */
+    .empty-state {
+      text-align: center;
+      padding: 32px 16px;
+      color: #6b7280;
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .empty-state-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+
+    .empty-state-text {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    /* ===== ANIMATION FOR NEW EXPENSES ===== */
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .animate-slide-in {
+      animation: slideInLeft 0.3s ease;
+    }
+
+    /* ===== CHART STYLES ===== */
+    .chart-container {
+      margin: 24px 0;
+      padding: 16px;
+      background-color: #f9fafb;
+      border-radius: 12px;
+      overflow-x: auto;
+    }
+
+    .chart-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .chart-empty {
+      text-align: center;
+      padding: 32px 16px;
+      color: #9ca3af;
+    }
+
+    /* ===== PENDING EXPENSE STATUS ===== */
+    .pending-badge {
+      display: inline-block;
+      background-color: #FEF3C7;
+      color: #92400e;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    .pending-row {
+      background-color: #FEF3C7;
+    }
+
+    /* ===== CLIENT CARD STYLES (UPDATED FROM ROUTE-CARD) ===== */
+    .client-card {
+      background-color: white;
+      border: 1px solid #e5e7eb;
+      border-left: 3px solid #5BC0CB;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .client-card:hover {
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-color: #5BC0CB;
+    }
+
+    .client-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .client-card-meta {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 8px;
+    }
+
+    .client-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .client-actions button {
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* ===== SITE BUTTON STYLES ===== */
+    .site-btn {
+      display: block;
+      width: 100%;
+      min-height: 56px;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background-color: #5BC0CB;
+      color: white;
+    }
+
+    .site-btn:hover {
+      opacity: 0.9;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .site-btn:active {
+      opacity: 0.8;
+    }
+
+    /* ===== TOGGLE SWITCH STYLES ===== */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 52px;
+      height: 28px;
+      cursor: pointer;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #d1d5db;
+      border-radius: 28px;
+      transition: background-color 0.3s ease;
+    }
+
+    .toggle-slider:before {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background-color: #5BC0CB;
+    }
+
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+
+    /* ===== MANAGE SECTION STYLES ===== */
+    .manage-section {
+      background-color: #f9fafb;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .manage-section.hidden {
+      display: none;
+    }
+
+    /* ===== REVIEW CARD STYLES ===== */
+    .review-card {
+      background-color: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .review-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .review-card-info {
+      flex: 1;
+    }
+
+    .review-card-title {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 4px;
+    }
+
+    .review-card-meta {
+      font-size: 13px;
+      color: #6b7280;
+      line-height: 1.4;
+    }
+
+    .review-card-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .review-card-actions button {
+      padding: 8px 12px;
+      font-size: 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+      color: white;
+      font-weight: 500;
+    }
+
+    .btn-approve {
+      background-color: #10b981;
+    }
+
+    .btn-approve:hover {
+      background-color: #059669;
+    }
+
+    .btn-edit {
+      background-color: #3b82f6;
+    }
+
+    .btn-edit:hover {
+      background-color: #2563eb;
+    }
+
+    .btn-reject {
+      background-color: #dc2626;
+    }
+
+    .btn-reject:hover {
+      background-color: #991b1b;
+    }
+
+    /* ===== MOBILE RESPONSIVENESS ===== */
+    @media (max-width: 640px) {
+      /* Typography */
+      body {
+        font-size: 14px;
+      }
+
+      .text-xs { font-size: 11px; }
+      .text-sm { font-size: 13px; }
+      .text-base { font-size: 15px; }
+      .text-lg { font-size: 16px; }
+      .text-xl { font-size: 18px; }
+      .text-2xl { font-size: 20px; }
+
+      /* Spacing */
+      .px-3.sm\:px-4 { padding-left: 12px; padding-right: 12px; }
+      .py-3.sm\:py-5 { padding-top: 12px; padding-bottom: 12px; }
+
+      /* Avoid iOS zoom on input focus */
+      input, select {
+        font-size: 16px !important;
+      }
+
+      /* Smaller table padding */
+      table td, table th {
+        padding: 10px 6px !important;
+      }
+
+      .table-sticky thead tr:first-child th {
+        top: 0;
+        padding: 10px 6px;
+      }
+
+      .table-sticky thead tr:nth-child(2) th {
+        top: 40px;
+        padding: 8px 6px;
+      }
+
+      /* Reduce shadows on mobile */
+      .shadow {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+      }
+
+      /* Grid adjustments */
+      .grid {
+        gap: 8px;
+      }
+
+      /* Flex stack on mobile */
+      header h1 {
+        margin-bottom: 8px;
+      }
+
+      main {
+        padding: 12px 8px;
+      }
+
+      .modal-content {
+        width: 95%;
+        padding: 16px;
+      }
+
+      .review-card-actions {
+        flex-direction: column;
+      }
+
+      .review-card-actions button {
+        width: 100%;
+      }
+    }
+
+    @media (min-width: 641px) {
+      .sm\:col-span-2 {
+        grid-column: span 2;
+      }
+
+      .sm\:col-span-3 {
+        grid-column: span 3;
+      }
+
+      .sm\:col-span-6 {
+        grid-column: span 6;
+      }
+
+      .sm\:flex-row {
+        flex-direction: row;
+      }
+
+      .sm\:w-20 {
+        width: 80px;
+      }
+
+      .sm\:text-sm { font-size: 14px; }
+      .sm\:text-base { font-size: 16px; }
+      .sm\:text-lg { font-size: 18px; }
+      .sm\:text-2xl { font-size: 24px; }
+
+      .sm\:px-3 { padding-left: 12px; padding-right: 12px; }
+      .sm\:px-4 { padding-left: 16px; padding-right: 16px; }
+
+      .sm\:py-2 { padding-top: 8px; padding-bottom: 8px; }
+      .sm\:py-4 { padding-top: 16px; padding-bottom: 16px; }
+
+      .sm\:gap-2 { gap: 8px; }
+      .sm\:gap-3 { gap: 12px; }
+
+      header {
+        padding: 20px 0;
+        display: flex;
+        align-items: center;
+      }
+
+      header nav {
+        gap: 8px;
+      }
+
+      header h1 {
+        margin-bottom: 0;
+      }
+
+      main {
+        padding: 24px 16px;
+      }
+
+      .sm\:p-3 { padding: 12px; }
+      .sm\:p-4 { padding: 16px; }
+
+      .sm\:space-y-5 > * + * { margin-top: 20px; }
+
+      .grid-cols-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .grid-cols-4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .grid-cols-6 {
+        grid-template-columns: repeat(6, 1fr);
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen" style="background-color: #f5f5f5;">
+  <!-- Header -->
+  <header class="text-white py-3 sm:py-5 shadow" style="background-color: #555555;">
+    <div class="max-w-6xl mx-auto px-3 sm:px-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div style="background-color: white; padding: 4px; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+          <img src="ahs.png" alt="AHS Logo" style="height: 40px; width: auto; flex-shrink: 0;">
+        </div>
+        <h1 class="text-xl sm:text-2xl font-bold">Wages &amp; Expenses Manager</h1>
+      </div>
+    </div>
+    <div class="max-w-6xl mx-auto px-3 sm:px-4 mt-3">
+      <nav class="flex flex-wrap gap-2 items-center">
+        <!-- Tab buttons -->
+        <button id="tab-wage" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white is-active" style="background-color: #5BC0CB;" aria-label="Switch to Wage Structure tab">Wage Structure</button>
+        <button id="tab-exp" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white" style="background-color: #4f8f99;" aria-label="Switch to Expense Tracker tab">Expense Tracker</button>
+        <button id="tab-quick" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white" style="background-color: #4f8f99;" aria-label="Switch to Quick Log tab">🚗 Quick Log</button>
+        <button id="tab-review" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white relative" style="background-color: #4f8f99;" aria-label="Switch to Review Pending tab">📋 Review</button>
+
+        <!-- Action buttons -->
+        <button id="btn-pdf-report" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white" style="background-color: #5BC0CB;" aria-label="Generate PDF report">PDF Report</button>
+        <button id="btn-save-month" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white" style="background-color: #4f8f99;" aria-label="Save month as HTML">Save Month</button>
+
+        <!-- Data import/export buttons -->
+        <button id="btn-export-data" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white" style="background-color: #5BC0CB;" aria-label="Export data as JSON">Export Data</button>
+        <button id="btn-import-data" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white" style="background-color: #4f8f99;" aria-label="Import data from JSON file">Import Data</button>
+        <input id="file-import-input" type="file" accept=".json" style="display: none;">
+
+        <!-- PDF month selector -->
+        <div class="ml-auto flex gap-2 items-center">
+          <label class="text-xs sm:text-sm text-white">PDF Month:</label>
+          <input id="pdf-month" type="month" class="px-2 py-1 text-xs rounded">
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+    <!-- Expense Panel -->
+    <section id="panel-expenses" class="space-y-5 hidden">
+      <!-- Add Expense Card -->
+      <div class="bg-white rounded-2xl shadow p-3 sm:p-4">
+        <h2 class="text-base sm:text-lg font-semibold mb-3 text-slate-800">Add Expense</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-6 gap-2 sm:gap-3 items-end">
+          <div>
+            <label class="block text-xs sm:text-sm text-slate-600 mb-1">Date</label>
+            <input id="exp-date" type="date" class="w-full border rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-sm" aria-label="Expense date">
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-xs sm:text-sm text-slate-600 mb-1">Description</label>
+            <input id="exp-desc" type="text" placeholder="Description" class="w-full border rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-sm" aria-label="Expense description">
+          </div>
+          <div>
+            <label class="block text-xs sm:text-sm text-slate-600 mb-1">Category</label>
+            <select id="exp-cat" class="w-full border rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-sm" aria-label="Expense category">
+              <option value="travel">Travel</option>
+              <option value="office">Office</option>
+              <option value="software">Software</option>
+              <option value="meals">Meals</option>
+              <option value="misc">Misc</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs sm:text-sm text-slate-600 mb-1">Miles</label>
+            <input id="exp-miles" type="text" inputmode="decimal" class="w-full border rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-sm" aria-label="Travel miles">
+          </div>
+          <div>
+            <label class="block text-xs sm:text-sm text-slate-600 mb-1">Rate (£/mi)</label>
+            <input id="exp-rate" type="text" inputmode="decimal" class="w-full border rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-sm" aria-label="Mileage rate">
+          </div>
+          <div>
+            <label class="block text-xs sm:text-sm text-slate-600 mb-1">Amount (£)</label>
+            <input id="exp-amount" type="text" inputmode="decimal" class="w-full border rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-sm bg-slate-100" disabled aria-label="Calculated expense amount">
+          </div>
+          <div class="col-span-1 sm:col-span-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+            <button id="btn-add-exp" class="text-white px-3 sm:px-4 py-2 rounded-lg hover:opacity-90 text-sm transition-opacity" style="background-color: #5BC0CB;" aria-label="Add new expense">Add Expense</button>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2 text-xs sm:text-sm flex-1">
+              <span class="text-slate-500 whitespace-nowrap">Default rate:</span>
+              <input id="default-rate" type="text" inputmode="decimal" class="flex-1 sm:w-20 border rounded-lg px-2 sm:px-3 py-1 text-sm" aria-label="Default mileage rate">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expenses Table -->
+      <div class="bg-white rounded-2xl shadow">
+        <div class="p-3 sm:p-4 border-b"><h3 class="font-semibold text-slate-800 text-sm sm:text-base">Expenses</h3></div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs sm:text-sm table-sticky" id="tbl-expenses">
+            <thead style="background-color: #5BC0CB;" class="text-white">
+              <tr class="text-left">
+                <th class="p-2 sm:p-3">Date</th>
+                <th class="p-2 sm:p-3">Description</th>
+                <th class="p-2 sm:p-3">Category</th>
+                <th class="p-2 sm:p-3">Miles</th>
+                <th class="p-2 sm:p-3">Rate</th>
+                <th class="p-2 sm:p-3">Amount</th>
+                <th class="p-2 sm:p-3"></th>
+              </tr>
+            </thead>
+            <tbody id="tbody-expenses"></tbody>
+          </table>
+        </div>
+        <div class="p-3 sm:p-4 bg-slate-50 rounded-b-2xl grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="text-white rounded-xl p-3 sm:p-4" style="background-color: #4f8f99;">
+            <div class="text-xs sm:text-sm opacity-90">Category Totals</div>
+            <ul id="list-cat-totals" class="mt-2 space-y-1 text-xs sm:text-sm"></ul>
+          </div>
+          <div class="text-white rounded-xl p-3 sm:p-4 sm:col-span-2 flex items-center justify-between" style="background-color: #5BC0CB;">
+            <div class="text-base sm:text-lg font-semibold">Total</div>
+            <div id="grand-total" class="text-xl sm:text-2xl font-bold">£0.00</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Log Panel -->
+    <section id="panel-quick" class="space-y-4 hidden">
+      <!-- Return Trip Toggle -->
+      <div class="bg-white rounded-2xl shadow p-3 sm:p-4 flex items-center justify-between">
+        <div>
+          <span class="text-sm sm:text-base font-semibold text-slate-800">Return Trip</span>
+          <span class="text-xs sm:text-sm text-slate-500 block">Double miles for round trips</span>
+        </div>
+        <label class="toggle-switch" aria-label="Toggle return trip">
+          <input type="checkbox" id="return-trip-toggle">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- Client Quick Buttons -->
+      <div class="bg-white rounded-2xl shadow p-3 sm:p-4">
+        <h2 class="text-base sm:text-lg font-semibold mb-3 text-slate-800">Clients</h2>
+        <div id="client-quick-list"></div>
+      </div>
+
+      <!-- One-off Trip Entry -->
+      <div class="bg-white rounded-2xl shadow p-3 sm:p-4">
+        <h2 class="text-base sm:text-lg font-semibold mb-3 text-slate-800">One-off Trip</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs sm:text-sm text-slate-600 mb-1">Date</label>
+            <input id="oneoff-date" type="date" class="w-full border rounded-lg px-3 py-2 text-sm" aria-label="Trip date">
+          </div>
+          <div>
+            <label class="block text-xs sm:text-sm text-slate-600 mb-1">Client / Description</label>
+            <input id="oneoff-desc" type="text" placeholder="e.g. New Client — Site Visit" class="w-full border rounded-lg px-3 py-2 text-sm" aria-label="Trip description">
+          </div>
+          <div>
+            <label class="block text-xs sm:text-sm text-slate-600 mb-1">Miles</label>
+            <input id="oneoff-miles" type="text" inputmode="decimal" placeholder="0" class="w-full border rounded-lg px-3 py-2 text-sm" aria-label="Trip miles">
+          </div>
+          <div class="col-span-1 sm:col-span-3">
+            <button id="btn-oneoff-log" class="text-white px-4 py-2 rounded-lg text-sm" style="background-color: #5BC0CB;" aria-label="Log one-off trip as pending expense">Log Trip</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Manage Clients (collapsible) -->
+      <div class="bg-white rounded-2xl shadow">
+        <button id="btn-toggle-manage" class="w-full p-3 sm:p-4 flex items-center justify-between text-left" aria-label="Toggle client management section">
+          <span class="text-base sm:text-lg font-semibold text-slate-800">Manage Clients</span>
+          <span id="manage-chevron" class="text-slate-400 transition-transform" style="font-size: 20px;">▼</span>
+        </button>
+        <div id="manage-section" class="manage-section hidden p-3 sm:p-4 border-t space-y-4">
+          <!-- Add New Client -->
+          <div class="flex gap-2 items-end">
+            <div class="flex-1">
+              <label class="block text-xs sm:text-sm text-slate-600 mb-1">Client Name</label>
+              <input id="new-client-name" type="text" placeholder="e.g. Acme Corp" class="w-full border rounded-lg px-3 py-2 text-sm" aria-label="New client name">
+            </div>
+            <button id="btn-add-client" class="text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap" style="background-color: #5BC0CB;" aria-label="Add new client">+ Add Client</button>
+          </div>
+          <!-- Client Directory List -->
+          <div id="client-manage-list" class="space-y-3"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Review Pending Panel -->
+    <section id="panel-review" class="space-y-4 hidden">
+      <div id="review-content"></div>
+    </section>
+
+    <!-- Wage Panel -->
+    <section id="panel-wage" class="space-y-4 sm:space-y-5">
+      <div class="bg-white rounded-2xl shadow overflow-x-auto">
+        <div class="p-3 sm:p-4 border-b flex items-center justify-between">
+          <h2 id="wage-title" class="text-base sm:text-lg font-semibold text-slate-800">Wage Structure — 2026</h2>
+          <button id="btn-add-month" class="px-3 py-1 text-xs sm:text-sm rounded-lg text-white transition-opacity hover:opacity-90" style="background-color: #5BC0CB;" aria-label="Add a new month">+ Add Month</button>
+        </div>
+        <table class="w-full min-w-[900px] text-xs sm:text-sm table-sticky" id="tbl-wage">
+          <thead style="background-color: #5BC0CB;" class="text-white text-xs">
+            <tr>
+              <th class="p-2 sm:p-3 text-left" style="width: 80px;">Month</th>
+              <th class="p-2 sm:p-3 text-left" colspan="2" style="width: 200px;">Income</th>
+              <th class="p-2 sm:p-3 text-left" style="width: 80px;">Total</th>
+              <th class="p-2 sm:p-3 text-left" colspan="2" style="width: 240px;">Outgoing</th>
+              <th class="p-2 sm:p-3 text-left" style="width: 80px;">Expenses</th>
+              <th class="p-2 sm:p-3 text-left" style="width: 6%;">Payment</th>
+              <th class="p-2 sm:p-3 text-center" style="width: 10px;">Delete</th>
+            </tr>
+            <tr class="text-white opacity-80 text-xs">
+              <th></th>
+              <th class="p-2 sm:p-3" style="width: 100px;">Wage</th>
+              <th class="p-2 sm:p-3" style="width: 100px;">Dividend</th>
+              <th></th>
+              <th class="p-2 sm:p-3" style="width: 130px;">Personal Tax Monthly Payment</th>
+              <th class="p-2 sm:p-3" style="width: 130px;">VAT monthly payment</th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-wage"></tbody>
+        </table>
+      </div>
+
+      <!-- Monthly Income vs Expenses Chart -->
+      <div class="chart-container">
+        <div class="chart-title">Monthly Income vs Expenses</div>
+        <svg id="chart-svg" width="100%" height="250" viewBox="0 0 800 250" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto;"></svg>
+      </div>
+
+      <div class="p-3 sm:p-4 bg-slate-50 rounded-b-2xl text-sm" id="summary-row"></div>
+
+      <div class="rounded-2xl p-3 sm:p-4 text-white shadow" style="background-color: #4f8f99;">
+        <h3 class="font-semibold text-sm sm:text-base">How totals are calculated</h3>
+        <ul class="mt-2 text-xs sm:text-sm space-y-1 opacity-95">
+          <li>Income Total = Wage Payment + Dividend Payment</li>
+          <li>Expenses auto-pulled from Expense Tracker per month (approved only)</li>
+          <li>Total Payment = Income Total + Total Expenses</li>
+          <li>Personal Tax values are tracked separately</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal Overlay for Add Month -->
+  <div id="modal-add-month" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Add Month</h3>
+      <p>Select a month to add to your wage structure:</p>
+      <select id="modal-month-select" class="w-full border rounded-lg px-3 py-2 text-sm mb-4" aria-label="Select month">
+        <!-- Options populated by JS -->
+      </select>
+      <div class="modal-buttons">
+        <button class="btn-modal-cancel" onclick="closeAddMonthModal()">Cancel</button>
+        <button class="btn-modal-confirm" onclick="confirmAddMonth()">Add Month</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Overlay for Delete Expense Confirmation -->
+  <div id="modal-delete-expense" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Delete Expense</h3>
+      <p>Are you sure you want to delete this expense? This action cannot be undone.</p>
+      <div class="modal-buttons">
+        <button class="btn-modal-cancel" onclick="cancelDeleteExpense()">Cancel</button>
+        <button class="btn-modal-confirm" style="background-color: #dc2626;" onclick="confirmDeleteExpense()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Overlay for Delete Month Confirmation -->
+  <div id="modal-delete-month" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Delete Month</h3>
+      <p id="modal-delete-month-text">Are you sure you want to delete this month? This action cannot be undone.</p>
+      <div class="modal-buttons">
+        <button class="btn-modal-cancel" onclick="cancelDeleteMonth()">Cancel</button>
+        <button class="btn-modal-confirm" style="background-color: #dc2626;" onclick="confirmDeleteMonth()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Overlay for Import Confirmation -->
+  <div id="modal-import-confirm" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Import Data</h3>
+      <p>This will replace all current data. Are you sure you want to proceed?</p>
+      <div class="modal-buttons">
+        <button class="btn-modal-cancel" onclick="cancelImport()">Cancel</button>
+        <button class="btn-modal-confirm" onclick="confirmImport()">Import</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Rejecting Pending Expense -->
+  <div id="modal-reject-pending" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Reject Pending Expense</h3>
+      <p>Are you sure you want to delete this pending expense?</p>
+      <div class="modal-buttons">
+        <button class="btn-modal-cancel" onclick="cancelRejectPending()">Cancel</button>
+        <button class="btn-modal-confirm" style="background-color: #dc2626;" onclick="confirmRejectPending()">Reject</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+/**
+ * Wages & Expenses Manager V4
+ * With Client Management, Quick Log, Pending Expenses, and Review functionality
+ */
+
+// ===== Utilities =====
+const GBP = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' });
+const fmt = (n) => GBP.format(Number.isFinite(+n) ? +n : 0);
+
+const parseNum = (v) => {
+  if (v === '' || v === null || v === undefined) return 0;
+  let s = String(v);
+  s = s.replace(/[^0-9.,-]/g, '');
+  if (s.includes(',') && !s.includes('.')) {
+    s = s.replace(/,/g, '.');
+  } else {
+    s = s.replace(/,/g, '');
+  }
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+};
+
+const genUID = () => globalThis.crypto?.randomUUID?.() ?? (Date.now() + '-' + Math.random().toString(16).slice(2));
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ===== Month Range Configuration =====
+const REFERENCE_MONTH = new Date(2026, 1, 1);
+
+function formatMonthLabel(key) {
+  const [y, m] = key.split('-');
+  const d = new Date(parseInt(y), parseInt(m) - 1, 1);
+  const mon = d.toLocaleString('en-GB', { month: 'short' });
+  const yy = String(d.getFullYear()).slice(-2);
+  return `${mon} ${yy}`;
+}
+
+function getAllAvailableMonths() {
+  const months = [];
+  const start = new Date(REFERENCE_MONTH);
+  for (let i = 0; i < 48; i++) {
+    const d = new Date(start);
+    d.setMonth(d.getMonth() + i);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const key = `${y}-${m}`;
+    const mon = d.toLocaleString('en-GB', { month: 'short' });
+    const yy = String(d.getFullYear()).slice(-2);
+    months.push({ key, label: `${mon} ${yy}` });
+  }
+  return months;
+}
+
+function monthKeyFromDate(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  if (isNaN(d)) return null;
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  return `${y}-${m}`;
+}
+
+// ===== State Management =====
+const LS_KEY = 'wage-structure-blue-vanilla-v1';
+
+const state = (function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    let data = raw ? JSON.parse(raw) : { expenses: [], wageData: {}, mileageRate: 0.45, clients: [] };
+
+    // Ensure clients array exists BEFORE migration attempts
+    if (!data.clients) {
+      data.clients = [];
+    }
+
+    // Migration: savedRoutes to clients (from v3)
+    if (data.savedRoutes && data.savedRoutes.length > 0) {
+      data.savedRoutes.forEach(route => {
+        const existingClient = data.clients.find(c => c.name === route.to);
+        if (!existingClient) {
+          data.clients.push({
+            id: genUID(),
+            name: route.to,
+            sites: [{
+              id: genUID(),
+              name: route.from || 'Default Site',
+              miles: route.miles || 0
+            }]
+          });
+        }
+      });
+      delete data.savedRoutes;
+    }
+
+    // Persist migrations immediately so they're not repeated
+    localStorage.setItem(LS_KEY, JSON.stringify(data));
+
+    // Migration: backpay to vatPayment
+    if (data.wageData) {
+      Object.keys(data.wageData).forEach(key => {
+        const wage = data.wageData[key];
+        if (wage.backpay !== undefined && wage.vatPayment === undefined) {
+          wage.vatPayment = wage.backpay;
+          delete wage.backpay;
+        }
+        if (wage.vatPayment === undefined) {
+          wage.vatPayment = 0;
+        }
+      });
+    }
+
+    // Migration: Add status field to expenses
+    if (data.expenses) {
+      data.expenses.forEach(exp => {
+        if (!exp.status) {
+          exp.status = 'approved';
+        }
+      });
+    }
+
+    return data;
+  } catch (e) {
+    return { expenses: [], wageData: {}, mileageRate: 0.45, clients: [] };
+  }
+})();
+
+const persist = () => localStorage.setItem(LS_KEY, JSON.stringify(state));
+
+// ===== Tab Navigation =====
+const tabWage = document.getElementById('tab-wage');
+const tabExp = document.getElementById('tab-exp');
+const tabQuick = document.getElementById('tab-quick');
+const tabReview = document.getElementById('tab-review');
+const panelWage = document.getElementById('panel-wage');
+const panelExp = document.getElementById('panel-expenses');
+const panelQuick = document.getElementById('panel-quick');
+const panelReview = document.getElementById('panel-review');
+
+function setTab(name) {
+  const allTabs = [tabWage, tabExp, tabQuick, tabReview];
+  const allPanels = [panelWage, panelExp, panelQuick, panelReview];
+  allTabs.forEach(t => t.classList.remove('is-active'));
+  allPanels.forEach(p => p.classList.add('hidden'));
+
+  if (name === 'wage') {
+    tabWage.classList.add('is-active');
+    panelWage.classList.remove('hidden');
+  } else if (name === 'exp') {
+    tabExp.classList.add('is-active');
+    panelExp.classList.remove('hidden');
+  } else if (name === 'quick') {
+    tabQuick.classList.add('is-active');
+    panelQuick.classList.remove('hidden');
+    renderQuickLog();
+  } else if (name === 'review') {
+    tabReview.classList.add('is-active');
+    panelReview.classList.remove('hidden');
+    renderReview();
+  }
+}
+
+tabWage.onclick = () => setTab('wage');
+tabExp.onclick = () => setTab('exp');
+tabQuick.onclick = () => setTab('quick');
+tabReview.onclick = () => setTab('review');
+
+// ===== Pending Badge =====
+function updatePendingBadge() {
+  const count = state.expenses.filter(e => e.status === 'pending').length;
+  const badge = document.getElementById('review-badge');
+  if (badge) {
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'inline-flex' : 'none';
+  }
+}
+
+// ===== Expense Panel =====
+const elDate = document.getElementById('exp-date');
+const elDesc = document.getElementById('exp-desc');
+const elCat = document.getElementById('exp-cat');
+const elMiles = document.getElementById('exp-miles');
+const elRate = document.getElementById('exp-rate');
+const elAmount = document.getElementById('exp-amount');
+const elAdd = document.getElementById('btn-add-exp');
+const elDefaultRate = document.getElementById('default-rate');
+const tbodyExp = document.getElementById('tbody-expenses');
+const listCatTotals = document.getElementById('list-cat-totals');
+const grandTotalEl = document.getElementById('grand-total');
+
+const categoryLabels = {
+  travel: 'Travel',
+  office: 'Office Supplies',
+  software: 'Software',
+  meals: 'Meals',
+  misc: 'Misc'
+};
+
+function catLabel(id) {
+  return categoryLabels[id] || 'Misc';
+}
+
+function refreshExpenseAmountField() {
+  const isTravel = elCat.value === 'travel';
+  elAmount.disabled = isTravel;
+  elAmount.classList.toggle('bg-slate-100', isTravel);
+  if (isTravel) {
+    elAmount.value = (parseNum(elMiles.value) * parseNum(elRate.value)).toFixed(2);
+  }
+}
+
+elCat.addEventListener('change', refreshExpenseAmountField);
+elMiles.addEventListener('input', refreshExpenseAmountField);
+elRate.addEventListener('input', refreshExpenseAmountField);
+
+elDefaultRate.value = state.mileageRate;
+elRate.value = state.mileageRate;
+
+elDefaultRate.addEventListener('input', () => {
+  state.mileageRate = parseNum(elDefaultRate.value);
+  elRate.value = state.mileageRate;
+  refreshExpenseAmountField();
+  persist();
+});
+
+let pendingDeleteExpenseId = null;
+
+elAdd.onclick = () => {
+  if (!elDate.value) {
+    elDate.classList.add('error');
+    elDate.focus();
+    setTimeout(() => elDate.classList.remove('error'), 3000);
+    return;
+  }
+
+  const exp = {
+    id: genUID(),
+    date: elDate.value,
+    description: elDesc.value || '',
+    category: elCat.value,
+    miles: parseNum(elMiles.value),
+    rate: parseNum(elRate.value),
+    amount: parseFloat(
+      (
+        elCat.value === 'travel'
+          ? parseNum(elMiles.value) * parseNum(elRate.value)
+          : parseNum(elAmount.value)
+      ).toFixed(2)
+    ),
+    status: 'approved'
+  };
+  state.expenses.unshift(exp);
+  persist();
+  renderExpenses();
+  renderWageTable();
+  renderChart();
+
+  elDate.value = '';
+  elDesc.value = '';
+  elCat.value = 'travel';
+  elMiles.value = '';
+  elRate.value = state.mileageRate;
+  elAmount.value = '';
+  refreshExpenseAmountField();
+};
+
+function requestDeleteExpense(expenseId) {
+  pendingDeleteExpenseId = expenseId;
+  openModal('modal-delete-expense');
+}
+
+function confirmDeleteExpense() {
+  if (pendingDeleteExpenseId) {
+    state.expenses = state.expenses.filter((x) => x.id !== pendingDeleteExpenseId);
+    persist();
+    renderExpenses();
+    renderWageTable();
+    renderChart();
+    closeModal('modal-delete-expense');
+    pendingDeleteExpenseId = null;
+  }
+}
+
+function cancelDeleteExpense() {
+  pendingDeleteExpenseId = null;
+  closeModal('modal-delete-expense');
+}
+
+function renderExpenses() {
+  tbodyExp.innerHTML = '';
+
+  const approvedExpenses = state.expenses.filter(e => e.status === 'approved');
+
+  if (approvedExpenses.length === 0) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="p-3 text-slate-500" colspan="7">
+      <div class="empty-state">
+        <div class="empty-state-icon">📋</div>
+        <div class="empty-state-title">No approved expenses yet</div>
+        <div class="empty-state-text">Add an expense or approve pending expenses to see them here.</div>
+      </div>
+    </td>`;
+    tbodyExp.appendChild(tr);
+  } else {
+    approvedExpenses.forEach((e) => {
+      const tr = document.createElement('tr');
+      tr.className = 'border-t animate-slide-in';
+      tr.innerHTML = `
+        <td class="p-3">${e.date}</td>
+        <td class="p-3">${e.description}</td>
+        <td class="p-3">${catLabel(e.category)}</td>
+        <td class="p-3">${e.miles || '-'}</td>
+        <td class="p-3">${e.miles ? e.rate.toFixed(2) : '-'}</td>
+        <td class="p-3 font-medium text-teal">${fmt(e.amount)}</td>
+        <td class="p-3 text-right"><button class="text-red-600 hover:text-red-800 hover:underline transition-colors" onclick="requestDeleteExpense('${e.id}')" aria-label="Delete this expense">Delete</button></td>`;
+      tbodyExp.appendChild(tr);
+    });
+  }
+
+  const catTotals = {};
+  let grand = 0;
+  approvedExpenses.forEach((e) => {
+    catTotals[e.category] = (catTotals[e.category] || 0) + e.amount;
+    grand += e.amount;
+  });
+
+  listCatTotals.innerHTML = '';
+  if (Object.keys(catTotals).length === 0) {
+    const li = document.createElement('li');
+    li.textContent = 'No data';
+    li.className = 'opacity-90';
+    listCatTotals.appendChild(li);
+  } else {
+    Object.entries(catTotals).forEach(([k, v]) => {
+      const li = document.createElement('li');
+      li.className = 'flex justify-between';
+      li.innerHTML = `<span>${catLabel(k)}</span><span class="font-semibold">${fmt(v)}</span>`;
+      listCatTotals.appendChild(li);
+    });
+  }
+  grandTotalEl.textContent = fmt(grand);
+}
+
+// ===== Toast Notification =====
+function showToast(message) {
+  // Remove any existing toast
+  const existing = document.getElementById('toast-notification');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'toast-notification';
+  toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2937;color:white;padding:12px 24px;border-radius:12px;font-size:14px;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.2);animation:toastIn 0.3s ease;max-width:90%;text-align:center;';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'toastOut 0.3s ease forwards';
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
+
+// ===== Quick Log Functions =====
+function renderQuickLog() {
+  const container = document.getElementById('client-quick-list');
+  if (state.clients.length === 0) {
+    container.innerHTML = `<div class="text-center py-8 text-slate-400">
+      <div style="font-size:40px">🏢</div>
+      <p class="mt-2 text-sm font-medium">No clients added yet</p>
+      <p class="mt-1 text-xs">Tap <strong>"Manage Clients"</strong> below to add your first client and their site locations.</p>
+    </div>`;
+    return;
+  }
+
+  let html = '';
+  state.clients.forEach(client => {
+    if (client.sites.length === 0) {
+      // Client with no sites — show a message
+      html += `<div class="client-card" id="client-${client.id}">
+        <div class="client-card-header">
+          <span class="font-semibold text-slate-800">${escapeHtml(client.name)}</span>
+        </div>
+        <div class="text-xs text-amber-600 mt-2" style="padding:8px;background:#FEF3C7;border-radius:6px;">
+          ⚠ No sites added yet — go to <strong>Manage Clients</strong> below to add a site with miles for this client.
+        </div>
+      </div>`;
+    } else if (client.sites.length === 1) {
+      // Single site — show as one big tappable button (no expand needed)
+      const site = client.sites[0];
+      html += `<div class="client-card" id="client-${client.id}">
+        <button class="site-btn" onclick="logClientTrip('${client.id}','${site.id}')" aria-label="Log trip to ${escapeHtml(client.name)} ${escapeHtml(site.name)}" style="margin:0;border-radius:8px;">
+          <div class="flex items-center justify-between w-full">
+            <div>
+              <div class="font-semibold text-slate-800">${escapeHtml(client.name)}</div>
+              <div class="text-xs text-slate-500">${escapeHtml(site.name)} · ${site.miles} miles</div>
+            </div>
+            <div class="text-white px-4 py-2 rounded-lg text-sm font-medium" style="background-color:#5BC0CB">Log Trip</div>
+          </div>
+        </button>
+      </div>`;
+    } else {
+      // Multiple sites — expandable
+      html += `<div class="client-card" id="client-${client.id}">
+        <div class="client-card-header" onclick="toggleClientSites('${client.id}')" style="cursor:pointer">
+          <span class="font-semibold text-slate-800">${escapeHtml(client.name)}</span>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-400">${client.sites.length} sites</span>
+            <span class="text-slate-400 client-chevron" id="chevron-${client.id}">▶</span>
+          </div>
+        </div>
+        <div class="client-sites hidden" id="sites-${client.id}" style="margin-top:8px;">
+          ${client.sites.map(site => `
+            <button class="site-btn" onclick="logClientTrip('${client.id}','${site.id}')" aria-label="Log trip to ${escapeHtml(client.name)} ${escapeHtml(site.name)}">
+              <div class="flex items-center justify-between w-full">
+                <div>
+                  <div class="font-medium text-slate-800">${escapeHtml(site.name)}</div>
+                  <div class="text-xs text-slate-500">${site.miles} miles</div>
+                </div>
+                <div class="text-white px-3 py-1 rounded-lg text-xs" style="background-color:#5BC0CB">Log Trip</div>
+              </div>
+            </button>
+          `).join('')}
+        </div>
+      </div>`;
+    }
+  });
+  container.innerHTML = html;
+}
+
+function toggleClientSites(clientId) {
+  const sites = document.getElementById('sites-' + clientId);
+  const chevron = document.getElementById('chevron-' + clientId);
+  if (!sites || !chevron) return;
+  sites.classList.toggle('hidden');
+  chevron.textContent = sites.classList.contains('hidden') ? '▶' : '▼';
+}
+
+function logClientTrip(clientId, siteId) {
+  const client = state.clients.find(c => c.id === clientId);
+  const site = client?.sites.find(s => s.id === siteId);
+  if (!client || !site) return;
+
+  const isReturn = document.getElementById('return-trip-toggle').checked;
+  const miles = isReturn ? site.miles * 2 : site.miles;
+  const rate = state.mileageRate;
+
+  const exp = {
+    id: genUID(),
+    date: new Date().toISOString().split('T')[0],
+    description: `${client.name} — ${site.name}${isReturn ? ' (return)' : ''}`,
+    category: 'travel',
+    miles: miles,
+    rate: rate,
+    amount: parseFloat((miles * rate).toFixed(2)),
+    status: 'pending'
+  };
+  state.expenses.unshift(exp);
+  persist();
+  renderQuickLog();
+  updatePendingBadge();
+  showToast(`✓ Trip logged: ${client.name} — ${site.name}, ${miles} miles`);
+}
+
+// ===== One-off Trip Logging =====
+function logOneoffTrip() {
+  const date = document.getElementById('oneoff-date').value;
+  const desc = document.getElementById('oneoff-desc').value;
+  const miles = parseNum(document.getElementById('oneoff-miles').value);
+
+  if (!date) { alert('Please pick a date'); return; }
+  if (!desc) { alert('Please enter a description'); return; }
+  if (miles <= 0) { alert('Please enter miles'); return; }
+
+  const rate = state.mileageRate;
+  const isReturn = document.getElementById('return-trip-toggle').checked;
+  const actualMiles = isReturn ? miles * 2 : miles;
+
+  const exp = {
+    id: genUID(),
+    date: date,
+    description: desc + (isReturn ? ' (return)' : ''),
+    category: 'travel',
+    miles: actualMiles,
+    rate: rate,
+    amount: parseFloat((actualMiles * rate).toFixed(2)),
+    status: 'pending'
+  };
+  state.expenses.unshift(exp);
+  persist();
+
+  document.getElementById('oneoff-desc').value = '';
+  document.getElementById('oneoff-miles').value = '';
+  updatePendingBadge();
+  showToast(`✓ Trip logged: ${desc}, ${actualMiles} miles`);
+}
+
+// ===== Client Management Functions =====
+function toggleManageClients() {
+  const section = document.getElementById('manage-section');
+  const chevron = document.getElementById('manage-chevron');
+  section.classList.toggle('hidden');
+  chevron.style.transform = section.classList.contains('hidden') ? '' : 'rotate(180deg)';
+}
+
+function addClient() {
+  const name = document.getElementById('new-client-name').value.trim();
+  if (!name) { alert('Please enter a client name'); return; }
+  state.clients.push({ id: genUID(), name: name, sites: [] });
+  document.getElementById('new-client-name').value = '';
+  persist();
+  renderClientManageList();
+  renderQuickLog();
+}
+
+function deleteClient(clientId) {
+  if (!confirm('Delete this client and all their sites?')) return;
+  state.clients = state.clients.filter(c => c.id !== clientId);
+  persist();
+  renderClientManageList();
+  renderQuickLog();
+}
+
+function renameClient(clientId) {
+  const client = state.clients.find(c => c.id === clientId);
+  if (!client) return;
+  const newName = prompt('Rename client:', client.name);
+  if (newName && newName.trim()) {
+    client.name = newName.trim();
+    persist();
+    renderClientManageList();
+    renderQuickLog();
+  }
+}
+
+function addSite(clientId) {
+  const nameInput = document.getElementById('site-name-' + clientId);
+  const milesInput = document.getElementById('site-miles-' + clientId);
+  const name = nameInput.value.trim();
+  const miles = parseNum(milesInput.value);
+  if (!name) { alert('Please enter a site name'); return; }
+  if (miles <= 0) { alert('Please enter miles'); return; }
+
+  const client = state.clients.find(c => c.id === clientId);
+  if (!client) return;
+  client.sites.push({ id: genUID(), name: name, miles: miles });
+  nameInput.value = '';
+  milesInput.value = '';
+  persist();
+  renderClientManageList();
+  renderQuickLog();
+}
+
+function deleteSite(clientId, siteId) {
+  const client = state.clients.find(c => c.id === clientId);
+  if (!client) return;
+  client.sites = client.sites.filter(s => s.id !== siteId);
+  persist();
+  renderClientManageList();
+  renderQuickLog();
+}
+
+function renderClientManageList() {
+  const container = document.getElementById('client-manage-list');
+  if (state.clients.length === 0) {
+    container.innerHTML = '<p class="text-sm text-slate-400 text-center py-4">No clients yet. Add one above.</p>';
+    return;
+  }
+
+  let html = '';
+  state.clients.forEach(client => {
+    html += `<div class="border rounded-xl p-3 space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="font-semibold text-slate-800">${escapeHtml(client.name)}</span>
+        <div class="flex gap-2">
+          <button class="text-xs text-blue-700 hover:underline" onclick="renameClient('${client.id}')">Rename</button>
+          <button class="text-xs text-red-600 hover:underline" onclick="deleteClient('${client.id}')">Delete</button>
+        </div>
+      </div>
+      <div class="space-y-1">
+        ${client.sites.map(site => `
+          <div class="flex items-center justify-between bg-slate-50 rounded-lg px-3 py-2 text-sm">
+            <span>${escapeHtml(site.name)} — ${site.miles} miles</span>
+            <button class="text-red-600 text-xs hover:underline" onclick="deleteSite('${client.id}','${site.id}')">×</button>
+          </div>
+        `).join('')}
+      </div>
+      <div class="flex gap-2 items-end">
+        <input id="site-name-${client.id}" type="text" placeholder="Site name" class="flex-1 border rounded-lg px-2 py-1 text-sm">
+        <input id="site-miles-${client.id}" type="text" inputmode="decimal" placeholder="Miles" class="w-20 border rounded-lg px-2 py-1 text-sm">
+        <button class="text-white px-3 py-1 rounded-lg text-xs" style="background-color:#4f8f99" onclick="addSite('${client.id}')">+ Site</button>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+// ===== Review Pending Panel =====
+let pendingRejectId = null;
+
+function renderReview() {
+  const pending = state.expenses.filter(e => e.status === 'pending');
+  const reviewContent = document.getElementById('review-content');
+
+  if (pending.length === 0) {
+    reviewContent.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">✅</div>
+        <div class="empty-state-title">All clear!</div>
+        <div class="empty-state-text">No pending expenses to review.</div>
+      </div>
+    `;
+  } else {
+    reviewContent.innerHTML = pending.map((exp, idx) => `
+      <div class="review-card">
+        <div class="review-card-header">
+          <div class="review-card-info">
+            <div class="review-card-title">${exp.description}</div>
+            <div class="review-card-meta">
+              <div>📅 Date: ${exp.date}</div>
+              <div>📏 Miles: ${exp.miles} @ £${exp.rate.toFixed(2)}/mi</div>
+              <div>💷 Amount: <strong>${fmt(exp.amount)}</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="review-card-actions">
+          <button class="btn-approve" onclick="approvePending('${exp.id}')" aria-label="Approve this pending expense">✓ Approve</button>
+          <button class="btn-edit" onclick="editPending('${exp.id}')" aria-label="Edit this pending expense">✎ Edit</button>
+          <button class="btn-reject" onclick="requestRejectPending('${exp.id}')" aria-label="Reject this pending expense">✕ Reject</button>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function approvePending(expenseId) {
+  const exp = state.expenses.find(e => e.id === expenseId);
+  if (exp) {
+    exp.status = 'approved';
+    persist();
+    renderExpenses();
+    renderWageTable();
+    renderChart();
+    updatePendingBadge();
+    renderReview();
+  }
+}
+
+function editPending(expenseId) {
+  const exp = state.expenses.find(e => e.id === expenseId);
+  if (!exp) return;
+
+  const newDate = prompt('Date (YYYY-MM-DD):', exp.date);
+  if (newDate === null) return;
+  const newDesc = prompt('Description:', exp.description);
+  if (newDesc === null) return;
+  const newMiles = prompt('Miles:', exp.miles);
+  if (newMiles === null) return;
+  const newRate = prompt('Rate (£/mi):', exp.rate);
+  if (newRate === null) return;
+
+  exp.date = newDate;
+  exp.description = newDesc;
+  exp.miles = parseNum(newMiles);
+  exp.rate = parseNum(newRate);
+  exp.amount = parseFloat((exp.miles * exp.rate).toFixed(2));
+
+  persist();
+  renderReview();
+}
+
+function requestRejectPending(expenseId) {
+  pendingRejectId = expenseId;
+  openModal('modal-reject-pending');
+}
+
+function confirmRejectPending() {
+  if (pendingRejectId) {
+    state.expenses = state.expenses.filter(e => e.id !== pendingRejectId);
+    persist();
+    updatePendingBadge();
+    renderReview();
+    closeModal('modal-reject-pending');
+    pendingRejectId = null;
+  }
+}
+
+function cancelRejectPending() {
+  pendingRejectId = null;
+  closeModal('modal-reject-pending');
+}
+
+// ===== Wage Panel =====
+const wageTitle = document.getElementById('wage-title');
+const tbodyWage = document.getElementById('tbody-wage');
+const summaryRow = document.getElementById('summary-row');
+
+const currentYear = new Date().getFullYear();
+wageTitle.textContent = `Wage Structure — ${currentYear}`;
+
+function getWage(k) {
+  return state.wageData[k] || { wage: 0, dividend: 0, personalTax: 0, vatPayment: 0 };
+}
+
+function setWage(k, patch) {
+  state.wageData[k] = Object.assign(getWage(k), patch);
+  persist();
+  renderWageTable();
+  renderChart();
+}
+
+function expensesByMonth() {
+  const map = {};
+  state.expenses.forEach((e) => {
+    if (e.status !== 'approved') return;
+    const k = monthKeyFromDate(e.date);
+    if (!k) return;
+    map[k] = (map[k] || 0) + e.amount;
+  });
+  return map;
+}
+
+function moneyInputHtml(key, field, value) {
+  return `<div class="money-input">
+    <span>£</span>
+    <input type="text" inputmode="decimal" value="${Number(value) || 0}" data-k="${key}" data-f="${field}" />
+  </div>`;
+}
+
+function renderWageTable() {
+  const expByMonth = expensesByMonth();
+  tbodyWage.innerHTML = '';
+  let ytdIncome = 0,
+    ytdPersonalTax = 0,
+    ytdVAT = 0,
+    ytdExp = 0;
+
+  const monthKeys = Object.keys(state.wageData).sort();
+
+  monthKeys.forEach((k) => {
+    const label = formatMonthLabel(k);
+    const m = getWage(k);
+    const income = parseNum(m.wage) + parseNum(m.dividend);
+    const personalTax = parseNum(m.personalTax);
+    const vat = parseNum(m.vatPayment);
+    const expenses = expByMonth[k] || 0;
+    const totalPayment = income + expenses;
+
+    ytdIncome += income;
+    ytdPersonalTax += personalTax;
+    ytdVAT += vat;
+    ytdExp += expenses;
+
+    const tr = document.createElement('tr');
+    tr.className = 'border-t';
+    tr.innerHTML = `
+      <td class="p-3 font-medium">${label}</td>
+      <td class="p-3">${moneyInputHtml(k, 'wage', m.wage)}</td>
+      <td class="p-3">${moneyInputHtml(k, 'dividend', m.dividend)}</td>
+      <td class="p-3 text-slate-900">${fmt(income)}</td>
+      <td class="p-3">${moneyInputHtml(k, 'personalTax', m.personalTax)}</td>
+      <td class="p-3">${moneyInputHtml(k, 'vatPayment', m.vatPayment)}</td>
+      <td class="p-3 text-slate-900">${fmt(expenses)}</td>
+      <td class="p-3 text-teal font-semibold">${fmt(totalPayment)}</td>
+      <td class="p-3 text-center"><button class="btn-delete-month text-red-600 hover:text-red-800 font-bold transition-colors" data-k="${k}" aria-label="Delete this month">×</button></td>`;
+    tbodyWage.appendChild(tr);
+  });
+
+  tbodyWage.querySelectorAll('input[data-k]').forEach((inp) => {
+    const commit = () => {
+      const k = inp.getAttribute('data-k');
+      const f = inp.getAttribute('data-f');
+      setWage(k, { [f]: parseNum(inp.value) });
+    };
+    inp.addEventListener('blur', commit);
+    inp.addEventListener('change', commit);
+  });
+
+  tbodyWage.querySelectorAll('.btn-delete-month').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const k = btn.getAttribute('data-k');
+      pendingDeleteMonthKey = k;
+      document.getElementById('modal-delete-month-text').textContent = `Are you sure you want to delete ${formatMonthLabel(k)}? This action cannot be undone.`;
+      openModal('modal-delete-month');
+    });
+  });
+
+  const totalPayment = ytdIncome + ytdExp;
+  summaryRow.innerHTML = `
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-sm">
+      ${statHtml('Year-to-date Income', fmt(ytdIncome))}
+      ${statHtml('Year-to-date Personal Tax', fmt(ytdPersonalTax))}
+      ${statHtml('Year-to-date VAT', fmt(ytdVAT))}
+      ${statHtml('Year-to-date Expenses', fmt(ytdExp))}
+      ${statHtml('Year-to-date Payment', fmt(totalPayment), true)}
+    </div>`;
+}
+
+function statHtml(label, value, highlight) {
+  return `<div class="rounded-xl px-4 py-3 ${
+    highlight ? 'text-white shadow' : 'bg-white shadow border'
+  }" style="${highlight ? 'background-color: #5BC0CB;' : ''}">
+    <div class="text-xs ${highlight ? 'opacity-90' : 'text-slate-500'}">${label}</div>
+    <div class="text-lg font-semibold ${highlight ? '' : 'text-slate-900'}">${value}</div>
+  </div>`;
+}
+
+let pendingDeleteMonthKey = null;
+
+function confirmDeleteMonth() {
+  if (pendingDeleteMonthKey) {
+    deleteMonth(pendingDeleteMonthKey);
+    closeModal('modal-delete-month');
+    pendingDeleteMonthKey = null;
+  }
+}
+
+function cancelDeleteMonth() {
+  pendingDeleteMonthKey = null;
+  closeModal('modal-delete-month');
+}
+
+function deleteMonth(k) {
+  delete state.wageData[k];
+  persist();
+  renderWageTable();
+  renderChart();
+}
+
+function renderChart() {
+  const chartSvg = document.getElementById('chart-svg');
+  const monthKeys = Object.keys(state.wageData).sort();
+
+  if (monthKeys.length === 0) {
+    chartSvg.innerHTML = '<text x="50%" y="50%" text-anchor="middle" dy="0.3em" fill="#9ca3af" font-size="14">Add months to see the chart</text>';
+    return;
+  }
+
+  const expByMonth = expensesByMonth();
+
+  let maxValue = 0;
+  monthKeys.forEach(k => {
+    const wage = getWage(k);
+    const income = parseNum(wage.wage) + parseNum(wage.dividend);
+    const expenses = expByMonth[k] || 0;
+    maxValue = Math.max(maxValue, income, expenses);
+  });
+
+  if (maxValue === 0) maxValue = 1000;
+
+  const chartWidth = 800;
+  const chartHeight = 250;
+  const padding = 40;
+  const graphWidth = chartWidth - (padding * 2);
+  const graphHeight = chartHeight - (padding * 2);
+
+  const barWidth = graphWidth / (monthKeys.length * 2.5);
+  const spacing = barWidth * 0.5;
+
+  let svg = `<defs>
+    <style>
+      .chart-bar-label { font-size: 12px; fill: #6b7280; text-anchor: middle; }
+      .chart-axis-label { font-size: 11px; fill: #9ca3af; }
+      .chart-legend-text { font-size: 13px; fill: #1f2937; }
+    </style>
+  </defs>`;
+
+  svg += `<line x1="${padding}" y1="${chartHeight - padding}" x2="${chartWidth - padding}" y2="${chartHeight - padding}" stroke="#d1d5db" stroke-width="1"/>`;
+  svg += `<line x1="${padding}" y1="${padding}" x2="${padding}" y2="${chartHeight - padding}" stroke="#d1d5db" stroke-width="1"/>`;
+
+  monthKeys.forEach((k, idx) => {
+    const wage = getWage(k);
+    const income = parseNum(wage.wage) + parseNum(wage.dividend);
+    const expenses = expByMonth[k] || 0;
+
+    const xBase = padding + (idx * (barWidth * 2 + spacing * 2));
+
+    const incomeHeight = (income / maxValue) * graphHeight;
+    const incomeY = chartHeight - padding - incomeHeight;
+    svg += `<rect x="${xBase}" y="${incomeY}" width="${barWidth}" height="${incomeHeight}" fill="#5BC0CB" rx="2"/>`;
+
+    const expenseHeight = (expenses / maxValue) * graphHeight;
+    const expenseY = chartHeight - padding - expenseHeight;
+    svg += `<rect x="${xBase + barWidth + spacing}" y="${expenseY}" width="${barWidth}" height="${expenseHeight}" fill="#4f8f99" rx="2"/>`;
+
+    const monthLabel = formatMonthLabel(k);
+    svg += `<text x="${xBase + barWidth + (barWidth + spacing) / 2}" y="${chartHeight - padding + 20}" class="chart-bar-label">${monthLabel}</text>`;
+  });
+
+  svg += `<rect x="${padding}" y="10" width="12" height="12" fill="#5BC0CB" rx="1"/>`;
+  svg += `<text x="${padding + 18}" y="20" class="chart-legend-text">Income</text>`;
+
+  svg += `<rect x="${padding + 100}" y="10" width="12" height="12" fill="#4f8f99" rx="1"/>`;
+  svg += `<text x="${padding + 118}" y="20" class="chart-legend-text">Expenses</text>`;
+
+  chartSvg.innerHTML = svg;
+}
+
+// ===== Modal Functions =====
+function openModal(modalId) {
+  document.getElementById(modalId).classList.add('active');
+}
+
+function closeModal(modalId) {
+  document.getElementById(modalId).classList.remove('active');
+}
+
+// ===== Add Month Modal =====
+function showAddMonthModal() {
+  const available = getAllAvailableMonths();
+  const existing = new Set(Object.keys(state.wageData));
+
+  if (available.length === existing.size) {
+    alert('All available months have been added!');
+    return;
+  }
+
+  const selectEl = document.getElementById('modal-month-select');
+  selectEl.innerHTML = '';
+
+  available.forEach(m => {
+    if (!existing.has(m.key)) {
+      const option = document.createElement('option');
+      option.value = m.key;
+      option.textContent = m.label;
+      selectEl.appendChild(option);
+    }
+  });
+
+  openModal('modal-add-month');
+}
+
+function closeAddMonthModal() {
+  closeModal('modal-add-month');
+}
+
+function confirmAddMonth() {
+  const monthKey = document.getElementById('modal-month-select').value;
+  if (monthKey && !Object.keys(state.wageData).includes(monthKey)) {
+    state.wageData[monthKey] = { wage: 0, dividend: 0, personalTax: 0, vatPayment: 0 };
+    persist();
+    renderWageTable();
+    renderChart();
+    closeAddMonthModal();
+  }
+}
+
+// ===== Data Export/Import Functions =====
+function exportData() {
+  const dataStr = JSON.stringify(state, null, 2);
+  const blob = new Blob([dataStr], { type: 'application/json;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.setAttribute('href', URL.createObjectURL(blob));
+  link.setAttribute('download', `wages-expenses-backup-${new Date().toISOString().split('T')[0]}.json`);
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function triggerImportFile() {
+  document.getElementById('file-import-input').click();
+}
+
+let pendingImportData = null;
+
+document.getElementById('file-import-input').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    try {
+      const importedData = JSON.parse(event.target.result);
+      pendingImportData = importedData;
+      openModal('modal-import-confirm');
+    } catch (err) {
+      alert('Invalid JSON file. Please select a valid backup file.');
+    }
+  };
+  reader.readAsText(file);
+});
+
+function confirmImport() {
+  if (pendingImportData) {
+    if (pendingImportData.wageData) {
+      Object.keys(pendingImportData.wageData).forEach(key => {
+        const wage = pendingImportData.wageData[key];
+        if (wage.backpay !== undefined && wage.vatPayment === undefined) {
+          wage.vatPayment = wage.backpay;
+          delete wage.backpay;
+        }
+        if (wage.vatPayment === undefined) {
+          wage.vatPayment = 0;
+        }
+      });
+    }
+
+    if (pendingImportData.expenses) {
+      pendingImportData.expenses.forEach(exp => {
+        if (!exp.status) {
+          exp.status = 'approved';
+        }
+      });
+    }
+
+    if (!pendingImportData.clients) {
+      pendingImportData.clients = [];
+    }
+
+    Object.assign(state, pendingImportData);
+    persist();
+    renderExpenses();
+    renderWageTable();
+    renderChart();
+    renderQuickLog();
+    renderClientManageList();
+    updatePendingBadge();
+    closeModal('modal-import-confirm');
+    pendingImportData = null;
+    document.getElementById('file-import-input').value = '';
+    alert('Data imported successfully!');
+  }
+}
+
+function cancelImport() {
+  pendingImportData = null;
+  closeModal('modal-import-confirm');
+  document.getElementById('file-import-input').value = '';
+}
+
+document.querySelectorAll('input[type="text"][inputmode="decimal"]').forEach((el) => {
+  el.addEventListener('blur', () => {
+    if (
+      el.id === 'exp-amount' ||
+      el.id === 'exp-rate' ||
+      el.id === 'default-rate' ||
+      el.id === 'exp-miles'
+    ) {
+      return;
+    }
+    const val = parseNum(el.value);
+    if (!isNaN(val)) el.value = String(val);
+  });
+});
+
+// ===== Initialization =====
+(function init() {
+  if (Object.keys(state.wageData).length === 0) {
+    state.wageData['2026-02'] = { wage: 0, dividend: 0, personalTax: 0, vatPayment: 0 };
+    persist();
+  }
+
+  document.getElementById('default-rate').value = state.mileageRate;
+  document.getElementById('exp-rate').value = state.mileageRate;
+
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('oneoff-date').value = today;
+
+  const btnAddMonth = document.getElementById('btn-add-month');
+  if (btnAddMonth) {
+    btnAddMonth.addEventListener('click', showAddMonthModal);
+  }
+
+  const btnToggleManage = document.getElementById('btn-toggle-manage');
+  if (btnToggleManage) {
+    btnToggleManage.addEventListener('click', toggleManageClients);
+  }
+
+  const btnAddClient = document.getElementById('btn-add-client');
+  if (btnAddClient) {
+    btnAddClient.addEventListener('click', addClient);
+  }
+
+  const btnOneoffLog = document.getElementById('btn-oneoff-log');
+  if (btnOneoffLog) {
+    btnOneoffLog.addEventListener('click', logOneoffTrip);
+  }
+
+  document.getElementById('btn-export-data').addEventListener('click', exportData);
+  document.getElementById('btn-import-data').addEventListener('click', triggerImportFile);
+
+  document.querySelectorAll('.modal-overlay').forEach(modal => {
+    modal.addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.classList.remove('active');
+      }
+    });
+  });
+
+  renderExpenses();
+  renderWageTable();
+  renderChart();
+  renderQuickLog();
+  renderClientManageList();
+  refreshExpenseAmountField();
+  updatePendingBadge();
+  setTab('wage');
+})();
+
+/**
+ * Generate combined monthly PDF report using jsPDF
+ */
+async function generatePDFReport() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  function addFooter(doc) {
+    const pageCount = doc.internal.getNumberOfPages();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    doc.setFontSize(9);
+    doc.setTextColor(120, 120, 120);
+
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+
+      doc.text(
+        'AHS Compliance Consulting – Confidential',
+        15,
+        pageHeight - 10
+      );
+
+      doc.text(
+        `Page ${i} of ${pageCount}`,
+        pageWidth - 15,
+        pageHeight - 10,
+        { align: 'right' }
+      );
+    }
+  }
+
+  const pdfMonthInput = document.getElementById('pdf-month').value;
+  let reportDate = new Date();
+  if (pdfMonthInput) {
+    const [year, month] = pdfMonthInput.split('-');
+    reportDate = new Date(parseInt(year), parseInt(month) - 1, 1);
+  }
+
+  const currentMonth = reportDate.toLocaleString('en-GB', { month: 'long', year: 'numeric' });
+  const filename = `${reportDate.toLocaleString('en-GB', { month: 'short' })}-${reportDate.getFullYear()}-WagesExpenses.pdf`;
+
+  const expByMonth = expensesByMonth();
+
+  let totalIncome = 0;
+  let totalExpenses = 0;
+  let totalPersonalTax = 0;
+  let totalVAT = 0;
+
+  Object.entries(state.wageData).forEach(([k, wage]) => {
+    totalIncome += parseNum(wage.wage) + parseNum(wage.dividend);
+    totalPersonalTax += parseNum(wage.personalTax);
+    totalVAT += parseNum(wage.vatPayment);
+  });
+
+  Object.values(expByMonth).forEach((amt) => {
+    totalExpenses += amt;
+  });
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let yPos = 20;
+  const margin = 15;
+  const lineHeight = 8;
+
+  try {
+    const logoWidth = 12;
+    const logoHeight = 15;
+    const safeMargin = 8;
+    const logoPadding = 1;
+    const boxWidth = logoWidth + (logoPadding * 2);
+    const boxHeight = logoHeight + (logoPadding * 2);
+    const logoX = pageWidth - safeMargin - boxWidth;
+    const logoY = 6;
+
+    doc.setFillColor(255, 255, 255);
+    doc.rect(logoX, logoY, boxWidth, boxHeight, 'F');
+
+    doc.addImage('ahs.png', 'PNG', logoX + logoPadding, logoY + logoPadding, logoWidth, logoHeight);
+  } catch (err) {
+    console.log('Logo could not be added to PDF:', err);
+  }
+
+  doc.setFontSize(18);
+  doc.setTextColor(85, 85, 85);
+  doc.text('Monthly Wages & Expenses Report', margin, yPos);
+
+  yPos += 8;
+  doc.setFontSize(11);
+  doc.setTextColor(122, 122, 122);
+  doc.text(currentMonth, margin, yPos);
+
+  yPos += 15;
+
+  doc.setFontSize(10);
+  doc.setTextColor(30, 30, 30);
+
+  const summaryData = [
+    { label: 'Total Income', value: fmt(totalIncome) },
+    { label: 'Personal Tax', value: fmt(totalPersonalTax) },
+    { label: 'VAT Monthly', value: fmt(totalVAT) },
+    { label: 'Total Expenses', value: fmt(totalExpenses) },
+    { label: 'Total Payment', value: fmt(totalIncome + totalExpenses) }
+  ];
+
+  const boxWidth = (pageWidth - margin * 2 - 12.5) / 5;
+  summaryData.forEach((item, idx) => {
+    const xPos = margin + idx * (boxWidth + 2.5);
+    doc.setFillColor(91, 192, 203);
+    doc.rect(xPos, yPos, boxWidth, 20, 'F');
+    doc.setDrawColor(91, 192, 203);
+    doc.rect(xPos, yPos, boxWidth, 20);
+    doc.setFontSize(8);
+    doc.setTextColor(85, 85, 85);
+    doc.text(item.label, xPos + 3, yPos + 6);
+    doc.setFontSize(11);
+    doc.setTextColor(85, 85, 85);
+    doc.setFont(undefined, 'bold');
+    doc.text(item.value, xPos + 3, yPos + 15);
+    doc.setFont(undefined, 'normal');
+  });
+
+  yPos += 30;
+
+  doc.setFontSize(12);
+  doc.setTextColor(85, 85, 85);
+  doc.text('Wage Summary', margin, yPos);
+  yPos += 8;
+
+  const wageTableData = Object.entries(state.wageData)
+    .map(([k, w]) => {
+      const income = parseNum(w.wage) + parseNum(w.dividend);
+      const payment = income + (expByMonth[k] || 0);
+      return [k, fmt(w.wage), fmt(w.dividend), fmt(income), fmt(parseNum(w.personalTax)), fmt(parseNum(w.vatPayment)), fmt(payment)];
+    });
+
+  doc.autoTable({
+    head: [['Month', 'Wage', 'Dividend', 'Total Income', 'Personal Tax', 'VAT Monthly', 'Total Payment']],
+    body: wageTableData,
+    startY: yPos,
+    margin: margin,
+    theme: 'grid',
+    headStyles: { fillColor: [91, 192, 203], textColor: [85, 85, 85], fontStyle: 'bold', halign: 'left' },
+    bodyStyles: { textColor: [30, 30, 30] },
+    columnStyles: {
+      1: { halign: 'right' },
+      2: { halign: 'right' },
+      3: { halign: 'right' },
+      4: { halign: 'right' },
+      5: { halign: 'right' },
+      6: { halign: 'right' }
+    }
+  });
+
+  yPos = doc.lastAutoTable.finalY + 15;
+
+  if (yPos > 250) {
+    doc.addPage();
+    yPos = 20;
+  }
+
+  doc.setFontSize(12);
+  doc.setTextColor(85, 85, 85);
+  doc.text('Expenses', margin, yPos);
+  yPos += 8;
+
+  const approvedExpenses = state.expenses.filter(e => e.status === 'approved');
+  if (approvedExpenses.length > 0) {
+    const tableData = approvedExpenses.map((exp) => [
+      exp.date,
+      exp.description,
+      exp.category,
+      fmt(exp.amount)
+    ]);
+
+    doc.autoTable({
+      head: [['Date', 'Description', 'Category', 'Amount']],
+      body: tableData,
+      startY: yPos,
+      margin: margin,
+      theme: 'grid',
+      headStyles: { fillColor: [91, 192, 203], textColor: [85, 85, 85], fontStyle: 'bold', halign: 'left' },
+      bodyStyles: { textColor: [30, 30, 30] },
+      columnStyles: {
+        3: { halign: 'right' }
+      }
+    });
+
+    yPos = doc.lastAutoTable.finalY + 15;
+  } else {
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text('No expenses recorded.', margin, yPos);
+    yPos += 15;
+  }
+
+  addFooter(doc);
+
+  doc.save(filename);
+}
+
+/**
+ * Save current month data as a self-contained HTML file
+ */
+function saveMonthAsHTML() {
+  const currentDate = new Date();
+  const monthName = currentDate.toLocaleString('en-GB', { month: 'long' });
+  const year = currentDate.getFullYear();
+  const filename = `${monthName}-${year}-WagesExpenses.html`;
+
+  const dataSnapshot = JSON.stringify(state, null, 2);
+  const LSKey = `wage-structure-snapshot-${year}-${currentDate.getMonth() + 1}`;
+
+  const appCSS = document.getElementById('app-css') ? document.getElementById('app-css').innerHTML : '';
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wages & Expenses - ${monthName} ${year}</title>
+  <style id="snapshot-css">
+    ${appCSS}
+  </style>
+</head>
+<body class="min-h-screen bg-slate-50">
+  <header class="text-white py-5 shadow" style="background-color: #555555;">
+    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
+      <h1 class="text-2xl font-bold">Wages & Expenses - ${monthName} ${year}</h1>
+      <nav class="flex gap-2">
+        <button class="px-3 py-2 rounded-lg text-white" style="background-color: #5BC0CB;" onclick="setTab('wage')">Wage Structure</button>
+        <button class="px-3 py-2 rounded-lg text-white" style="background-color: #4f8f99;" onclick="setTab('exp')">Expense Tracker</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <section id="panel-expenses" class="space-y-5 hidden">
+      <div class="bg-white rounded-2xl shadow p-4">
+        <h2 class="text-lg font-semibold mb-3 text-slate-800">Add Expense</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-6 gap-3 items-end">
+          <div>
+            <label class="block text-sm text-slate-600 mb-1">Date</label>
+            <input id="exp-date" type="date" class="w-full border rounded-lg px-3 py-2">
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-sm text-slate-600 mb-1">Description</label>
+            <input id="exp-desc" type="text" placeholder="Enter description" class="w-full border rounded-lg px-3 py-2">
+          </div>
+          <div>
+            <label class="block text-sm text-slate-600 mb-1">Category</label>
+            <select id="exp-cat" class="w-full border rounded-lg px-3 py-2">
+              <option value="travel">Travel</option>
+              <option value="office">Office Supplies</option>
+              <option value="software">Software</option>
+              <option value="meals">Meals</option>
+              <option value="misc">Misc</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm text-slate-600 mb-1">Miles</label>
+            <input id="exp-miles" type="text" inputmode="decimal" class="w-full border rounded-lg px-3 py-2">
+          </div>
+          <div>
+            <label class="block text-sm text-slate-600 mb-1">Rate (£/mile)</label>
+            <input id="exp-rate" type="text" inputmode="decimal" class="w-full border rounded-lg px-3 py-2">
+          </div>
+          <div>
+            <label class="block text-sm text-slate-600 mb-1">Amount (£)</label>
+            <input id="exp-amount" type="text" inputmode="decimal" class="w-full border rounded-lg px-3 py-2 bg-slate-100" disabled>
+          </div>
+          <div class="sm:col-span-6 flex items-center gap-3">
+            <button onclick="addExpense()" class="text-white px-4 py-2 rounded-lg transition-opacity hover:opacity-90" style="background-color: #5BC0CB;">Add Expense</button>
+            <div class="ml-auto flex items-center gap-2 text-sm">
+              <span class="text-slate-500">Default mileage rate:</span>
+              <input id="default-rate" type="text" inputmode="decimal" class="w-24 border rounded-lg px-3 py-1">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow">
+        <div class="p-4 border-b"><h3 class="font-semibold text-slate-800">Expenses</h3></div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm table-sticky" id="tbl-expenses">
+            <thead style="background-color: #5BC0CB;" class="text-white">
+              <tr class="text-left">
+                <th class="p-3">Date</th>
+                <th class="p-3">Description</th>
+                <th class="p-3">Category</th>
+                <th class="p-3">Miles</th>
+                <th class="p-3">Rate (£/mile)</th>
+                <th class="p-3">Amount (£)</th>
+                <th class="p-3"></th>
+              </tr>
+            </thead>
+            <tbody id="tbody-expenses"></tbody>
+          </table>
+        </div>
+        <div class="p-4 bg-slate-50 rounded-b-2xl grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="text-white rounded-xl p-4" style="background-color: #4f8f99;">
+            <div class="text-sm opacity-80">Category Totals</div>
+            <ul id="list-cat-totals" class="mt-2 space-y-1"></ul>
+          </div>
+          <div class="text-white rounded-xl p-4 sm:col-span-2 flex items-center justify-between" style="background-color: #5BC0CB;">
+            <div class="text-lg font-semibold">Total</div>
+            <div id="grand-total" class="text-2xl font-bold">£0.00</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="panel-wage" class="space-y-5">
+      <div class="bg-white rounded-2xl shadow overflow-x-auto">
+        <div class="p-4 border-b">
+          <h2 id="wage-title" class="text-lg font-semibold text-slate-800">${monthName} ${year}</h2>
+        </div>
+        <table class="w-full min-w-[900px] text-sm table-sticky" id="tbl-wage">
+          <thead style="background-color: #5BC0CB;" class="text-white text-xs">
+            <tr>
+              <th class="p-3 text-left" style="width: 80px;">Month</th>
+              <th class="p-3 text-left" colspan="2" style="width: 200px;">Income</th>
+              <th class="p-3 text-left" style="width: 80px;">Total</th>
+              <th class="p-3 text-left" colspan="2" style="width: 240px;">Outgoing</th>
+              <th class="p-3 text-left" style="width: 80px;">Expenses</th>
+              <th class="p-3 text-left" style="width: 6%;">Payment</th>
+            </tr>
+            <tr class="text-white opacity-80 text-xs">
+              <th></th>
+              <th class="p-3" style="width: 100px;">Wage</th>
+              <th class="p-3" style="width: 100px;">Dividend</th>
+              <th></th>
+              <th class="p-3" style="width: 130px;">Personal Tax Monthly Payment</th>
+              <th class="p-3" style="width: 130px;">VAT monthly payment</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-wage"></tbody>
+        </table>
+      </div>
+      <div class="p-4 bg-slate-50 rounded-b-2xl" id="summary-row"></div>
+      <div class="rounded-2xl p-4 text-white shadow" style="background-color: #4f8f99;">
+        <h3 class="font-semibold">How totals are calculated</h3>
+        <ul class="mt-2 text-sm space-y-1 opacity-95">
+          <li>Income Total = Wage Payment + Dividend Payment</li>
+          <li>Total Expenses are auto-pulled from the Expense Tracker for that month</li>
+          <li>Total Payment = Income Total + Total Expenses</li>
+          <li>Personal Tax values are tracked but don't affect the Total Payment</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+const genUID = () => globalThis.crypto?.randomUUID?.() ?? (Date.now() + '-' + Math.random().toString(16).slice(2));
+const GBP = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' });
+const fmt = (n) => GBP.format(Number.isFinite(+n) ? +n : 0);
+const parseNum = (v) => {
+  if (v === '' || v === null || v === undefined) return 0;
+  let s = String(v);
+  s = s.replace(/[^0-9.,-]/g, '');
+  if (s.includes(',') && !s.includes('.')) s = s.replace(/,/g, '.');
+  else s = s.replace(/,/g, '');
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+};
+
+const LS_KEY = '${LSKey}';
+const state = (() => {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    let data = raw ? JSON.parse(raw) : ${dataSnapshot};
+    if (data.wageData) {
+      Object.keys(data.wageData).forEach(key => {
+        const wage = data.wageData[key];
+        if (wage.backpay !== undefined && wage.vatPayment === undefined) {
+          wage.vatPayment = wage.backpay;
+          delete wage.backpay;
+        }
+        if (wage.vatPayment === undefined) {
+          wage.vatPayment = 0;
+        }
+      });
+    }
+    if (data.expenses) {
+      data.expenses.forEach(exp => {
+        if (!exp.status) {
+          exp.status = 'approved';
+        }
+      });
+    }
+    if (!data.clients) {
+      data.clients = [];
+    }
+    return data;
+  } catch(e) {
+    return ${dataSnapshot};
+  }
+})();
+const persist = () => localStorage.setItem(LS_KEY, JSON.stringify(state));
+
+function formatMonthLabel(key) {
+  const [y, m] = key.split('-');
+  const d = new Date(parseInt(y), parseInt(m) - 1, 1);
+  const mon = d.toLocaleString('en-GB', { month: 'short' });
+  const yy = String(d.getFullYear()).slice(-2);
+  return mon + ' ' + yy;
+}
+
+function monthKeyFromDate(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  if (isNaN(d)) return null;
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  return y + '-' + m;
+}
+
+function setTab(name) {
+  const buttons = document.querySelectorAll('button[onclick*="setTab"]');
+  const panelWage = document.getElementById('panel-wage');
+  const panelExp = document.getElementById('panel-expenses');
+  if (name === 'wage') {
+    buttons[0].style.backgroundColor = '#5BC0CB';
+    buttons[1].style.backgroundColor = '#4f8f99';
+    panelWage.classList.remove('hidden');
+    panelExp.classList.add('hidden');
+  } else {
+    buttons[1].style.backgroundColor = '#5BC0CB';
+    buttons[0].style.backgroundColor = '#4f8f99';
+    panelExp.classList.remove('hidden');
+    panelWage.classList.add('hidden');
+  }
+}
+
+function expensesByMonth() {
+  const map = {};
+  state.expenses.forEach(e => {
+    if (e.status !== 'approved') return;
+    const k = monthKeyFromDate(e.date);
+    if (!k) return;
+    map[k] = (map[k] || 0) + e.amount;
+  });
+  return map;
+}
+
+function catLabel(id) {
+  return ({travel:'Travel', office:'Office Supplies', software:'Software', meals:'Meals', misc:'Misc'})[id] || 'Misc';
+}
+
+function renderExpenses() {
+  const tbodyExp = document.getElementById('tbody-expenses');
+  const listCatTotals = document.getElementById('list-cat-totals');
+  const grandTotalEl = document.getElementById('grand-total');
+  tbodyExp.innerHTML = '';
+  const approvedExpenses = state.expenses.filter(e => e.status === 'approved');
+  if (approvedExpenses.length === 0) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td class="p-3 text-slate-500" colspan="7">No expenses yet.</td>';
+    tbodyExp.appendChild(tr);
+  } else {
+    approvedExpenses.forEach(e => {
+      const tr = document.createElement('tr');
+      tr.className = 'border-t';
+      tr.innerHTML = \`
+        <td class="p-3">\${e.date}</td>
+        <td class="p-3">\${e.description}</td>
+        <td class="p-3">\${catLabel(e.category)}</td>
+        <td class="p-3">\${e.miles || '-'}</td>
+        <td class="p-3">\${e.miles ? e.rate.toFixed(2) : '-'}</td>
+        <td class="p-3 font-medium" style="color: #5BC0CB;">\${fmt(e.amount)}</td>
+        <td class="p-3 text-right"><button class="text-red-600 hover:underline" onclick="deleteExpense('\${e.id}')">Delete</button></td>
+      \`;
+      tbodyExp.appendChild(tr);
+    });
+  }
+  const catTotals = {};
+  let grand = 0;
+  approvedExpenses.forEach(e => {
+    catTotals[e.category] = (catTotals[e.category] || 0) + e.amount;
+    grand += e.amount;
+  });
+  listCatTotals.innerHTML = '';
+  if (Object.keys(catTotals).length === 0) {
+    const li = document.createElement('li');
+    li.textContent = 'No data';
+    li.className = 'opacity-90';
+    listCatTotals.appendChild(li);
+  } else {
+    Object.entries(catTotals).forEach(([k,v]) => {
+      const li = document.createElement('li');
+      li.className = 'flex justify-between';
+      li.innerHTML = \`<span>\${catLabel(k)}</span><span class="font-semibold">\${fmt(v)}</span>\`;
+      listCatTotals.appendChild(li);
+    });
+  }
+  grandTotalEl.textContent = fmt(grand);
+}
+
+function renderWageTable() {
+  const expByMonth = expensesByMonth();
+  const tbodyWage = document.getElementById('tbody-wage');
+  const summaryRow = document.getElementById('summary-row');
+  tbodyWage.innerHTML = '';
+  let ytdIncome = 0, ytdPersonalTax = 0, ytdVAT = 0, ytdExp = 0;
+
+  const monthKeys = Object.keys(state.wageData).sort();
+
+  monthKeys.forEach(k => {
+    const label = formatMonthLabel(k);
+    const m = state.wageData[k] || {wage: 0, dividend: 0, personalTax: 0, vatPayment: 0};
+    const income = parseNum(m.wage) + parseNum(m.dividend);
+    const personalTax = parseNum(m.personalTax);
+    const vat = parseNum(m.vatPayment);
+    const expenses = expByMonth[k] || 0;
+    const totalPayment = income + expenses;
+    ytdIncome += income; ytdPersonalTax += personalTax; ytdVAT += vat; ytdExp += expenses;
+    const tr = document.createElement('tr');
+    tr.className = 'border-t';
+    tr.innerHTML = \`
+      <td class="p-3 font-medium">\${label}</td>
+      <td class="p-3"><div class="flex items-center border rounded-lg overflow-hidden"><span class="px-2 bg-slate-100 text-slate-500">£</span><input type="text" inputmode="decimal" value="\${Number(m.wage)||0}" data-k="\${k}" data-f="wage" class="w-full px-3 py-2 outline-none"></div></td>
+      <td class="p-3"><div class="flex items-center border rounded-lg overflow-hidden"><span class="px-2 bg-slate-100 text-slate-500">£</span><input type="text" inputmode="decimal" value="\${Number(m.dividend)||0}" data-k="\${k}" data-f="dividend" class="w-full px-3 py-2 outline-none"></div></td>
+      <td class="p-3 text-slate-900">\${fmt(income)}</td>
+      <td class="p-3"><div class="flex items-center border rounded-lg overflow-hidden"><span class="px-2 bg-slate-100 text-slate-500">£</span><input type="text" inputmode="decimal" value="\${Number(m.personalTax)||0}" data-k="\${k}" data-f="personalTax" class="w-full px-3 py-2 outline-none"></div></td>
+      <td class="p-3"><div class="flex items-center border rounded-lg overflow-hidden"><span class="px-2 bg-slate-100 text-slate-500">£</span><input type="text" inputmode="decimal" value="\${Number(m.vatPayment)||0}" data-k="\${k}" data-f="vatPayment" class="w-full px-3 py-2 outline-none"></div></td>
+      <td class="p-3 text-slate-900">\${fmt(expenses)}</td>
+      <td class="p-3 font-semibold" style="color: #5BC0CB;">\${fmt(totalPayment)}</td>
+    \`;
+    tbodyWage.appendChild(tr);
+  });
+
+  tbodyWage.querySelectorAll('input[data-k]').forEach(inp => {
+    const commit = () => {
+      const k = inp.getAttribute('data-k');
+      const f = inp.getAttribute('data-f');
+      if (!state.wageData[k]) state.wageData[k] = {wage:0, dividend:0, personalTax:0, vatPayment:0};
+      state.wageData[k][f] = parseNum(inp.value);
+      persist();
+      renderWageTable();
+    };
+    inp.addEventListener('blur', commit);
+    inp.addEventListener('change', commit);
+  });
+
+  const totalPayment = ytdIncome + ytdExp;
+  summaryRow.innerHTML = \`
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-sm">
+      <div class="rounded-xl px-4 py-3 bg-white shadow border">
+        <div class="text-xs text-slate-500">Year-to-date Income</div>
+        <div class="text-lg font-semibold text-slate-900">\${fmt(ytdIncome)}</div>
+      </div>
+      <div class="rounded-xl px-4 py-3 bg-white shadow border">
+        <div class="text-xs text-slate-500">Year-to-date Personal Tax</div>
+        <div class="text-lg font-semibold text-slate-900">\${fmt(ytdPersonalTax)}</div>
+      </div>
+      <div class="rounded-xl px-4 py-3 bg-white shadow border">
+        <div class="text-xs text-slate-500">Year-to-date VAT</div>
+        <div class="text-lg font-semibold text-slate-900">\${fmt(ytdVAT)}</div>
+      </div>
+      <div class="rounded-xl px-4 py-3 bg-white shadow border">
+        <div class="text-xs text-slate-500">Year-to-date Expenses</div>
+        <div class="text-lg font-semibold text-slate-900">\${fmt(ytdExp)}</div>
+      </div>
+      <div class="rounded-xl px-4 py-3 text-white shadow" style="background-color: #5BC0CB;">
+        <div class="text-xs opacity-90">Year-to-date Payment</div>
+        <div class="text-lg font-semibold">\${fmt(totalPayment)}</div>
+      </div>
+    </div>
+  \`;
+}
+
+function addExpense() {
+  const elDate = document.getElementById('exp-date');
+  const elDesc = document.getElementById('exp-desc');
+  const elCat = document.getElementById('exp-cat');
+  const elMiles = document.getElementById('exp-miles');
+  const elRate = document.getElementById('exp-rate');
+  const elAmount = document.getElementById('exp-amount');
+  if (!elDate.value) { alert('Please pick a date'); return; }
+  const exp = {
+    id: genUID(),
+    date: elDate.value,
+    description: elDesc.value || '',
+    category: elCat.value,
+    miles: parseNum(elMiles.value),
+    rate: parseNum(elRate.value),
+    amount: parseFloat((elCat.value === 'travel' ? parseNum(elMiles.value) * parseNum(elRate.value) : parseNum(elAmount.value)).toFixed(2)),
+    status: 'approved'
+  };
+  state.expenses.unshift(exp);
+  persist();
+  renderExpenses();
+  renderWageTable();
+  elDate.value = ''; elDesc.value = ''; elCat.value = 'travel';
+  elMiles.value = ''; elRate.value = state.mileageRate; elAmount.value = '';
+}
+
+function deleteExpense(id) {
+  state.expenses = state.expenses.filter(x => x.id !== id);
+  persist();
+  renderExpenses();
+  renderWageTable();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (!state.mileageRate) state.mileageRate = 0.45;
+  document.getElementById('default-rate').value = state.mileageRate;
+  document.getElementById('exp-rate').value = state.mileageRate;
+  document.getElementById('default-rate').addEventListener('input', () => {
+    state.mileageRate = parseNum(document.getElementById('default-rate').value);
+    document.getElementById('exp-rate').value = state.mileageRate;
+    persist();
+  });
+  renderExpenses();
+  renderWageTable();
+  setTab('wage');
+});
+  <\/script>
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', filename);
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+
+  alert(`Month saved as: ${filename}`);
+}
+
+const today = new Date();
+const yr = today.getFullYear();
+const mo = String(today.getMonth() + 1).padStart(2, '0');
+document.getElementById('pdf-month').value = `${yr}-${mo}`;
+
+const btnPdf = document.getElementById('btn-pdf-report');
+if (btnPdf) btnPdf.onclick = generatePDFReport;
+const btnSave = document.getElementById('btn-save-month');
+if (btnSave) btnSave.onclick = saveMonthAsHTML;
+
+  </script>
+</body>
+</html>
