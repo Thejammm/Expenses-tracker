@@ -1048,14 +1048,18 @@
   </style>
 </head>
 <body class="min-h-screen" style="background-color: #f5f5f5;">
-  <!-- Header -->
-  <header class="text-white py-3 sm:py-5 shadow" style="background-color: #555555;">
+  <!-- Header — AHS-branded: charcoal panel with cyan accent strip below,
+       matching the look used across the other AHS apps (PD Tools etc.). -->
+  <header class="text-white py-3 sm:py-5 shadow" style="background-color: #2c3e50; border-bottom: 3px solid #5BC0CB;">
     <div class="max-w-6xl mx-auto px-3 sm:px-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div style="background-color: white; padding: 4px; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+        <div style="background-color: white; padding: 4px; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,.15);">
           <img src="ahs.png" alt="AHS Logo" style="height: 40px; width: auto; flex-shrink: 0;">
         </div>
-        <h1 class="text-xl sm:text-2xl font-bold">Wages &amp; Expenses Manager</h1>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold" style="line-height: 1.15;">Wages &amp; Expenses Manager</h1>
+          <div style="font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #5BC0CB; font-weight: 600; margin-top: 2px;">AHS Compliance Consulting</div>
+        </div>
       </div>
     </div>
     <div class="max-w-6xl mx-auto px-3 sm:px-4 mt-3">
@@ -1073,6 +1077,7 @@
         <!-- Data import/export buttons -->
         <button id="btn-export-data" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white" style="background-color: #5BC0CB;" aria-label="Export data as JSON">Export Data</button>
         <button id="btn-import-data" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white" style="background-color: #4f8f99;" aria-label="Import data from JSON file">Import Data</button>
+        <button id="btn-excel-export" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white" style="background-color: #5BC0CB;" aria-label="Export to Excel CSV by period" onclick="openExcelExport()">📊 Excel Export</button>
         <input id="file-import-input" type="file" accept=".json" style="display: none;">
 
         <!-- PDF month selector -->
@@ -1328,10 +1333,19 @@
   <div id="modal-import-confirm" class="modal-overlay">
     <div class="modal-content">
       <h3>Import Data</h3>
-      <p>This will replace all current data. Are you sure you want to proceed?</p>
+      <p style="margin-bottom: 10px;">
+        <strong>Merge</strong> (recommended) adds new expenses, clients and wage months from the file
+        while keeping everything already in the app. Use this when you've added data on your phone
+        and want to bring it across.
+      </p>
+      <p style="margin-bottom: 14px; font-size: 13px; color: #6b7280;">
+        <strong>Replace all</strong> wipes the app's current data and replaces it with the file
+        contents &mdash; only use this when restoring a full backup.
+      </p>
       <div class="modal-buttons">
         <button class="btn-modal-cancel" onclick="cancelImport()">Cancel</button>
-        <button class="btn-modal-confirm" onclick="confirmImport()">Import</button>
+        <button class="btn-modal-cancel" style="border-color:#dc2626;color:#dc2626;" onclick="confirmImport('replace')">Replace all</button>
+        <button class="btn-modal-confirm" onclick="confirmImport('merge')">Merge</button>
       </div>
     </div>
   </div>
@@ -1344,6 +1358,52 @@
       <div class="modal-buttons">
         <button class="btn-modal-cancel" onclick="cancelRejectPending()">Cancel</button>
         <button class="btn-modal-confirm" style="background-color: #dc2626;" onclick="confirmRejectPending()">Reject</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Excel / CSV Export by Period -->
+  <div id="modal-excel-export" class="modal-overlay">
+    <div class="modal-content" style="max-width: 460px;">
+      <h3>Excel Export</h3>
+      <p style="margin-bottom: 12px; font-size: 13px; color: #6b7280;">
+        Generates a <strong>.csv</strong> file (opens in Excel) containing expenses and wage data
+        for the selected period. Designed for sending to your accountant at month / quarter / year
+        end.
+      </p>
+      <div style="margin-bottom: 14px;">
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">Period type</label>
+        <select id="excel-period-type" class="border rounded-lg px-2 py-1 text-sm" style="width: 100%;" onchange="onExcelPeriodTypeChange()">
+          <option value="month">Specific month</option>
+          <option value="quarter">Specific quarter</option>
+          <option value="year">Specific year</option>
+          <option value="all">All time</option>
+        </select>
+      </div>
+      <div id="excel-period-month-row" style="margin-bottom: 14px;">
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">Month</label>
+        <input id="excel-period-month" type="month" class="border rounded-lg px-2 py-1 text-sm" style="width: 100%;">
+      </div>
+      <div id="excel-period-quarter-row" style="margin-bottom: 14px; display:none;">
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">Quarter</label>
+        <div style="display:flex; gap:8px;">
+          <select id="excel-period-quarter" class="border rounded-lg px-2 py-1 text-sm" style="flex:1;">
+            <option value="1">Q1 (Apr&ndash;Jun)</option>
+            <option value="2">Q2 (Jul&ndash;Sep)</option>
+            <option value="3">Q3 (Oct&ndash;Dec)</option>
+            <option value="4">Q4 (Jan&ndash;Mar)</option>
+          </select>
+          <input id="excel-period-quarter-year" type="number" min="2000" max="2100" class="border rounded-lg px-2 py-1 text-sm" style="width: 90px;" placeholder="Year">
+        </div>
+        <p style="margin-top:6px; font-size:11px; color:#6b7280;">UK tax-year quarters (Apr&ndash;Mar). The year is the calendar year the quarter <em>starts</em> in.</p>
+      </div>
+      <div id="excel-period-year-row" style="margin-bottom: 14px; display:none;">
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">Year (UK tax year)</label>
+        <input id="excel-period-year" type="number" min="2000" max="2100" class="border rounded-lg px-2 py-1 text-sm" style="width: 100%;" placeholder="e.g. 2026 = Apr 2026 – Mar 2027">
+      </div>
+      <div class="modal-buttons">
+        <button class="btn-modal-cancel" onclick="closeModal('modal-excel-export')">Cancel</button>
+        <button class="btn-modal-confirm" onclick="generateExcelExport()">Export CSV</button>
       </div>
     </div>
   </div>
@@ -2310,6 +2370,162 @@ function exportData() {
   document.body.removeChild(link);
 }
 
+/* ──────────────────────────────────────────────────────────────────
+ * EXCEL / CSV EXPORT — period-filtered output for the accountant.
+ * Output is CSV (Excel opens it natively) with UTF-8 BOM. Includes
+ * an Expenses table and a Wages table for the selected period, with
+ * totals on each.
+ *
+ * Period choices:
+ *   - Specific month  (YYYY-MM)
+ *   - Specific quarter — UK tax-year quarters (Apr-Jun / Jul-Sep /
+ *                       Oct-Dec / Jan-Mar of the following year)
+ *   - Specific year   — UK tax year (Apr YYYY → Mar YYYY+1)
+ *   - All time
+ * ────────────────────────────────────────────────────────────────── */
+function openExcelExport() {
+  document.getElementById('excel-period-type').value = 'month';
+  const today = new Date();
+  const ym = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
+  document.getElementById('excel-period-month').value = ym;
+  document.getElementById('excel-period-quarter-year').value = today.getFullYear();
+  document.getElementById('excel-period-year').value = today.getFullYear();
+  onExcelPeriodTypeChange();
+  openModal('modal-excel-export');
+}
+
+function onExcelPeriodTypeChange() {
+  const t = document.getElementById('excel-period-type').value;
+  document.getElementById('excel-period-month-row').style.display   = (t === 'month')   ? '' : 'none';
+  document.getElementById('excel-period-quarter-row').style.display = (t === 'quarter') ? '' : 'none';
+  document.getElementById('excel-period-year-row').style.display    = (t === 'year')    ? '' : 'none';
+}
+
+function getExcelPeriodFilter() {
+  const type = document.getElementById('excel-period-type').value;
+  if (type === 'month') {
+    const m = document.getElementById('excel-period-month').value;
+    if (!m) return null;
+    return {
+      label: 'Month: ' + formatMonthLabel(m),
+      filename: 'month-' + m,
+      includes: (yyyy_mm) => yyyy_mm === m,
+    };
+  }
+  if (type === 'quarter') {
+    const q = parseInt(document.getElementById('excel-period-quarter').value, 10);
+    const y = parseInt(document.getElementById('excel-period-quarter-year').value, 10);
+    if (!q || !y) return null;
+    const months = [];
+    if (q === 1)      { months.push(y + '-04', y + '-05', y + '-06'); }
+    else if (q === 2) { months.push(y + '-07', y + '-08', y + '-09'); }
+    else if (q === 3) { months.push(y + '-10', y + '-11', y + '-12'); }
+    else if (q === 4) { months.push((y + 1) + '-01', (y + 1) + '-02', (y + 1) + '-03'); }
+    const set = new Set(months);
+    return {
+      label: 'UK tax-year Q' + q + ' ' + y + ' (' + months.join(', ') + ')',
+      filename: 'Q' + q + '-' + y,
+      includes: (yyyy_mm) => set.has(yyyy_mm),
+    };
+  }
+  if (type === 'year') {
+    const y = parseInt(document.getElementById('excel-period-year').value, 10);
+    if (!y) return null;
+    const set = new Set();
+    for (let mn = 4; mn <= 12; mn++) set.add(y + '-' + String(mn).padStart(2, '0'));
+    for (let mn = 1; mn <= 3; mn++) set.add((y + 1) + '-' + String(mn).padStart(2, '0'));
+    return {
+      label: 'UK tax year ' + y + '/' + (y + 1).toString().slice(-2),
+      filename: 'tax-year-' + y + '-' + (y + 1),
+      includes: (yyyy_mm) => set.has(yyyy_mm),
+    };
+  }
+  if (type === 'all') {
+    return { label: 'All time', filename: 'all-time', includes: () => true };
+  }
+  return null;
+}
+
+function generateExcelExport() {
+  const filter = getExcelPeriodFilter();
+  if (!filter) { alert('Please choose a valid period (month / quarter year / year).'); return; }
+
+  const monthOf = (dateStr) => (dateStr || '').slice(0, 7);
+  const exps = (state.expenses || [])
+    .filter(e => filter.includes(monthOf(e.date)))
+    .sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+  const wageEntries = Object.entries(state.wageData || {})
+    .filter(([k]) => filter.includes(k))
+    .sort((a, b) => a[0].localeCompare(b[0]));
+
+  // ── CSV builder ──
+  const csv = [];
+  const escape = (v) => {
+    if (v == null) return '';
+    const s = String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const row = (...cells) => csv.push(cells.map(escape).join(','));
+
+  row('Wages & Expenses Export');
+  row('Period', filter.label);
+  row('Generated', new Date().toLocaleString('en-GB'));
+  row('');
+
+  // Expenses
+  row('EXPENSES');
+  row('Date', 'Description', 'Category', 'Miles', 'Rate (GBP)', 'Amount (GBP)', 'Status');
+  let expTotal = 0, mileTotal = 0;
+  exps.forEach(e => {
+    row(
+      e.date || '',
+      e.description || '',
+      e.category || '',
+      e.miles != null ? e.miles : '',
+      e.rate  != null ? e.rate  : '',
+      e.amount != null ? Number(e.amount).toFixed(2) : '',
+      e.status || ''
+    );
+    if (typeof e.amount === 'number') expTotal += e.amount;
+    if (typeof e.miles  === 'number') mileTotal += e.miles;
+  });
+  if (exps.length === 0) row('(no expenses in period)');
+  row('', '', 'TOTAL', mileTotal, '', expTotal.toFixed(2), exps.length + ' expense' + (exps.length === 1 ? '' : 's'));
+  row('');
+
+  // Wages
+  row('WAGE DATA');
+  row('Month', 'Wage (GBP)', 'Dividend (GBP)', 'Personal Tax (GBP)', 'VAT (GBP)', 'Total (GBP)');
+  let wgT = 0, dvT = 0, ptT = 0, vatT = 0;
+  wageEntries.forEach(([key, w]) => {
+    const wg = +w.wage || 0, dv = +w.dividend || 0, pt = +w.personalTax || 0, vat = +w.vatPayment || 0;
+    wgT += wg; dvT += dv; ptT += pt; vatT += vat;
+    row(
+      formatMonthLabel(key),
+      wg.toFixed(2),
+      dv.toFixed(2),
+      pt.toFixed(2),
+      vat.toFixed(2),
+      (wg + dv + pt + vat).toFixed(2)
+    );
+  });
+  if (wageEntries.length === 0) row('(no wage data in period)');
+  row('TOTAL', wgT.toFixed(2), dvT.toFixed(2), ptT.toFixed(2), vatT.toFixed(2), (wgT + dvT + ptT + vatT).toFixed(2));
+
+  // Trigger download — UTF-8 BOM keeps Excel happy with non-ASCII chars.
+  const csvText = '﻿' + csv.join('\n');
+  const blob = new Blob([csvText], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'wages-expenses-' + filter.filename + '-' + new Date().toISOString().slice(0, 10) + '.csv';
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  setTimeout(() => { document.body.removeChild(link); URL.revokeObjectURL(link.href); }, 0);
+  closeModal('modal-excel-export');
+  if (typeof showToast === 'function') showToast('CSV exported (' + exps.length + ' expense' + (exps.length === 1 ? '' : 's') + ', ' + wageEntries.length + ' month' + (wageEntries.length === 1 ? '' : 's') + ')');
+}
+
 function triggerImportFile() {
   document.getElementById('file-import-input').click();
 }
@@ -2333,46 +2549,140 @@ document.getElementById('file-import-input').addEventListener('change', function
   reader.readAsText(file);
 });
 
-function confirmImport() {
-  if (pendingImportData) {
-    if (pendingImportData.wageData) {
-      Object.keys(pendingImportData.wageData).forEach(key => {
-        const wage = pendingImportData.wageData[key];
-        if (wage.backpay !== undefined && wage.vatPayment === undefined) {
-          wage.vatPayment = wage.backpay;
-          delete wage.backpay;
-        }
-        if (wage.vatPayment === undefined) {
-          wage.vatPayment = 0;
-        }
-      });
-    }
+/* ──────────────────────────────────────────────────────────────────
+ * IMPORT — two modes:
+ *   'merge'   (default & recommended):
+ *               • Expenses : add by id, skip duplicates
+ *               • wageData : add new months only, keep existing months
+ *               • Clients  : add by id, skip duplicates; for matching
+ *                            clients, merge sites by id
+ *               • mileageRate : keep current value
+ *   'replace' (legacy / restore-from-backup):
+ *               wipes all current data and replaces with file
+ * ────────────────────────────────────────────────────────────────── */
+function confirmImport(mode) {
+  mode = mode || 'merge';
+  if (!pendingImportData) return;
 
-    if (pendingImportData.expenses) {
-      pendingImportData.expenses.forEach(exp => {
-        if (!exp.status) {
-          exp.status = 'approved';
-        }
-      });
-    }
-
-    if (!pendingImportData.clients) {
-      pendingImportData.clients = [];
-    }
-
-    Object.assign(state, pendingImportData);
-    persist();
-    renderExpenses();
-    renderWageTable();
-    renderChart();
-    renderQuickLog();
-    renderClientManageList();
-    updatePendingBadge();
-    closeModal('modal-import-confirm');
-    pendingImportData = null;
-    document.getElementById('file-import-input').value = '';
-    alert('Data imported successfully!');
+  // ── Migrate legacy fields on the imported data first ──
+  if (pendingImportData.wageData) {
+    Object.keys(pendingImportData.wageData).forEach(key => {
+      const wage = pendingImportData.wageData[key];
+      if (wage.backpay !== undefined && wage.vatPayment === undefined) {
+        wage.vatPayment = wage.backpay;
+        delete wage.backpay;
+      }
+      if (wage.vatPayment === undefined) {
+        wage.vatPayment = 0;
+      }
+    });
   }
+  if (pendingImportData.expenses) {
+    pendingImportData.expenses.forEach(exp => {
+      if (!exp.status) exp.status = 'approved';
+    });
+  }
+  if (!pendingImportData.clients) pendingImportData.clients = [];
+
+  let summary;
+  if (mode === 'replace') {
+    Object.assign(state, pendingImportData);
+    summary = 'Replace mode: all current data has been replaced with the imported file.';
+  } else {
+    summary = mergeImportedData(pendingImportData);
+  }
+
+  persist();
+  renderExpenses();
+  renderWageTable();
+  renderChart();
+  renderQuickLog();
+  renderClientManageList();
+  updatePendingBadge();
+  closeModal('modal-import-confirm');
+  pendingImportData = null;
+  document.getElementById('file-import-input').value = '';
+  alert(summary);
+}
+
+/* Merge imported data into the current state. Returns a human-readable
+ * summary string describing what was added vs already on file. */
+function mergeImportedData(imported) {
+  const newId = (prefix) => {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+    return prefix + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+  };
+
+  let expAdded = 0, expSkipped = 0;
+  let monAdded = 0, monKept = 0;
+  let cliAdded = 0, cliMatched = 0, siteAdded = 0;
+
+  // ── Expenses — match by id ──
+  if (Array.isArray(imported.expenses)) {
+    if (!Array.isArray(state.expenses)) state.expenses = [];
+    const existingIds = new Set(state.expenses.map(e => e.id));
+    imported.expenses.forEach(e => {
+      if (e.id && existingIds.has(e.id)) {
+        expSkipped++;
+      } else {
+        if (!e.id) e.id = newId('exp');
+        state.expenses.push(e);
+        existingIds.add(e.id);
+        expAdded++;
+      }
+    });
+  }
+
+  // ── Wage data — keyed by month (e.g. "2026-04") ──
+  if (imported.wageData && typeof imported.wageData === 'object') {
+    if (!state.wageData || typeof state.wageData !== 'object') state.wageData = {};
+    Object.keys(imported.wageData).forEach(key => {
+      if (Object.prototype.hasOwnProperty.call(state.wageData, key)) {
+        monKept++;
+      } else {
+        state.wageData[key] = imported.wageData[key];
+        monAdded++;
+      }
+    });
+  }
+
+  // ── Clients — match by id; for matching clients, merge sites by id ──
+  if (Array.isArray(imported.clients)) {
+    if (!Array.isArray(state.clients)) state.clients = [];
+    const existingClientById = new Map(state.clients.map(c => [c.id, c]));
+    imported.clients.forEach(impCli => {
+      if (impCli.id && existingClientById.has(impCli.id)) {
+        const existing = existingClientById.get(impCli.id);
+        if (!Array.isArray(existing.sites)) existing.sites = [];
+        const existingSiteIds = new Set(existing.sites.map(s => s.id));
+        (impCli.sites || []).forEach(impSite => {
+          if (!impSite.id || !existingSiteIds.has(impSite.id)) {
+            if (!impSite.id) impSite.id = newId('site');
+            existing.sites.push(impSite);
+            existingSiteIds.add(impSite.id);
+            siteAdded++;
+          }
+        });
+        cliMatched++;
+      } else {
+        if (!impCli.id) impCli.id = newId('cli');
+        state.clients.push(impCli);
+        cliAdded++;
+      }
+    });
+  }
+
+  // mileageRate is intentionally NOT overwritten on merge — current value wins.
+
+  return [
+    'Import complete (merge mode):',
+    '',
+    '  Expenses: ' + expAdded + ' added, ' + expSkipped + ' already on file',
+    '  Wage months: ' + monAdded + ' added, ' + monKept + ' kept (already on file)',
+    '  Clients: ' + cliAdded + ' added, ' + cliMatched + ' matched (' + siteAdded + ' new sites)',
+    '',
+    'Mileage rate left unchanged.',
+  ].join('\n');
 }
 
 function cancelImport() {
