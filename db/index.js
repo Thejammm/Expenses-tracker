@@ -5,6 +5,11 @@ const { Pool } = require('pg');
 const fs   = require('fs');
 const path = require('path');
 
+// TEMP DIAGNOSTIC — reveals what env the container actually receives.
+console.log('ENV DIAG present:', ['DATABASE_URL','SESSION_SECRET','ADMIN_EMAIL','ADMIN_PASSWORD','NODE_ENV','PORT']
+  .map(k => k + '=' + (process.env[k] ? 'set' : 'MISSING')).join(' '));
+console.log('ENV DIAG allkeys:', Object.keys(process.env).sort().join(','));
+
 if (!process.env.DATABASE_URL) {
   console.error('FATAL: DATABASE_URL environment variable is not set.');
   process.exit(1);
