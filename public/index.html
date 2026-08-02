@@ -15,1081 +15,319 @@
 
   <style id="app-css">
     /* ============================================
-       Wages & Expenses Manager - Custom CSS
-       Complete replacement for Tailwind
+       Wages & Expenses Manager — HSMS design system
+       (visual reskin; class names preserved for the app JS)
        ============================================ */
 
-    /* ===== RESET & BASE STYLES ===== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    :root{
+      --bg:#F8FAFC; --surface:#FFFFFF; --primary:#1E3A5F;
+      --accent:#2563EB; --accent-light:#EFF6FF; --accent-dark:#1D4ED8;
+      --text:#111827; --text-muted:#6B7280; --border:#E5E7EB;
+      --input-bg:#F9FAFB; --muted-bg:#F3F4F6;
+      --success:#10B981; --success-bg:#ECFDF5; --success-brd:#A7F3D0;
+      --warning:#F59E0B; --warning-bg:#FFFBEB; --warning-brd:#FDE68A;
+      --danger:#DC2626; --danger-bg:#FEF2F2; --danger-brd:#FECACA;
+      --info:#2563EB; --info-bg:#EFF6FF; --info-brd:#BFDBFE;
+      --shadow:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);
+      --shadow-md:0 4px 12px rgba(16,24,40,.06);
+      --radius:12px;
+    }
+    [data-theme="dark"]{
+      --bg:#0F172A; --surface:#1E293B; --primary:#2563EB;
+      --accent:#3B82F6; --accent-light:#1E3A5F; --accent-dark:#93C5FD;
+      --text:#E5E9F0; --text-muted:#9AA6B8; --border:#334155;
+      --input-bg:#0F172A; --muted-bg:#273244;
+      --success:#34D399; --success-bg:#0B3D2E; --success-brd:#0F5137;
+      --warning:#FBBF24; --warning-bg:#3F2E0A; --warning-brd:#6B4D0E;
+      --danger:#F87171; --danger-bg:#3F1A1A; --danger-brd:#6B2626;
+      --info:#60A5FA; --info-bg:#12253F; --info-brd:#1D4ED8;
+      --shadow:0 1px 3px rgba(0,0,0,.45),0 1px 2px rgba(0,0,0,.35);
+      --shadow-md:0 4px 14px rgba(0,0,0,.5);
+      color-scheme:dark;
+    }
+
+    html,body{ height:100%; width:100%; }
+    body{
+      font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+      font-size:14px; line-height:1.6; color:var(--text);
+      background:var(--bg); min-height:100vh; -webkit-font-smoothing:antialiased;
+    }
+    h1,h2,h3,h4,h5,h6{ font-weight:600; line-height:1.25; letter-spacing:-.01em; }
+
+    /* ===== Typography utilities ===== */
+    .text-xs{font-size:12px;} .text-sm{font-size:14px;} .text-base{font-size:16px;}
+    .text-lg{font-size:18px;} .text-xl{font-size:20px;} .text-2xl{font-size:24px;}
+    .font-medium{font-weight:500;} .font-semibold{font-weight:600;} .font-bold{font-weight:700;}
+    .text-left{text-align:left;} .text-center{text-align:center;} .text-right{text-align:right;}
+    .whitespace-nowrap{white-space:nowrap;}
+
+    /* ===== Spacing ===== */
+    .p-1{padding:4px;} .p-2{padding:8px;} .p-3{padding:12px;} .p-4{padding:16px;}
+    .px-2{padding-left:8px;padding-right:8px;} .px-3{padding-left:12px;padding-right:12px;} .px-4{padding-left:16px;padding-right:16px;}
+    .py-1{padding-top:4px;padding-bottom:4px;} .py-2{padding-top:8px;padding-bottom:8px;} .py-3{padding-top:12px;padding-bottom:12px;}
+    .mb-1{margin-bottom:4px;} .mb-3{margin-bottom:12px;} .mt-2{margin-top:8px;} .ml-auto{margin-left:auto;}
+    .space-y-1>*+*{margin-top:4px;} .space-y-2>*+*{margin-top:8px;} .space-y-4>*+*{margin-top:16px;} .space-y-5>*+*{margin-top:20px;}
+
+    /* ===== Layout ===== */
+    .flex{display:flex;} .flex-wrap{flex-wrap:wrap;} .flex-col{flex-direction:column;}
+    .items-stretch{align-items:stretch;} .items-center{align-items:center;} .items-end{align-items:flex-end;}
+    .justify-between{justify-content:space-between;}
+    .gap-1{gap:4px;} .gap-2{gap:8px;} .gap-3{gap:12px;}
+    .grid{display:grid;gap:12px;} .grid-cols-1{grid-template-columns:1fr;} .col-span-1{grid-column:span 1;}
+    .flex-1{flex:1;} .w-full{width:100%;} .w-20{width:80px;}
+    .min-h-screen{min-height:100vh;} .max-w-6xl{max-width:1280px;margin-left:auto;margin-right:auto;}
+    .mx-auto{margin-left:auto;margin-right:auto;} .min-w-\[900px\]{min-width:900px;}
+
+    /* ===== Colours (mapped to tokens) ===== */
+    .bg-white{background-color:var(--surface);}
+    .bg-slate-50{background-color:var(--bg);}
+    .bg-slate-100{background-color:var(--muted-bg);}
+    .text-white{color:#fff;}
+    .text-slate-500{color:var(--text-muted);}
+    .text-slate-600{color:var(--text-muted);}
+    .text-slate-800{color:var(--text);}
+    .text-slate-900{color:var(--text);}
+    .text-teal{color:var(--accent);}
+    .text-red-600{color:var(--danger);} .text-red-800{color:var(--danger);}
+    .text-blue-700{color:var(--accent);}
+    .text-amber-600{color:var(--warning);}
+    .opacity-80{opacity:.8;} .opacity-90{opacity:.9;} .opacity-95{opacity:.95;}
+
+    /* ===== Borders / shadows / radius ===== */
+    .border{border:1px solid var(--border);}
+    .border-b{border-bottom:1px solid var(--border);}
+    .border-t{border-top:1px solid var(--border);}
+    .border-red{border-color:var(--danger)!important;}
+    .shadow{box-shadow:var(--shadow);}
+    .rounded-lg{border-radius:8px;} .rounded-xl{border-radius:10px;}
+    .rounded-2xl{border-radius:var(--radius);} .rounded-b-2xl{border-bottom-left-radius:var(--radius);border-bottom-right-radius:var(--radius);}
+
+    /* ===== Buttons ===== */
+    button{ cursor:pointer; border:none; background:transparent; color:inherit; font-family:inherit; font-size:14px; transition:all .15s ease; }
+    button:hover{ opacity:.92; }
+    button:active{ opacity:.85; }
+    .hover\:opacity-90:hover{opacity:.9;}
+    .hover\:text-red-800:hover{color:var(--danger);}
+    .hover\:underline:hover{text-decoration:underline;}
+
+    /* ===== Form inputs ===== */
+    input,select{
+      font-family:inherit; font-size:14px; color:var(--text); background:var(--input-bg);
+      border:1.5px solid var(--border); border-radius:6px; padding:9px 11px; width:100%;
+      -webkit-appearance:none; outline:none; transition:border-color .15s, box-shadow .15s;
+    }
+    input:focus,select:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(37,99,235,.15); }
+    input:disabled{ background:var(--muted-bg); color:var(--text-muted); cursor:not-allowed; }
+    input[type="date"],input[type="month"]{ cursor:pointer; }
+    input.error{ border-color:var(--danger)!important; box-shadow:0 0 0 3px rgba(220,38,38,.15)!important; }
+    select{
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23787878' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat:no-repeat; background-position:right 10px center; padding-right:30px;
+    }
+
+    /* ===== Tables ===== */
+    .overflow-x-auto{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    table{ width:100%; border-collapse:separate; border-spacing:0; }
+    th,td{ padding:12px 12px; text-align:left; border-bottom:1px solid var(--border); }
+    th{ font-weight:600; font-size:12px; letter-spacing:.03em; }
+    td{ font-size:14px; color:var(--text); }
+    td input{ margin:0; }
+
+    .money-input{ display:flex; align-items:center; border:1.5px solid var(--border); border-radius:6px; background:var(--input-bg); overflow:hidden; height:38px; }
+    .money-input span{ background:var(--muted-bg); padding:0 9px; color:var(--text-muted); font-weight:600; font-size:13px; border-right:1.5px solid var(--border); display:flex; align-items:center; }
+    .money-input input{ border:none!important; background:transparent; padding:8px 9px!important; flex:1; font-size:14px; }
+    .money-input input:focus{ box-shadow:none!important; outline:none; }
+
+    .sticky-col{ position:sticky; left:0; background:var(--surface); box-shadow:2px 0 2px rgba(0,0,0,.03); }
+    .table-sticky thead tr:first-child th{
+      position:sticky; top:0; z-index:20; background:var(--primary); color:#fff;
+      border-bottom:2px solid rgba(0,0,0,.12); padding:12px 12px; font-size:12px; font-weight:600; letter-spacing:.03em;
+    }
+    .table-sticky thead tr:nth-child(2) th{
+      position:sticky; top:46px; z-index:19; background:var(--primary); color:rgba(255,255,255,.82);
+      padding:10px 12px; font-size:11px; font-weight:500; border-bottom:1px solid rgba(0,0,0,.12);
+    }
+    .table-sticky tbody tr{ border-bottom:1px solid var(--border); transition:background-color .12s ease; }
+    .table-sticky tbody tr:hover{ background:var(--muted-bg); }
+
+    /* ===== Header ===== */
+    header.app-header{ position:sticky; top:0; z-index:200; background:var(--surface); border-bottom:1px solid var(--border); box-shadow:var(--shadow); }
+    header.app-header .brand-title{ font-size:16px; font-weight:600; color:var(--text); letter-spacing:-.01em; line-height:1.15; }
+    header.app-header .brand-sub{ font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-weight:600; margin-top:2px; }
+    .logo-box{ background:var(--surface); padding:3px; border-radius:8px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); }
+
+    /* Icon buttons in the header (theme toggle etc.) */
+    .icon-btn{ display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:8px; background:transparent; color:var(--text-muted); font-size:17px; }
+    .icon-btn:hover{ background:var(--muted-bg); color:var(--text); opacity:1; }
+
+    /* ===== Tab bar (HSMS) ===== */
+    .tab-bar{ position:sticky; top:0; z-index:150; background:var(--surface); border-bottom:1px solid var(--border); }
+    header nav{ display:flex; flex-wrap:wrap; gap:4px; align-items:center; }
+    header nav button{ background:none; border:none; border-bottom:2px solid transparent; padding:12px 12px 10px; font-size:13px; font-weight:500; color:var(--text-muted); border-radius:0; position:relative; display:inline-flex; align-items:center; gap:6px; }
+    header nav button:hover{ color:var(--text); opacity:1; background:transparent; }
+    header nav button.is-active{ color:var(--accent); border-bottom-color:var(--accent); font-weight:600; }
+    header nav button.action-btn{ border:1.5px solid var(--border); border-radius:6px; padding:7px 12px; color:var(--text); background:var(--surface); font-weight:600; }
+    header nav button.action-btn:hover{ border-color:var(--accent); color:var(--accent); }
+    header nav button.action-btn.primary{ background:var(--accent); border-color:var(--accent); color:#fff; }
+    header nav button.action-btn.primary:hover{ background:var(--accent-dark); color:#fff; }
+
+    .badge-pending{ position:absolute; top:2px; right:-2px; background:var(--danger); color:#fff; border-radius:50%; width:16px; height:16px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; }
+
+    /* ===== Main ===== */
+    main{ max-width:1280px; margin:0 auto; padding:28px 20px 56px; }
+    section{ display:block; transition:opacity .3s ease; }
+    section.hidden{ opacity:0; pointer-events:none; }
+    section:not(.hidden){ opacity:1; }
+    .hidden{ display:none!important; }
+
+    /* ===== Cards ===== */
+    .bg-white.rounded-2xl{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); }
+
+    /* ===== Modals ===== */
+    .modal-overlay{ position:fixed; inset:0; background:rgba(16,24,40,.5); display:none; align-items:center; justify-content:center; z-index:1000; animation:fadeIn .2s ease; padding:16px; }
+    .modal-overlay.active{ display:flex; }
+    .modal-content{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:24px; max-width:500px; width:100%; box-shadow:var(--shadow-md); animation:slideUp .25s ease; }
+    .modal-content h3{ font-size:17px; font-weight:600; margin-bottom:14px; color:var(--text); }
+    .modal-content p{ color:var(--text-muted); margin-bottom:14px; }
+    .modal-buttons{ display:flex; gap:10px; justify-content:flex-end; margin-top:18px; }
+    .modal-buttons button{ padding:10px 16px; border-radius:6px; font-size:14px; font-weight:600; min-height:40px; }
+    .btn-modal-cancel{ background:transparent; border:1.5px solid var(--border); color:var(--text); }
+    .btn-modal-cancel:hover{ border-color:var(--primary); opacity:1; }
+    .btn-modal-confirm{ background:var(--accent); color:#fff; }
+    .btn-modal-confirm:hover{ background:var(--accent-dark); opacity:1; }
+
+    /* ===== Empty state ===== */
+    .empty-state{ text-align:center; padding:32px 16px; color:var(--text-muted); }
+    .empty-state-icon{ font-size:44px; margin-bottom:12px; }
+    .empty-state-title{ font-size:16px; font-weight:600; color:var(--text); margin-bottom:8px; }
+    .empty-state-text{ font-size:14px; color:var(--text-muted); }
+
+    /* ===== Charts ===== */
+    .chart-container{ margin:0; padding:16px; background:var(--muted-bg); border:1px solid var(--border); border-radius:var(--radius); overflow-x:auto; }
+    .chart-title{ font-size:14px; font-weight:600; color:var(--text); margin-bottom:12px; text-align:center; }
+    .chart-empty{ text-align:center; padding:32px 16px; color:var(--text-muted); }
+
+    /* ===== Pending ===== */
+    .pending-badge{ display:inline-block; background:var(--warning-bg); color:var(--warning); border:1px solid var(--warning-brd); padding:3px 8px; border-radius:4px; font-size:11px; font-weight:700; margin-left:8px; }
+    .pending-row{ background:var(--warning-bg); }
+
+    /* ===== Client cards ===== */
+    .client-card{ background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:10px; padding:16px; margin-bottom:12px; cursor:pointer; transition:box-shadow .15s, border-color .15s; }
+    .client-card:hover{ box-shadow:var(--shadow-md); border-color:var(--accent); }
+    .client-card-header{ display:flex; justify-content:space-between; align-items:center; font-weight:600; color:var(--text); }
+    .client-card-meta{ font-size:13px; color:var(--text-muted); margin-top:8px; }
+    .client-actions{ display:flex; gap:8px; margin-top:8px; }
+    .client-actions button{ padding:4px 8px; font-size:12px; border-radius:4px; }
+
+    /* ===== Site buttons ===== */
+    .site-btn{ display:block; width:100%; min-height:52px; padding:12px 16px; border:1px solid var(--border); border-radius:8px; font-size:15px; font-weight:500; background:var(--surface); color:var(--text); transition:box-shadow .15s, border-color .15s; }
+    .site-btn:hover{ box-shadow:var(--shadow-md); border-color:var(--accent); opacity:1; }
+
+    /* ===== Toggle switch ===== */
+    .toggle-switch{ position:relative; display:inline-block; width:52px; height:28px; cursor:pointer; }
+    .toggle-switch input{ opacity:0; width:0; height:0; }
+    .toggle-slider{ position:absolute; inset:0; background:var(--border); border-radius:28px; transition:background-color .3s ease; }
+    .toggle-slider:before{ content:""; position:absolute; width:22px; height:22px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:transform .3s ease; }
+    .toggle-switch input:checked + .toggle-slider{ background:var(--accent); }
+    .toggle-switch input:checked + .toggle-slider:before{ transform:translateX(24px); }
+
+    /* ===== Manage section ===== */
+    .manage-section{ background:var(--muted-bg); border-radius:8px; transition:all .3s ease; }
+    .manage-section.hidden{ display:none; }
+
+    /* ===== Review cards ===== */
+    .review-card{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:12px; display:flex; flex-direction:column; gap:12px; }
+    .review-card-header{ display:flex; justify-content:space-between; align-items:flex-start; }
+    .review-card-info{ flex:1; }
+    .review-card-title{ font-weight:600; color:var(--text); margin-bottom:4px; }
+    .review-card-meta{ font-size:13px; color:var(--text-muted); line-height:1.5; }
+    .review-card-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+    .review-card-actions button{ padding:8px 12px; font-size:12px; border-radius:6px; border:none; color:#fff; font-weight:600; }
+    .btn-approve{ background:var(--success); } .btn-approve:hover{ opacity:.88; }
+    .btn-edit{ background:var(--accent); } .btn-edit:hover{ background:var(--accent-dark); opacity:1; }
+    .btn-reject{ background:var(--danger); } .btn-reject:hover{ opacity:.88; }
+
+    /* ===== Keyframes ===== */
+    @keyframes toastIn{ from{opacity:0;transform:translateX(-50%) translateY(20px);} to{opacity:1;transform:translateX(-50%) translateY(0);} }
+    @keyframes toastOut{ from{opacity:1;transform:translateX(-50%) translateY(0);} to{opacity:0;transform:translateX(-50%) translateY(20px);} }
+    @keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
+    @keyframes slideUp{ from{transform:translateY(16px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+    @keyframes slideInLeft{ from{opacity:0;transform:translateX(-16px);} to{opacity:1;transform:translateX(0);} }
+    .animate-slide-in{ animation:slideInLeft .25s ease; }
+
+    /* ===== Responsive ===== */
+    @media (max-width:640px){
+      .text-xs{font-size:11px;} .text-sm{font-size:13px;} .text-base{font-size:15px;}
+      .text-lg{font-size:16px;} .text-xl{font-size:18px;} .text-2xl{font-size:20px;}
+      input,select{ font-size:16px!important; }
+      table td, table th{ padding:10px 8px!important; }
+      .table-sticky thead tr:first-child th{ top:0; padding:10px 8px; }
+      .table-sticky thead tr:nth-child(2) th{ top:40px; padding:8px 8px; }
+      main{ padding:18px 12px 48px; }
+      .modal-content{ padding:18px; }
+      .review-card-actions{ flex-direction:column; }
+      .review-card-actions button{ width:100%; }
+      .grid{ gap:10px; }
+    }
+
+    @media (min-width:641px){
+      .sm\:col-span-2{grid-column:span 2;} .sm\:col-span-3{grid-column:span 3;} .sm\:col-span-6{grid-column:span 6;}
+      .sm\:flex-row{flex-direction:row;} .sm\:w-20{width:80px;}
+      .sm\:text-sm{font-size:14px;} .sm\:text-base{font-size:16px;} .sm\:text-lg{font-size:18px;} .sm\:text-2xl{font-size:24px;}
+      .sm\:px-3{padding-left:12px;padding-right:12px;} .sm\:px-4{padding-left:16px;padding-right:16px;}
+      .sm\:py-2{padding-top:8px;padding-bottom:8px;} .sm\:py-4{padding-top:16px;padding-bottom:16px;}
+      .sm\:gap-2{gap:8px;} .sm\:gap-3{gap:12px;}
+      .sm\:p-3{padding:12px;} .sm\:p-4{padding:16px;} .sm\:space-y-5>*+*{margin-top:20px;}
+      .grid-cols-2{grid-template-columns:1fr 1fr;} .grid-cols-3{grid-template-columns:repeat(3,1fr);}
+      .grid-cols-4{grid-template-columns:repeat(4,1fr);} .grid-cols-6{grid-template-columns:repeat(6,1fr);}
     }
 
-    html, body {
-      height: 100%;
-      width: 100%;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      font-size: 14px;
-      line-height: 1.5;
-      color: #1f2937;
-      background-color: #f5f5f5;
-      min-height: 100vh;
-    }
-
-    /* ===== TYPOGRAPHY ===== */
-    h1, h2, h3, h4, h5, h6 {
-      font-weight: 600;
-      line-height: 1.2;
-    }
-
-    .text-xs { font-size: 12px; }
-    .text-sm { font-size: 14px; }
-    .text-base { font-size: 16px; }
-    .text-lg { font-size: 18px; }
-    .text-xl { font-size: 20px; }
-    .text-2xl { font-size: 24px; }
-
-    .font-semibold { font-weight: 600; }
-    .font-bold { font-weight: 700; }
-
-    .text-left { text-align: left; }
-    .text-center { text-align: center; }
-    .text-right { text-align: right; }
-
-    .whitespace-nowrap { white-space: nowrap; }
-
-    /* ===== SPACING ===== */
-    .p-1 { padding: 4px; }
-    .p-2 { padding: 8px; }
-    .p-3 { padding: 12px; }
-    .p-4 { padding: 16px; }
-
-    .px-2 { padding-left: 8px; padding-right: 8px; }
-    .px-3 { padding-left: 12px; padding-right: 12px; }
-    .px-4 { padding-left: 16px; padding-right: 16px; }
-
-    .py-1 { padding-top: 4px; padding-bottom: 4px; }
-    .py-2 { padding-top: 8px; padding-bottom: 8px; }
-    .py-3 { padding-top: 12px; padding-bottom: 12px; }
-
-    .mb-1 { margin-bottom: 4px; }
-    .mb-3 { margin-bottom: 12px; }
-    .mt-2 { margin-top: 8px; }
-    .ml-auto { margin-left: auto; }
-
-    .space-y-1 > * + * { margin-top: 4px; }
-    .space-y-2 > * + * { margin-top: 8px; }
-    .space-y-4 > * + * { margin-top: 16px; }
-    .space-y-5 > * + * { margin-top: 20px; }
-
-    /* ===== LAYOUT ===== */
-    .flex {
-      display: flex;
-    }
-
-    .flex-wrap {
-      flex-wrap: wrap;
-    }
-
-    .flex-col {
-      flex-direction: column;
-    }
-
-    .items-stretch {
-      align-items: stretch;
-    }
-
-    .items-center {
-      align-items: center;
-    }
-
-    .items-end {
-      align-items: flex-end;
-    }
-
-    .justify-between {
-      justify-content: space-between;
-    }
-
-    .gap-1 { gap: 4px; }
-    .gap-2 { gap: 8px; }
-    .gap-3 { gap: 12px; }
-
-    .grid {
-      display: grid;
-    }
-
-    .grid-cols-1 {
-      grid-template-columns: 1fr;
-    }
-
-    .col-span-1 {
-      grid-column: span 1;
-    }
-
-    /* ===== COLORS ===== */
-    .bg-white {
-      background-color: white;
-    }
-
-    .bg-slate-50 {
-      background-color: #f9fafb;
-    }
-
-    .text-white {
-      color: white;
-    }
-
-    .text-slate-500 {
-      color: #6b7280;
-    }
-
-    .text-slate-600 {
-      color: #4b5563;
-    }
-
-    .text-slate-800 {
-      color: #1f2937;
-    }
-
-    .text-slate-900 {
-      color: #0f172a;
-    }
-
-    .text-teal {
-      color: #5BC0CB;
-    }
-
-    .text-red-600 { color: #dc2626; }
-    .text-red-800 { color: #991b1b; }
-
-    .opacity-80 {
-      opacity: 0.8;
-    }
-
-    .opacity-90 {
-      opacity: 0.9;
-    }
-
-    .opacity-95 {
-      opacity: 0.95;
-    }
-
-    /* ===== BORDERS & SHADOWS ===== */
-    .border {
-      border: 1px solid #d1d5db;
-    }
-
-    .border-b {
-      border-bottom: 1px solid #d1d5db;
-    }
-
-    .border-t {
-      border-top: 1px solid #d1d5db;
-    }
-
-    .border-red {
-      border-color: #dc2626 !important;
-    }
-
-    .shadow {
-      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-    }
-
-    .rounded-lg {
-      border-radius: 8px;
-    }
-
-    .rounded-xl {
-      border-radius: 12px;
-    }
-
-    .rounded-2xl {
-      border-radius: 16px;
-    }
-
-    .rounded-b-2xl {
-      border-bottom-left-radius: 16px;
-      border-bottom-right-radius: 16px;
-    }
-
-    /* ===== BUTTONS ===== */
-    button {
-      cursor: pointer;
-      border: none;
-      font-size: 14px;
-      transition: all 0.2s ease;
-    }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
-    button:active {
-      opacity: 0.8;
-    }
-
-    .hover\:opacity-90:hover {
-      opacity: 0.9;
-    }
-
-    .hover\:text-red-800:hover {
-      color: #991b1b;
-    }
-
-    .hover\:underline:hover {
-      text-decoration: underline;
-    }
-
-    /* ===== FORM INPUTS ===== */
-    input, select {
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      padding: 10px 10px;
-      font-size: 14px;
-      font-family: inherit;
-      width: 100%;
-      background-color: white;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      border-color: #5BC0CB;
-      box-shadow: 0 0 0 2px rgba(91, 192, 203, 0.15);
-    }
-
-    input:disabled {
-      background-color: #f0f5f7;
-      color: #94a3b8;
-      cursor: not-allowed;
-    }
-
-    input[type="date"] {
-      cursor: pointer;
-    }
-
-    input.error {
-      border-color: #dc2626 !important;
-      box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15) !important;
-    }
-
-    .bg-slate-100 {
-      background-color: #f3f4f6;
-    }
-
-    /* ===== TABLES ===== */
-    .overflow-x-auto {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-    }
-
-    th, td {
-      padding: 12px 10px;
-      text-align: left;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    th {
-      font-weight: 600;
-      font-size: 13px;
-      letter-spacing: 0.3px;
-    }
-
-    td {
-      font-size: 14px;
-    }
-
-    td input {
-      margin: 0;
-    }
-
-    /* Money input wrapper */
-    .money-input {
-      display: flex;
-      align-items: center;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      background-color: white;
-      overflow: hidden;
-      height: 36px;
-    }
-
-    .money-input span {
-      background-color: #f0f5f7;
-      padding: 0 8px;
-      color: #64748b;
-      font-weight: 600;
-      font-size: 13px;
-      border-right: 1px solid #cbd5e1;
-      display: flex;
-      align-items: center;
-    }
-
-    .money-input input {
-      border: none !important;
-      padding: 8px 8px !important;
-      flex: 1;
-      font-size: 14px;
-    }
-
-    .money-input input:focus {
-      box-shadow: none !important;
-      outline: none;
-    }
-
-    /* ===== STICKY HEADERS & COLUMNS ===== */
-    .sticky-col {
-      position: sticky;
-      left: 0;
-      background: white;
-      box-shadow: 2px 0 2px rgba(0, 0, 0, 0.03);
-    }
-
-    .table-sticky thead tr:first-child th {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      background: #5BC0CB;
-      color: white;
-      border-bottom: 2px solid #48a8b8;
-      padding: 12px 10px;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-    }
-
-    .table-sticky thead tr:nth-child(2) th {
-      position: sticky;
-      top: 46px;
-      z-index: 19;
-      background: #5BC0CB;
-      color: rgba(255, 255, 255, 0.85);
-      padding: 10px 10px;
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.2px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    }
-
-    .table-sticky tbody tr {
-      border-bottom: 1px solid #e2e8f0;
-      transition: background-color 0.15s ease;
-    }
-
-    .table-sticky tbody tr:hover {
-      background-color: #f8fafc;
-    }
-
-    /* ===== UTILITY CLASSES ===== */
-    .w-full {
-      width: 100%;
-    }
-
-    .w-20 {
-      width: 80px;
-    }
-
-    .min-h-screen {
-      min-height: 100vh;
-    }
-
-    .max-w-6xl {
-      max-width: 1280px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .mx-auto {
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .flex-1 {
-      flex: 1;
-    }
-
-    .min-w-\[900px\] {
-      min-width: 900px;
-    }
-
-    /* ===== HEADER ===== */
-    header {
-      background-color: #555555;
-      color: white;
-      padding: 12px 0;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    header h1 {
-      font-size: 20px;
-      margin-bottom: 12px;
-    }
-
-    header nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    header button {
-      padding: 8px 12px;
-      font-size: 12px;
-      color: white;
-      border-radius: 8px;
-      position: relative;
-    }
-
-    header button[style*="5BC0CB"] {
-      background-color: #5BC0CB;
-    }
-
-    header button[style*="4f8f99"] {
-      background-color: #4f8f99;
-    }
-
-    .badge-pending {
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      background-color: #dc2626;
-      color: white;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: bold;
-    }
-
-    /* ===== TAB STYLING ===== */
-    header button.is-active {
-      opacity: 1;
-    }
-
-    header button:not(.is-active) {
-      opacity: 0.7;
-    }
-
-    /* ===== MAIN CONTENT ===== */
-    main {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 16px 12px;
-    }
-
-    section {
-      display: block;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    /* Toast notification animations */
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-      to { opacity: 1; transform: translateX(-50%) translateY(0); }
-    }
-    @keyframes toastOut {
-      from { opacity: 1; transform: translateX(-50%) translateY(0); }
-      to { opacity: 0; transform: translateX(-50%) translateY(20px); }
-    }
-
-    /* Tab transitions */
-    section {
-      transition: opacity 0.3s ease;
-    }
-
-    section.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    section:not(.hidden) {
-      opacity: 1;
-    }
-
-    /* ===== CARDS ===== */
-    .bg-white.rounded-2xl {
-      border-radius: 16px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-    }
-
-    /* ===== RESPONSIVE GRID ===== */
-    .grid {
-      display: grid;
-      gap: 12px;
-    }
-
-    .grid-cols-1 {
-      grid-template-columns: 1fr;
-    }
-
-    /* ===== MODAL / OVERLAY STYLES ===== */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.5);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      animation: fadeIn 0.2s ease;
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    .modal-content {
-      background: white;
-      border-radius: 12px;
-      padding: 24px;
-      max-width: 500px;
-      width: 90%;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-      animation: slideUp 0.3s ease;
-    }
-
-    .modal-content h3 {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      color: #1f2937;
-    }
-
-    .modal-content p {
-      color: #6b7280;
-      margin-bottom: 16px;
-    }
-
-    .modal-buttons {
-      display: flex;
-      gap: 12px;
-      justify-content: flex-end;
-      margin-top: 20px;
-    }
-
-    .modal-buttons button {
-      padding: 10px 16px;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .btn-modal-cancel {
-      background-color: #e5e7eb;
-      color: #1f2937;
-    }
-
-    .btn-modal-cancel:hover {
-      background-color: #d1d5db;
-    }
-
-    .btn-modal-confirm {
-      background-color: #5BC0CB;
-      color: white;
-    }
-
-    .btn-modal-confirm:hover {
-      background-color: #4ca8b9;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    /* ===== EMPTY STATE STYLES ===== */
-    .empty-state {
-      text-align: center;
-      padding: 32px 16px;
-      color: #6b7280;
-    }
-
-    .empty-state-icon {
-      font-size: 48px;
-      margin-bottom: 12px;
-    }
-
-    .empty-state-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: #1f2937;
-      margin-bottom: 8px;
-    }
-
-    .empty-state-text {
-      font-size: 14px;
-      color: #6b7280;
-    }
-
-    /* ===== ANIMATION FOR NEW EXPENSES ===== */
-    @keyframes slideInLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    .animate-slide-in {
-      animation: slideInLeft 0.3s ease;
-    }
-
-    /* ===== CHART STYLES ===== */
-    .chart-container {
-      margin: 24px 0;
-      padding: 16px;
-      background-color: #f9fafb;
-      border-radius: 12px;
-      overflow-x: auto;
-    }
-
-    .chart-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #1f2937;
-      margin-bottom: 12px;
-      text-align: center;
-    }
-
-    .chart-empty {
-      text-align: center;
-      padding: 32px 16px;
-      color: #9ca3af;
-    }
-
-    /* ===== PENDING EXPENSE STATUS ===== */
-    .pending-badge {
-      display: inline-block;
-      background-color: #FEF3C7;
-      color: #92400e;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-      margin-left: 8px;
-    }
-
-    .pending-row {
-      background-color: #FEF3C7;
-    }
-
-    /* ===== CLIENT CARD STYLES (UPDATED FROM ROUTE-CARD) ===== */
-    .client-card {
-      background-color: white;
-      border: 1px solid #e5e7eb;
-      border-left: 3px solid #5BC0CB;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 12px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .client-card:hover {
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      border-color: #5BC0CB;
-    }
-
-    .client-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 600;
-      color: #1f2937;
-    }
-
-    .client-card-meta {
-      font-size: 13px;
-      color: #6b7280;
-      margin-top: 8px;
-    }
-
-    .client-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .client-actions button {
-      padding: 4px 8px;
-      font-size: 12px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    /* ===== SITE BUTTON STYLES ===== */
-    .site-btn {
-      display: block;
-      width: 100%;
-      min-height: 56px;
-      padding: 12px 16px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      background-color: #5BC0CB;
-      color: white;
-    }
-
-    .site-btn:hover {
-      opacity: 0.9;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .site-btn:active {
-      opacity: 0.8;
-    }
-
-    /* ===== TOGGLE SWITCH STYLES ===== */
-    .toggle-switch {
-      position: relative;
-      display: inline-block;
-      width: 52px;
-      height: 28px;
-      cursor: pointer;
-    }
-
-    .toggle-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .toggle-slider {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #d1d5db;
-      border-radius: 28px;
-      transition: background-color 0.3s ease;
-    }
-
-    .toggle-slider:before {
-      content: "";
-      position: absolute;
-      width: 22px;
-      height: 22px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      border-radius: 50%;
-      transition: transform 0.3s ease;
-    }
-
-    .toggle-switch input:checked + .toggle-slider {
-      background-color: #5BC0CB;
-    }
-
-    .toggle-switch input:checked + .toggle-slider:before {
-      transform: translateX(24px);
-    }
-
-    /* ===== MANAGE SECTION STYLES ===== */
-    .manage-section {
-      background-color: #f9fafb;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-    }
-
-    .manage-section.hidden {
-      display: none;
-    }
-
-    /* ===== REVIEW CARD STYLES ===== */
-    .review-card {
-      background-color: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .review-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
-    .review-card-info {
-      flex: 1;
-    }
-
-    .review-card-title {
-      font-weight: 600;
-      color: #1f2937;
-      margin-bottom: 4px;
-    }
-
-    .review-card-meta {
-      font-size: 13px;
-      color: #6b7280;
-      line-height: 1.4;
-    }
-
-    .review-card-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .review-card-actions button {
-      padding: 8px 12px;
-      font-size: 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      border: none;
-      color: white;
-      font-weight: 500;
-    }
-
-    .btn-approve {
-      background-color: #10b981;
-    }
-
-    .btn-approve:hover {
-      background-color: #059669;
-    }
-
-    .btn-edit {
-      background-color: #3b82f6;
-    }
-
-    .btn-edit:hover {
-      background-color: #2563eb;
-    }
-
-    .btn-reject {
-      background-color: #dc2626;
-    }
-
-    .btn-reject:hover {
-      background-color: #991b1b;
-    }
-
-    /* ===== MOBILE RESPONSIVENESS ===== */
-    @media (max-width: 640px) {
-      /* Typography */
-      body {
-        font-size: 14px;
-      }
-
-      .text-xs { font-size: 11px; }
-      .text-sm { font-size: 13px; }
-      .text-base { font-size: 15px; }
-      .text-lg { font-size: 16px; }
-      .text-xl { font-size: 18px; }
-      .text-2xl { font-size: 20px; }
-
-      /* Spacing */
-      .px-3.sm\:px-4 { padding-left: 12px; padding-right: 12px; }
-      .py-3.sm\:py-5 { padding-top: 12px; padding-bottom: 12px; }
-
-      /* Avoid iOS zoom on input focus */
-      input, select {
-        font-size: 16px !important;
-      }
-
-      /* Smaller table padding */
-      table td, table th {
-        padding: 10px 6px !important;
-      }
-
-      .table-sticky thead tr:first-child th {
-        top: 0;
-        padding: 10px 6px;
-      }
-
-      .table-sticky thead tr:nth-child(2) th {
-        top: 40px;
-        padding: 8px 6px;
-      }
-
-      /* Reduce shadows on mobile */
-      .shadow {
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-      }
-
-      /* Grid adjustments */
-      .grid {
-        gap: 8px;
-      }
-
-      /* Flex stack on mobile */
-      header h1 {
-        margin-bottom: 8px;
-      }
-
-      main {
-        padding: 12px 8px;
-      }
-
-      .modal-content {
-        width: 95%;
-        padding: 16px;
-      }
-
-      .review-card-actions {
-        flex-direction: column;
-      }
-
-      .review-card-actions button {
-        width: 100%;
-      }
-    }
-
-    @media (min-width: 641px) {
-      .sm\:col-span-2 {
-        grid-column: span 2;
-      }
-
-      .sm\:col-span-3 {
-        grid-column: span 3;
-      }
-
-      .sm\:col-span-6 {
-        grid-column: span 6;
-      }
-
-      .sm\:flex-row {
-        flex-direction: row;
-      }
-
-      .sm\:w-20 {
-        width: 80px;
-      }
-
-      .sm\:text-sm { font-size: 14px; }
-      .sm\:text-base { font-size: 16px; }
-      .sm\:text-lg { font-size: 18px; }
-      .sm\:text-2xl { font-size: 24px; }
-
-      .sm\:px-3 { padding-left: 12px; padding-right: 12px; }
-      .sm\:px-4 { padding-left: 16px; padding-right: 16px; }
-
-      .sm\:py-2 { padding-top: 8px; padding-bottom: 8px; }
-      .sm\:py-4 { padding-top: 16px; padding-bottom: 16px; }
-
-      .sm\:gap-2 { gap: 8px; }
-      .sm\:gap-3 { gap: 12px; }
-
-      header {
-        padding: 20px 0;
-        display: flex;
-        align-items: center;
-      }
-
-      header nav {
-        gap: 8px;
-      }
-
-      header h1 {
-        margin-bottom: 0;
-      }
-
-      main {
-        padding: 24px 16px;
-      }
-
-      .sm\:p-3 { padding: 12px; }
-      .sm\:p-4 { padding: 16px; }
-
-      .sm\:space-y-5 > * + * { margin-top: 20px; }
-
-      .grid-cols-2 {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .grid-cols-3 {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      .grid-cols-4 {
-        grid-template-columns: repeat(4, 1fr);
-      }
-
-      .grid-cols-6 {
-        grid-template-columns: repeat(6, 1fr);
-      }
-    }
   </style>
 </head>
 <body class="min-h-screen" style="background-color: #f5f5f5;">
   <!-- Header — AHS-branded: charcoal panel with cyan accent strip below,
        matching the look used across the other AHS apps (PD Tools etc.). -->
-  <header class="text-white py-3 sm:py-5 shadow" style="background-color: #2c3e50; border-bottom: 3px solid #5BC0CB;">
-    <div class="max-w-6xl mx-auto px-3 sm:px-4 flex items-center justify-between">
+  <header class="app-header">
+    <div class="max-w-6xl mx-auto px-3 sm:px-4 flex items-center justify-between" style="min-height:60px;">
       <div class="flex items-center gap-3">
-        <div style="background-color: white; padding: 4px; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,.15);">
-          <img src="ahs.png" alt="AHS Logo" style="height: 40px; width: auto; flex-shrink: 0;">
+        <div class="logo-box">
+          <img src="ahs.png" alt="AHS Logo" style="height: 34px; width: auto; display:block;">
         </div>
         <div>
-          <h1 class="text-xl sm:text-2xl font-bold" style="line-height: 1.15;">Wages &amp; Expenses Manager</h1>
-          <div style="font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #5BC0CB; font-weight: 600; margin-top: 2px;">AHS Compliance Consulting</div>
+          <div class="brand-title">Wages &amp; Expenses Manager</div>
+          <div class="brand-sub">AHS Compliance Consulting</div>
         </div>
       </div>
       <div class="flex items-center gap-2" style="flex-shrink:0;">
         <span id="sync-status" class="text-xs" style="display:none; padding:4px 10px; border-radius:999px; font-weight:600; white-space:nowrap;"></span>
-        <button id="btn-signout" class="text-xs rounded-lg" style="display:none; background-color:#4f8f99; color:white; padding:6px 10px;" aria-label="Sign out">Sign out</button>
+        <button id="btn-theme" class="icon-btn" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+        <button id="btn-signout" class="text-xs" style="display:none; border:1.5px solid var(--border); border-radius:6px; color:var(--text); padding:7px 12px; background:var(--surface); font-weight:600;" aria-label="Sign out">Sign out</button>
       </div>
     </div>
-    <div class="max-w-6xl mx-auto px-3 sm:px-4 mt-3">
-      <nav class="flex flex-wrap gap-2 items-center">
-        <!-- Tab buttons -->
-        <button id="tab-wage" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white is-active" style="background-color: #5BC0CB;" aria-label="Switch to Wage Structure tab">Wage Structure</button>
-        <button id="tab-exp" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white" style="background-color: #4f8f99;" aria-label="Switch to Expense Tracker tab">Expense Tracker</button>
-        <button id="tab-quick" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white" style="background-color: #4f8f99;" aria-label="Switch to Quick Log tab">🚗 Quick Log</button>
-        <button id="tab-review" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white relative" style="background-color: #4f8f99;" aria-label="Switch to Review Pending tab">📋 Review<span id="review-badge" class="badge-pending" style="display:none;">0</span></button>
+    <div class="tab-bar">
+      <div class="max-w-6xl mx-auto px-3 sm:px-4">
+        <nav>
+          <!-- Tab buttons -->
+          <button id="tab-wage" class="is-active" aria-label="Switch to Wage Structure tab">Wage Structure</button>
+          <button id="tab-exp" aria-label="Switch to Expense Tracker tab">Expense Tracker</button>
+          <button id="tab-quick" aria-label="Switch to Quick Log tab">🚗 Quick Log</button>
+          <button id="tab-review" style="position:relative;" aria-label="Switch to Review Pending tab">📋 Review<span id="review-badge" class="badge-pending" style="display:none;">0</span></button>
 
-        <!-- Action buttons -->
-        <button id="btn-pdf-report" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white" style="background-color: #5BC0CB;" aria-label="Generate PDF report">PDF Report</button>
-        <button id="btn-save-month" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white" style="background-color: #4f8f99;" aria-label="Save month as HTML">Save Month</button>
-
-        <!-- Data import/export buttons -->
-        <button id="btn-export-data" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white" style="background-color: #5BC0CB;" aria-label="Export data as JSON">Export Data</button>
-        <button id="btn-import-data" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white" style="background-color: #4f8f99;" aria-label="Import data from JSON file">Import Data</button>
-        <button id="btn-excel-export" class="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg text-white" style="background-color: #5BC0CB;" aria-label="Export to Excel CSV by period" onclick="openExcelExport()">📊 Excel Export</button>
-        <input id="file-import-input" type="file" accept=".json" style="display: none;">
-
-        <!-- PDF month selector -->
-        <div class="ml-auto flex gap-2 items-center">
-          <label class="text-xs sm:text-sm text-white">PDF Month:</label>
-          <input id="pdf-month" type="month" class="px-2 py-1 text-xs rounded">
-        </div>
-      </nav>
+          <!-- Action buttons + PDF month selector -->
+          <div class="ml-auto flex flex-wrap gap-2 items-center" style="padding:6px 0;">
+            <button id="btn-pdf-report" class="action-btn primary" aria-label="Generate PDF report">PDF Report</button>
+            <button id="btn-save-month" class="action-btn" aria-label="Save month as HTML">Save Month</button>
+            <button id="btn-export-data" class="action-btn" aria-label="Export data as JSON">Export Data</button>
+            <button id="btn-import-data" class="action-btn" aria-label="Import data from JSON file">Import Data</button>
+            <button id="btn-excel-export" class="action-btn" aria-label="Export to Excel CSV by period" onclick="openExcelExport()">📊 Excel Export</button>
+            <input id="file-import-input" type="file" accept=".json" style="display: none;">
+            <label class="text-xs" style="color:var(--text-muted);">PDF Month:</label>
+            <input id="pdf-month" type="month" style="width:auto; padding:6px 8px; font-size:12px;">
+          </div>
+        </nav>
+      </div>
     </div>
   </header>
 
@@ -1131,7 +369,7 @@
             <input id="exp-amount" type="text" inputmode="decimal" class="w-full border rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-sm bg-slate-100" disabled aria-label="Calculated expense amount">
           </div>
           <div class="col-span-1 sm:col-span-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
-            <button id="btn-add-exp" class="text-white px-3 sm:px-4 py-2 rounded-lg hover:opacity-90 text-sm transition-opacity" style="background-color: #5BC0CB;" aria-label="Add new expense">Add Expense</button>
+            <button id="btn-add-exp" class="text-white px-3 sm:px-4 py-2 rounded-lg hover:opacity-90 text-sm transition-opacity" style="background-color: var(--accent);" aria-label="Add new expense">Add Expense</button>
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2 text-xs sm:text-sm flex-1">
               <span class="text-slate-500 whitespace-nowrap">Default rate:</span>
               <input id="default-rate" type="text" inputmode="decimal" class="flex-1 sm:w-20 border rounded-lg px-2 sm:px-3 py-1 text-sm" aria-label="Default mileage rate">
@@ -1145,7 +383,7 @@
         <div class="p-3 sm:p-4 border-b"><h3 class="font-semibold text-slate-800 text-sm sm:text-base">Expenses</h3></div>
         <div class="overflow-x-auto">
           <table class="w-full text-xs sm:text-sm table-sticky" id="tbl-expenses">
-            <thead style="background-color: #5BC0CB;" class="text-white">
+            <thead style="background-color: var(--accent);" class="text-white">
               <tr class="text-left">
                 <th class="p-2 sm:p-3">Date</th>
                 <th class="p-2 sm:p-3">Description</th>
@@ -1160,11 +398,11 @@
           </table>
         </div>
         <div class="p-3 sm:p-4 bg-slate-50 rounded-b-2xl grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div class="text-white rounded-xl p-3 sm:p-4" style="background-color: #4f8f99;">
+          <div class="text-white rounded-xl p-3 sm:p-4" style="background-color: var(--primary);">
             <div class="text-xs sm:text-sm opacity-90">Category Totals</div>
             <ul id="list-cat-totals" class="mt-2 space-y-1 text-xs sm:text-sm"></ul>
           </div>
-          <div class="text-white rounded-xl p-3 sm:p-4 sm:col-span-2 flex items-center justify-between" style="background-color: #5BC0CB;">
+          <div class="text-white rounded-xl p-3 sm:p-4 sm:col-span-2 flex items-center justify-between" style="background-color: var(--accent);">
             <div class="text-base sm:text-lg font-semibold">Total</div>
             <div id="grand-total" class="text-xl sm:text-2xl font-bold">£0.00</div>
           </div>
@@ -1209,7 +447,7 @@
             <input id="oneoff-miles" type="text" inputmode="decimal" placeholder="0" class="w-full border rounded-lg px-3 py-2 text-sm" aria-label="Trip miles">
           </div>
           <div class="col-span-1 sm:col-span-3">
-            <button id="btn-oneoff-log" class="text-white px-4 py-2 rounded-lg text-sm" style="background-color: #5BC0CB;" aria-label="Log one-off trip as pending expense">Log Trip</button>
+            <button id="btn-oneoff-log" class="text-white px-4 py-2 rounded-lg text-sm" style="background-color: var(--accent);" aria-label="Log one-off trip as pending expense">Log Trip</button>
           </div>
         </div>
       </div>
@@ -1227,7 +465,7 @@
               <label class="block text-xs sm:text-sm text-slate-600 mb-1">Client Name</label>
               <input id="new-client-name" type="text" placeholder="e.g. Acme Corp" class="w-full border rounded-lg px-3 py-2 text-sm" aria-label="New client name">
             </div>
-            <button id="btn-add-client" class="text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap" style="background-color: #5BC0CB;" aria-label="Add new client">+ Add Client</button>
+            <button id="btn-add-client" class="text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap" style="background-color: var(--accent);" aria-label="Add new client">+ Add Client</button>
           </div>
           <!-- Client Directory List -->
           <div id="client-manage-list" class="space-y-3"></div>
@@ -1246,12 +484,12 @@
         <div class="p-3 sm:p-4 border-b flex items-center justify-between">
           <h2 id="wage-title" class="text-base sm:text-lg font-semibold text-slate-800">Wage Structure — 2026</h2>
           <div class="flex gap-2">
-            <button id="btn-defaults" class="px-3 py-1 text-xs sm:text-sm rounded-lg text-white transition-opacity hover:opacity-90" style="background-color: #4f8f99;" aria-label="Edit monthly defaults">⚙ Defaults</button>
-            <button id="btn-add-month" class="px-3 py-1 text-xs sm:text-sm rounded-lg text-white transition-opacity hover:opacity-90" style="background-color: #5BC0CB;" aria-label="Add a new month">+ Add Month</button>
+            <button id="btn-defaults" class="px-3 py-1 text-xs sm:text-sm rounded-lg text-white transition-opacity hover:opacity-90" style="background-color: var(--primary);" aria-label="Edit monthly defaults">⚙ Defaults</button>
+            <button id="btn-add-month" class="px-3 py-1 text-xs sm:text-sm rounded-lg text-white transition-opacity hover:opacity-90" style="background-color: var(--accent);" aria-label="Add a new month">+ Add Month</button>
           </div>
         </div>
         <table class="w-full min-w-[900px] text-xs sm:text-sm table-sticky" id="tbl-wage">
-          <thead style="background-color: #5BC0CB;" class="text-white text-xs">
+          <thead style="background-color: var(--accent);" class="text-white text-xs">
             <tr>
               <th class="p-2 sm:p-3 text-left" style="width: 80px;">Month</th>
               <th class="p-2 sm:p-3 text-left" colspan="2" style="width: 200px;">Income</th>
@@ -1289,7 +527,7 @@
           <div id="pot-vat" class="text-xl sm:text-2xl font-bold text-slate-900">£0.00</div>
           <div id="pot-vat-sub" class="text-xs text-slate-500 mt-1">set aside to date</div>
         </div>
-        <div class="rounded-2xl shadow p-3 sm:p-4 text-white" style="background-color:#4f8f99;">
+        <div class="rounded-2xl shadow p-3 sm:p-4 text-white" style="background-color:var(--primary);">
           <div class="text-xs opacity-90">Total set aside</div>
           <div id="pot-total" class="text-xl sm:text-2xl font-bold">£0.00</div>
           <div id="pot-total-sub" class="text-xs opacity-90 mt-1">both pots combined</div>
@@ -1310,7 +548,7 @@
 
       <div class="p-3 sm:p-4 bg-slate-50 rounded-b-2xl text-sm" id="summary-row"></div>
 
-      <div class="rounded-2xl p-3 sm:p-4 text-white shadow" style="background-color: #4f8f99;">
+      <div class="rounded-2xl p-3 sm:p-4 text-white shadow" style="background-color: var(--primary);">
         <h3 class="font-semibold text-sm sm:text-base">How totals are calculated</h3>
         <ul class="mt-2 text-xs sm:text-sm space-y-1 opacity-95">
           <li>Income Total = Wage Payment + Dividend Payment</li>
@@ -1524,6 +762,21 @@ function escapeHtml(text) {
   div.textContent = text;
   return div.innerHTML;
 }
+
+// ===== Theme (light / dark) — matches the HSMS design system =====
+const THEME_KEY = 'wage-theme';
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  const btn = document.getElementById('btn-theme');
+  if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+}
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  localStorage.setItem(THEME_KEY, next);
+  applyTheme(next);
+}
+applyTheme(localStorage.getItem(THEME_KEY) || 'light');
 
 // ===== Month Range Configuration =====
 const REFERENCE_MONTH = new Date(2026, 1, 1);
@@ -2081,7 +1334,7 @@ function renderQuickLog() {
               <div class="font-semibold text-slate-800">${escapeHtml(client.name)}</div>
               <div class="text-xs text-slate-500">${escapeHtml(site.name)} · ${site.miles} miles</div>
             </div>
-            <div class="text-white px-4 py-2 rounded-lg text-sm font-medium" style="background-color:#5BC0CB">Log Trip</div>
+            <div class="text-white px-4 py-2 rounded-lg text-sm font-medium" style="background-color:var(--accent)">Log Trip</div>
           </div>
         </button>
       </div>`;
@@ -2103,7 +1356,7 @@ function renderQuickLog() {
                   <div class="font-medium text-slate-800">${escapeHtml(site.name)}</div>
                   <div class="text-xs text-slate-500">${site.miles} miles</div>
                 </div>
-                <div class="text-white px-3 py-1 rounded-lg text-xs" style="background-color:#5BC0CB">Log Trip</div>
+                <div class="text-white px-3 py-1 rounded-lg text-xs" style="background-color:var(--accent)">Log Trip</div>
               </div>
             </button>
           `).join('')}
@@ -2274,7 +1527,7 @@ function renderClientManageList() {
       <div class="flex gap-2 items-end">
         <input id="site-name-${client.id}" type="text" placeholder="Site name" class="flex-1 border rounded-lg px-2 py-1 text-sm">
         <input id="site-miles-${client.id}" type="text" inputmode="decimal" placeholder="Miles" class="w-20 border rounded-lg px-2 py-1 text-sm">
-        <button class="text-white px-3 py-1 rounded-lg text-xs" style="background-color:#4f8f99" onclick="addSite('${client.id}')">+ Site</button>
+        <button class="text-white px-3 py-1 rounded-lg text-xs" style="background-color:var(--primary)" onclick="addSite('${client.id}')">+ Site</button>
       </div>
     </div>`;
   });
@@ -2485,7 +1738,7 @@ function renderWageTable() {
 function statHtml(label, value, highlight) {
   return `<div class="rounded-xl px-4 py-3 ${
     highlight ? 'text-white shadow' : 'bg-white shadow border'
-  }" style="${highlight ? 'background-color: #5BC0CB;' : ''}">
+  }" style="${highlight ? 'background-color: var(--accent);' : ''}">
     <div class="text-xs ${highlight ? 'opacity-90' : 'text-slate-500'}">${label}</div>
     <div class="text-lg font-semibold ${highlight ? '' : 'text-slate-900'}">${value}</div>
   </div>`;
@@ -2556,7 +1809,7 @@ function renderAnalytics() {
             <span class="font-semibold text-slate-800">${fmt(amt)}</span>
           </div>
           <div style="background:#eef2f4; border-radius:999px; height:8px; overflow:hidden;">
-            <div style="width:${pct}%; height:100%; background:#5BC0CB; border-radius:999px;"></div>
+            <div style="width:${pct}%; height:100%; background:var(--accent); border-radius:999px;"></div>
           </div>
         </div>`;
       }).join('');
@@ -2597,14 +1850,14 @@ function renderChart() {
 
   let svg = `<defs>
     <style>
-      .chart-bar-label { font-size: 12px; fill: #6b7280; text-anchor: middle; }
-      .chart-axis-label { font-size: 11px; fill: #9ca3af; }
-      .chart-legend-text { font-size: 13px; fill: #1f2937; }
+      .chart-bar-label { font-size: 12px; fill: var(--text-muted); text-anchor: middle; }
+      .chart-axis-label { font-size: 11px; fill: var(--text-muted); }
+      .chart-legend-text { font-size: 13px; fill: var(--text); }
     </style>
   </defs>`;
 
-  svg += `<line x1="${padding}" y1="${chartHeight - padding}" x2="${chartWidth - padding}" y2="${chartHeight - padding}" stroke="#d1d5db" stroke-width="1"/>`;
-  svg += `<line x1="${padding}" y1="${padding}" x2="${padding}" y2="${chartHeight - padding}" stroke="#d1d5db" stroke-width="1"/>`;
+  svg += `<line x1="${padding}" y1="${chartHeight - padding}" x2="${chartWidth - padding}" y2="${chartHeight - padding}" style="stroke:var(--border);stroke-width:1;"/>`;
+  svg += `<line x1="${padding}" y1="${padding}" x2="${padding}" y2="${chartHeight - padding}" style="stroke:var(--border);stroke-width:1;"/>`;
 
   monthKeys.forEach((k, idx) => {
     const wage = getWage(k);
@@ -2615,20 +1868,20 @@ function renderChart() {
 
     const incomeHeight = (income / maxValue) * graphHeight;
     const incomeY = chartHeight - padding - incomeHeight;
-    svg += `<rect x="${xBase}" y="${incomeY}" width="${barWidth}" height="${incomeHeight}" fill="#5BC0CB" rx="2"/>`;
+    svg += `<rect x="${xBase}" y="${incomeY}" width="${barWidth}" height="${incomeHeight}" style="fill:var(--accent);" rx="2"/>`;
 
     const expenseHeight = (expenses / maxValue) * graphHeight;
     const expenseY = chartHeight - padding - expenseHeight;
-    svg += `<rect x="${xBase + barWidth + spacing}" y="${expenseY}" width="${barWidth}" height="${expenseHeight}" fill="#4f8f99" rx="2"/>`;
+    svg += `<rect x="${xBase + barWidth + spacing}" y="${expenseY}" width="${barWidth}" height="${expenseHeight}" style="fill:var(--text-muted);" rx="2"/>`;
 
     const monthLabel = formatMonthLabel(k);
     svg += `<text x="${xBase + barWidth + (barWidth + spacing) / 2}" y="${chartHeight - padding + 20}" class="chart-bar-label">${monthLabel}</text>`;
   });
 
-  svg += `<rect x="${padding}" y="10" width="12" height="12" fill="#5BC0CB" rx="1"/>`;
+  svg += `<rect x="${padding}" y="10" width="12" height="12" style="fill:var(--accent);" rx="1"/>`;
   svg += `<text x="${padding + 18}" y="20" class="chart-legend-text">Income</text>`;
 
-  svg += `<rect x="${padding + 100}" y="10" width="12" height="12" fill="#4f8f99" rx="1"/>`;
+  svg += `<rect x="${padding + 100}" y="10" width="12" height="12" style="fill:var(--text-muted);" rx="1"/>`;
   svg += `<text x="${padding + 118}" y="20" class="chart-legend-text">Expenses</text>`;
 
   chartSvg.innerHTML = svg;
@@ -3103,6 +2356,9 @@ document.querySelectorAll('input[type="text"][inputmode="decimal"]').forEach((el
   const btnDefaults = document.getElementById('btn-defaults');
   if (btnDefaults) btnDefaults.addEventListener('click', openDefaults);
 
+  const btnTheme = document.getElementById('btn-theme');
+  if (btnTheme) btnTheme.addEventListener('click', toggleTheme);
+
   document.querySelectorAll('.modal-overlay').forEach(modal => {
     modal.addEventListener('click', function(e) {
       // The login modal is deliberately not dismissible by backdrop click.
@@ -3356,8 +2612,8 @@ function saveMonthAsHTML() {
     <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
       <h1 class="text-2xl font-bold">Wages & Expenses - ${monthName} ${year}</h1>
       <nav class="flex gap-2">
-        <button class="px-3 py-2 rounded-lg text-white" style="background-color: #5BC0CB;" onclick="setTab('wage')">Wage Structure</button>
-        <button class="px-3 py-2 rounded-lg text-white" style="background-color: #4f8f99;" onclick="setTab('exp')">Expense Tracker</button>
+        <button class="px-3 py-2 rounded-lg text-white" style="background-color: var(--accent);" onclick="setTab('wage')">Wage Structure</button>
+        <button class="px-3 py-2 rounded-lg text-white" style="background-color: var(--primary);" onclick="setTab('exp')">Expense Tracker</button>
       </nav>
     </div>
   </header>
@@ -3398,7 +2654,7 @@ function saveMonthAsHTML() {
             <input id="exp-amount" type="text" inputmode="decimal" class="w-full border rounded-lg px-3 py-2 bg-slate-100" disabled>
           </div>
           <div class="sm:col-span-6 flex items-center gap-3">
-            <button onclick="addExpense()" class="text-white px-4 py-2 rounded-lg transition-opacity hover:opacity-90" style="background-color: #5BC0CB;">Add Expense</button>
+            <button onclick="addExpense()" class="text-white px-4 py-2 rounded-lg transition-opacity hover:opacity-90" style="background-color: var(--accent);">Add Expense</button>
             <div class="ml-auto flex items-center gap-2 text-sm">
               <span class="text-slate-500">Default mileage rate:</span>
               <input id="default-rate" type="text" inputmode="decimal" class="w-24 border rounded-lg px-3 py-1">
@@ -3411,7 +2667,7 @@ function saveMonthAsHTML() {
         <div class="p-4 border-b"><h3 class="font-semibold text-slate-800">Expenses</h3></div>
         <div class="overflow-x-auto">
           <table class="w-full text-sm table-sticky" id="tbl-expenses">
-            <thead style="background-color: #5BC0CB;" class="text-white">
+            <thead style="background-color: var(--accent);" class="text-white">
               <tr class="text-left">
                 <th class="p-3">Date</th>
                 <th class="p-3">Description</th>
@@ -3426,11 +2682,11 @@ function saveMonthAsHTML() {
           </table>
         </div>
         <div class="p-4 bg-slate-50 rounded-b-2xl grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div class="text-white rounded-xl p-4" style="background-color: #4f8f99;">
+          <div class="text-white rounded-xl p-4" style="background-color: var(--primary);">
             <div class="text-sm opacity-80">Category Totals</div>
             <ul id="list-cat-totals" class="mt-2 space-y-1"></ul>
           </div>
-          <div class="text-white rounded-xl p-4 sm:col-span-2 flex items-center justify-between" style="background-color: #5BC0CB;">
+          <div class="text-white rounded-xl p-4 sm:col-span-2 flex items-center justify-between" style="background-color: var(--accent);">
             <div class="text-lg font-semibold">Total</div>
             <div id="grand-total" class="text-2xl font-bold">£0.00</div>
           </div>
@@ -3444,7 +2700,7 @@ function saveMonthAsHTML() {
           <h2 id="wage-title" class="text-lg font-semibold text-slate-800">${monthName} ${year}</h2>
         </div>
         <table class="w-full min-w-[900px] text-sm table-sticky" id="tbl-wage">
-          <thead style="background-color: #5BC0CB;" class="text-white text-xs">
+          <thead style="background-color: var(--accent);" class="text-white text-xs">
             <tr>
               <th class="p-3 text-left" style="width: 80px;">Month</th>
               <th class="p-3 text-left" colspan="2" style="width: 200px;">Income</th>
@@ -3468,7 +2724,7 @@ function saveMonthAsHTML() {
         </table>
       </div>
       <div class="p-4 bg-slate-50 rounded-b-2xl" id="summary-row"></div>
-      <div class="rounded-2xl p-4 text-white shadow" style="background-color: #4f8f99;">
+      <div class="rounded-2xl p-4 text-white shadow" style="background-color: var(--primary);">
         <h3 class="font-semibold">How totals are calculated</h3>
         <ul class="mt-2 text-sm space-y-1 opacity-95">
           <li>Income Total = Wage Payment + Dividend Payment</li>
@@ -3550,13 +2806,13 @@ function setTab(name) {
   const panelWage = document.getElementById('panel-wage');
   const panelExp = document.getElementById('panel-expenses');
   if (name === 'wage') {
-    buttons[0].style.backgroundColor = '#5BC0CB';
-    buttons[1].style.backgroundColor = '#4f8f99';
+    buttons[0].style.backgroundColor = 'var(--accent)';
+    buttons[1].style.backgroundColor = 'var(--primary)';
     panelWage.classList.remove('hidden');
     panelExp.classList.add('hidden');
   } else {
-    buttons[1].style.backgroundColor = '#5BC0CB';
-    buttons[0].style.backgroundColor = '#4f8f99';
+    buttons[1].style.backgroundColor = 'var(--accent)';
+    buttons[0].style.backgroundColor = 'var(--primary)';
     panelExp.classList.remove('hidden');
     panelWage.classList.add('hidden');
   }
@@ -3597,7 +2853,7 @@ function renderExpenses() {
         <td class="p-3">\${catLabel(e.category)}</td>
         <td class="p-3">\${e.miles || '-'}</td>
         <td class="p-3">\${e.miles ? e.rate.toFixed(2) : '-'}</td>
-        <td class="p-3 font-medium" style="color: #5BC0CB;">\${fmt(e.amount)}</td>
+        <td class="p-3 font-medium" style="color: var(--accent);">\${fmt(e.amount)}</td>
         <td class="p-3 text-right"><button class="text-red-600 hover:underline" onclick="deleteExpense('\${e.id}')">Delete</button></td>
       \`;
       tbodyExp.appendChild(tr);
@@ -3654,7 +2910,7 @@ function renderWageTable() {
       <td class="p-3"><div class="flex items-center border rounded-lg overflow-hidden"><span class="px-2 bg-slate-100 text-slate-500">£</span><input type="text" inputmode="decimal" value="\${Number(m.personalTax)||0}" data-k="\${k}" data-f="personalTax" class="w-full px-3 py-2 outline-none"></div></td>
       <td class="p-3"><div class="flex items-center border rounded-lg overflow-hidden"><span class="px-2 bg-slate-100 text-slate-500">£</span><input type="text" inputmode="decimal" value="\${Number(m.vatPayment)||0}" data-k="\${k}" data-f="vatPayment" class="w-full px-3 py-2 outline-none"></div></td>
       <td class="p-3 text-slate-900">\${fmt(expenses)}</td>
-      <td class="p-3 font-semibold" style="color: #5BC0CB;">\${fmt(totalPayment)}</td>
+      <td class="p-3 font-semibold" style="color: var(--accent);">\${fmt(totalPayment)}</td>
     \`;
     tbodyWage.appendChild(tr);
   });
@@ -3691,7 +2947,7 @@ function renderWageTable() {
         <div class="text-xs text-slate-500">Year-to-date Expenses</div>
         <div class="text-lg font-semibold text-slate-900">\${fmt(ytdExp)}</div>
       </div>
-      <div class="rounded-xl px-4 py-3 text-white shadow" style="background-color: #5BC0CB;">
+      <div class="rounded-xl px-4 py-3 text-white shadow" style="background-color: var(--accent);">
         <div class="text-xs opacity-90">Year-to-date Payment</div>
         <div class="text-lg font-semibold">\${fmt(totalPayment)}</div>
       </div>
