@@ -22,27 +22,27 @@
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
     :root{
-      --bg:#F8FAFC; --surface:#FFFFFF; --primary:#1E3A5F;
-      --accent:#2563EB; --accent-light:#EFF6FF; --accent-dark:#1D4ED8;
+      --bg:#F8FAFC; --surface:#FFFFFF; --primary:#374151;
+      --accent:#5BC0CB; --accent-light:#E9F7F9; --accent-dark:#3FA7B8;
       --text:#111827; --text-muted:#6B7280; --border:#E5E7EB;
       --input-bg:#F9FAFB; --muted-bg:#F3F4F6;
       --success:#10B981; --success-bg:#ECFDF5; --success-brd:#A7F3D0;
       --warning:#F59E0B; --warning-bg:#FFFBEB; --warning-brd:#FDE68A;
       --danger:#DC2626; --danger-bg:#FEF2F2; --danger-brd:#FECACA;
-      --info:#2563EB; --info-bg:#EFF6FF; --info-brd:#BFDBFE;
+      --info:#5BC0CB; --info-bg:#E9F7F9; --info-brd:#BFE8ED;
       --shadow:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);
       --shadow-md:0 4px 12px rgba(16,24,40,.06);
       --radius:12px;
     }
     [data-theme="dark"]{
-      --bg:#0F172A; --surface:#1E293B; --primary:#2563EB;
-      --accent:#3B82F6; --accent-light:#1E3A5F; --accent-dark:#93C5FD;
+      --bg:#0F172A; --surface:#1E293B; --primary:#475569;
+      --accent:#6FD0DE; --accent-light:#14343B; --accent-dark:#8FDDE8;
       --text:#E5E9F0; --text-muted:#9AA6B8; --border:#334155;
       --input-bg:#0F172A; --muted-bg:#273244;
       --success:#34D399; --success-bg:#0B3D2E; --success-brd:#0F5137;
       --warning:#FBBF24; --warning-bg:#3F2E0A; --warning-brd:#6B4D0E;
       --danger:#F87171; --danger-bg:#3F1A1A; --danger-brd:#6B2626;
-      --info:#60A5FA; --info-bg:#12253F; --info-brd:#1D4ED8;
+      --info:#6FD0DE; --info-bg:#12333B; --info-brd:#2A6B77;
       --shadow:0 1px 3px rgba(0,0,0,.45),0 1px 2px rgba(0,0,0,.35);
       --shadow-md:0 4px 14px rgba(0,0,0,.5);
       color-scheme:dark;
@@ -118,7 +118,7 @@
       border:1.5px solid var(--border); border-radius:6px; padding:9px 11px; width:100%;
       -webkit-appearance:none; outline:none; transition:border-color .15s, box-shadow .15s;
     }
-    input:focus,select:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(37,99,235,.15); }
+    input:focus,select:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(91,192,203,.30); }
     input:disabled{ background:var(--muted-bg); color:var(--text-muted); cursor:not-allowed; }
     input[type="date"],input[type="month"]{ cursor:pointer; }
     input.error{ border-color:var(--danger)!important; box-shadow:0 0 0 3px rgba(220,38,38,.15)!important; }
