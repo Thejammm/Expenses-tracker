@@ -824,11 +824,29 @@ function monthKeyFromDate(dateStr) {
 
 // ===== State Management =====
 const LS_KEY = 'wage-structure-blue-vanilla-v1';
+const MILEAGE_RATE = 0.55;   // HMRC approved mileage rate (car/van, per mile)
+
+// One-off migration from the old 45p rate: moves the saved default to 55p and
+// re-rates mileage claims that are still pending (not yet paid). Approved/paid
+// claims keep the rate they were paid at. Returns true if anything changed.
+function migrateMileageRate(d) {
+  let changed = false;
+  if (!d) return false;
+  if (d.mileageRate === undefined || Number(d.mileageRate) === 0.45) { d.mileageRate = MILEAGE_RATE; changed = true; }
+  (d.expenses || []).forEach(exp => {
+    if (exp.status === 'pending' && exp.miles && Number(exp.rate) === 0.45) {
+      exp.rate = MILEAGE_RATE;
+      exp.amount = parseFloat((exp.miles * MILEAGE_RATE).toFixed(2));
+      changed = true;
+    }
+  });
+  return changed;
+}
 
 const state = (function loadState() {
   try {
     const raw = localStorage.getItem(LS_KEY);
-    let data = raw ? JSON.parse(raw) : { expenses: [], wageData: {}, mileageRate: 0.45, clients: [], monthlyDefaults: { wage: 0, dividend: 0, personalTax: 275, vatPayment: 1000 } };
+    let data = raw ? JSON.parse(raw) : { expenses: [], wageData: {}, mileageRate: 0.55, clients: [], monthlyDefaults: { wage: 0, dividend: 0, personalTax: 275, vatPayment: 1000 } };
 
     // Ensure clients array exists BEFORE migration attempts
     if (!data.clients) {
@@ -891,9 +909,11 @@ const state = (function loadState() {
       });
     }
 
+    if (migrateMileageRate(data)) localStorage.setItem(LS_KEY, JSON.stringify(data));
+
     return data;
   } catch (e) {
-    return { expenses: [], wageData: {}, mileageRate: 0.45, clients: [], monthlyDefaults: { wage: 0, dividend: 0, personalTax: 275, vatPayment: 1000 } };
+    return { expenses: [], wageData: {}, mileageRate: 0.55, clients: [], monthlyDefaults: { wage: 0, dividend: 0, personalTax: 275, vatPayment: 1000 } };
   }
 })();
 
@@ -1003,10 +1023,11 @@ const SYNC = (function () {
     if (!state.clients) state.clients = [];
     if (!state.expenses) state.expenses = [];
     if (!state.wageData) state.wageData = {};
-    if (state.mileageRate === undefined) state.mileageRate = 0.45;
+    const migrated = migrateMileageRate(state);
     if (!state.monthlyDefaults) state.monthlyDefaults = { wage: 0, dividend: 0, personalTax: 275, vatPayment: 1000 };
     localStorage.setItem(LS_KEY, JSON.stringify(state));
     rerenderAll();
+    return migrated;
   }
   function requireLogin() {
     ready = false;
@@ -1019,11 +1040,11 @@ const SYNC = (function () {
     try {
       const srv = await pull();
       const hasData = srv && typeof srv === 'object' && Object.keys(srv).length;
-      if (hasData) applyServerState(srv);
+      const migrated = hasData ? applyServerState(srv) : false;
       ready = true; online = true;
       showSignout(true);
       setStatus('Online · synced', 'online');
-      if (!hasData) await push();   // server empty -> seed it with current local state
+      if (!hasData || migrated) await push();   // server empty -> seed it with current local state
     } catch (e) {
       if (e && e.unauth) { requireLogin(); return; }
       online = false; ready = false;
@@ -2997,7 +3018,7 @@ function deleteExpense(id) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  if (!state.mileageRate) state.mileageRate = 0.45;
+  if (!state.mileageRate) state.mileageRate = 0.55;
   document.getElementById('default-rate').value = state.mileageRate;
   document.getElementById('exp-rate').value = state.mileageRate;
   document.getElementById('default-rate').addEventListener('input', () => {
