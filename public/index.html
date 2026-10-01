@@ -378,6 +378,10 @@
           </div>
           <div class="col-span-1 sm:col-span-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
             <button id="btn-add-exp" class="text-white px-3 sm:px-4 py-2 rounded-lg hover:opacity-90 text-sm transition-opacity" style="background-color: var(--accent);" aria-label="Add new expense">Add Expense</button>
+            <label class="flex items-center gap-2 text-xs sm:text-sm text-slate-700 whitespace-nowrap cursor-pointer">
+              <input id="exp-bizpaid" type="checkbox" class="w-4 h-4">
+              Paid by business — don't claim
+            </label>
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2 text-xs sm:text-sm flex-1">
               <span class="text-slate-500 whitespace-nowrap">Default rate:</span>
               <input id="default-rate" type="text" inputmode="decimal" class="flex-1 sm:w-20 border rounded-lg px-2 sm:px-3 py-1 text-sm" aria-label="Default mileage rate">
@@ -1158,6 +1162,11 @@ const elDefaultRate = document.getElementById('default-rate');
 const tbodyExp = document.getElementById('tbody-expenses');
 const listCatTotals = document.getElementById('list-cat-totals');
 const grandTotalEl = document.getElementById('grand-total');
+const elBizPaid = document.getElementById('exp-bizpaid');
+
+// An expense counts towards the wage/expenses claim only if it's approved AND
+// Simon paid it personally. Business-paid items are logged but never claimed.
+function isClaimable(e) { return e.status === 'approved' && !e.paidByBusiness; }
 
 const categoryLabels = {
   travel: 'Travel',
@@ -1172,7 +1181,7 @@ function catLabel(id) {
 }
 
 function refreshExpenseAmountField() {
-  const isTravel = elCat.value === 'travel';
+  const isTravel = elCat.value === 'travel' && !elBizPaid.checked;
   elAmount.disabled = isTravel;
   elAmount.classList.toggle('bg-slate-100', isTravel);
   if (isTravel) {
@@ -1183,6 +1192,7 @@ function refreshExpenseAmountField() {
 elCat.addEventListener('change', refreshExpenseAmountField);
 elMiles.addEventListener('input', refreshExpenseAmountField);
 elRate.addEventListener('input', refreshExpenseAmountField);
+elBizPaid.addEventListener('change', refreshExpenseAmountField);
 
 elDefaultRate.value = state.mileageRate;
 elRate.value = state.mileageRate;
@@ -1204,6 +1214,8 @@ elAdd.onclick = () => {
     return;
   }
 
+  const bizPaid = elBizPaid.checked;
+  const typedAmount = parseNum(elAmount.value);
   const exp = {
     id: genUID(),
     date: elDate.value,
@@ -1213,13 +1225,14 @@ elAdd.onclick = () => {
     rate: parseNum(elRate.value),
     amount: parseFloat(
       (
-        elCat.value === 'travel'
+        elCat.value === 'travel' && !(bizPaid && typedAmount)
           ? parseNum(elMiles.value) * parseNum(elRate.value)
-          : parseNum(elAmount.value)
+          : typedAmount
       ).toFixed(2)
     ),
     status: 'approved'
   };
+  if (bizPaid) exp.paidByBusiness = true;
   state.expenses.unshift(exp);
   persist();
   renderExpenses();
@@ -1232,8 +1245,19 @@ elAdd.onclick = () => {
   elMiles.value = '';
   elRate.value = state.mileageRate;
   elAmount.value = '';
+  elBizPaid.checked = false;
   refreshExpenseAmountField();
 };
+
+function toggleBizPaid(expenseId) {
+  const e = state.expenses.find(x => x.id === expenseId);
+  if (!e) return;
+  if (e.paidByBusiness) delete e.paidByBusiness; else e.paidByBusiness = true;
+  persist();
+  renderExpenses();
+  renderWageTable();
+  renderChart();
+}
 
 function requestDeleteExpense(expenseId) {
   pendingDeleteExpenseId = expenseId;
@@ -1278,19 +1302,20 @@ function renderExpenses() {
       tr.className = 'border-t animate-slide-in';
       tr.innerHTML = `
         <td class="p-3">${e.date}</td>
-        <td class="p-3">${e.description}</td>
+        <td class="p-3">${e.description}${e.paidByBusiness ? '<div class="text-xs font-semibold uppercase tracking-wide text-slate-500 mt-1">Paid by business · not claimed</div>' : ''}</td>
         <td class="p-3">${catLabel(e.category)}</td>
         <td class="p-3">${e.miles || '-'}</td>
         <td class="p-3">${e.miles ? e.rate.toFixed(2) : '-'}</td>
-        <td class="p-3 font-medium text-teal">${fmt(e.amount)}</td>
-        <td class="p-3 text-right"><button class="text-red-600 hover:text-red-800 hover:underline transition-colors" onclick="requestDeleteExpense('${e.id}')" aria-label="Delete this expense">Delete</button></td>`;
+        <td class="p-3 font-medium text-teal"${e.paidByBusiness ? ' style="color:#94a3b8;text-decoration:line-through"' : ''}>${fmt(e.amount)}</td>
+        <td class="p-3 text-right whitespace-nowrap"><button class="text-slate-600 hover:underline" style="margin-right:14px" onclick="toggleBizPaid('${e.id}')" aria-label="Switch between claim and paid by business">${e.paidByBusiness ? 'Claim it' : 'Business paid'}</button><button class="text-red-600 hover:text-red-800 hover:underline transition-colors" onclick="requestDeleteExpense('${e.id}')" aria-label="Delete this expense">Delete</button></td>`;
       tbodyExp.appendChild(tr);
     });
   }
 
   const catTotals = {};
-  let grand = 0;
+  let grand = 0, bizTotal = 0;
   approvedExpenses.forEach((e) => {
+    if (e.paidByBusiness) { bizTotal += e.amount; return; }
     catTotals[e.category] = (catTotals[e.category] || 0) + e.amount;
     grand += e.amount;
   });
@@ -1310,6 +1335,12 @@ function renderExpenses() {
     });
   }
   grandTotalEl.textContent = fmt(grand);
+  if (bizTotal > 0) {
+    const li = document.createElement('li');
+    li.className = 'flex justify-between opacity-80 border-t border-white/30 pt-1 mt-1';
+    li.innerHTML = `<span>Paid by business (not claimed)</span><span class="font-semibold">${fmt(bizTotal)}</span>`;
+    listCatTotals.appendChild(li);
+  }
 }
 
 // ===== Toast Notification =====
@@ -1680,7 +1711,7 @@ function setWage(k, patch) {
 function expensesByMonth() {
   const map = {};
   state.expenses.forEach((e) => {
-    if (e.status !== 'approved') return;
+    if (!isClaimable(e)) return;
     const k = monthKeyFromDate(e.date);
     if (!k) return;
     map[k] = (map[k] || 0) + e.amount;
@@ -1820,7 +1851,7 @@ function renderAnalytics() {
   if (el) {
     const totals = {};
     let grand = 0;
-    state.expenses.filter(e => e.status === 'approved').forEach(e => {
+    state.expenses.filter(isClaimable).forEach(e => {
       totals[e.category] = (totals[e.category] || 0) + e.amount;
       grand += e.amount;
     });
@@ -2124,9 +2155,9 @@ function generateExcelExport() {
       e.miles != null ? e.miles : '',
       e.rate  != null ? e.rate  : '',
       e.amount != null ? Number(e.amount).toFixed(2) : '',
-      e.status || ''
+      e.paidByBusiness ? 'paid by business (not claimed)' : (e.status || '')
     );
-    if (typeof e.amount === 'number') expTotal += e.amount;
+    if (typeof e.amount === 'number' && !e.paidByBusiness) expTotal += e.amount;
     if (typeof e.miles  === 'number') mileTotal += e.miles;
   });
   if (exps.length === 0) row('(no expenses in period)');
@@ -2577,7 +2608,7 @@ async function generatePDFReport() {
   doc.text('Expenses', margin, yPos);
   yPos += 8;
 
-  const approvedExpenses = state.expenses.filter(e => e.status === 'approved');
+  const approvedExpenses = state.expenses.filter(isClaimable);
   if (approvedExpenses.length > 0) {
     const tableData = approvedExpenses.map((exp) => [
       exp.date,
@@ -2850,7 +2881,7 @@ function setTab(name) {
 function expensesByMonth() {
   const map = {};
   state.expenses.forEach(e => {
-    if (e.status !== 'approved') return;
+    if (e.status !== 'approved' || e.paidByBusiness) return;
     const k = monthKeyFromDate(e.date);
     if (!k) return;
     map[k] = (map[k] || 0) + e.amount;
@@ -2867,7 +2898,7 @@ function renderExpenses() {
   const listCatTotals = document.getElementById('list-cat-totals');
   const grandTotalEl = document.getElementById('grand-total');
   tbodyExp.innerHTML = '';
-  const approvedExpenses = state.expenses.filter(e => e.status === 'approved');
+  const approvedExpenses = state.expenses.filter(e => e.status === 'approved' && !e.paidByBusiness);
   if (approvedExpenses.length === 0) {
     const tr = document.createElement('tr');
     tr.innerHTML = '<td class="p-3 text-slate-500" colspan="7">No expenses yet.</td>';
