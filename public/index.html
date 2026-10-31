@@ -35,9 +35,10 @@
       --text:#111827; --text-muted:#6B7280; --border:#E5E7EB;
       --input-bg:#F9FAFB; --muted-bg:#F3F4F6;
       --success:#10B981; --success-bg:#ECFDF5; --success-brd:#A7F3D0;
-      --warning:#F59E0B; --warning-bg:#FFFBEB; --warning-brd:#FDE68A;
-      --danger:#DC2626; --danger-bg:#FEF2F2; --danger-brd:#FECACA;
-      --info:#5BC0CB; --info-bg:#E9F7F9; --info-brd:#BFE8ED;
+      --warning:#F59E0B; --warning-bg:#FFFBEB; --warning-brd:#FDE68A; --warning-ink:#7A5200;
+      /* House rule: no red anywhere. "Danger" actions use neutral charcoal. */
+      --danger:#4B5563; --danger-bg:#F3F4F6; --danger-brd:#D1D5DB;
+      --info:#5BC0CB; --info-bg:#E9F7F9; --info-brd:#BFE8ED; --accent-ink:#1F7F8C;
       --shadow:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);
       --shadow-md:0 4px 12px rgba(16,24,40,.06);
       --radius:12px;
@@ -48,9 +49,9 @@
       --text:#E5E9F0; --text-muted:#9AA6B8; --border:#334155;
       --input-bg:#0F172A; --muted-bg:#273244;
       --success:#34D399; --success-bg:#0B3D2E; --success-brd:#0F5137;
-      --warning:#FBBF24; --warning-bg:#3F2E0A; --warning-brd:#6B4D0E;
-      --danger:#F87171; --danger-bg:#3F1A1A; --danger-brd:#6B2626;
-      --info:#6FD0DE; --info-bg:#12333B; --info-brd:#2A6B77;
+      --warning:#FBBF24; --warning-bg:#3F2E0A; --warning-brd:#6B4D0E; --warning-ink:#FCD989;
+      --danger:#CBD5E1; --danger-bg:#273244; --danger-brd:#475569;
+      --info:#6FD0DE; --info-bg:#12333B; --info-brd:#2A6B77; --accent-ink:#8FDDE8;
       --shadow:0 1px 3px rgba(0,0,0,.45),0 1px 2px rgba(0,0,0,.35);
       --shadow-md:0 4px 14px rgba(0,0,0,.5);
       color-scheme:dark;
@@ -129,7 +130,7 @@
     input:focus,select:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(91,192,203,.30); }
     input:disabled{ background:var(--muted-bg); color:var(--text-muted); cursor:not-allowed; }
     input[type="date"],input[type="month"]{ cursor:pointer; }
-    input.error{ border-color:var(--danger)!important; box-shadow:0 0 0 3px rgba(220,38,38,.15)!important; }
+    input.error,select.error{ border-color:var(--warning)!important; box-shadow:0 0 0 3px rgba(245,158,11,.25)!important; }
     select{
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23787878' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
       background-repeat:no-repeat; background-position:right 10px center; padding-right:30px;
@@ -181,7 +182,7 @@
     header nav button.action-btn.primary{ background:var(--accent); border-color:var(--accent); color:#fff; }
     header nav button.action-btn.primary:hover{ background:var(--accent-dark); color:#fff; }
 
-    .badge-pending{ position:absolute; top:2px; right:-2px; background:var(--danger); color:#fff; border-radius:50%; width:16px; height:16px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; }
+    .badge-pending{ position:absolute; top:2px; right:-2px; background:var(--accent); color:#fff; border-radius:50%; width:16px; height:16px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; }
 
     /* ===== Main ===== */
     main{ max-width:1280px; margin:0 auto; padding:28px 20px 56px; }
@@ -280,6 +281,97 @@
       .grid{ gap:10px; }
     }
 
+    /* ===== Paid from / claim status / HMRC rates UI (31 Oct 2026) ===== */
+    .field-label{ display:block; font-size:12px; color:var(--text-muted); margin-bottom:4px; }
+    .chip{ display:inline-block; padding:2px 7px; border-radius:3px; font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; white-space:nowrap; border:1px solid transparent; line-height:1.5; }
+    .chip-claim{ background:var(--accent-light); color:var(--accent-ink); border-color:var(--info-brd); }
+    .chip-vat{ background:var(--muted-bg); color:var(--text); border-color:var(--border); }
+    .chip-business{ background:var(--primary); color:#fff; border-color:var(--primary); }
+    .chip-attn{ background:var(--warning-bg); color:var(--warning-ink); border-color:var(--warning-brd); }
+    .chip-pending{ background:var(--surface); color:var(--text-muted); border-color:var(--border); }
+    tr.row-attn td{ background:var(--warning-bg)!important; }
+    tr.row-attn td:first-child{ box-shadow:inset 3px 0 0 var(--warning); }
+    .review-card.row-attn{ background:var(--warning-bg); border-color:var(--warning-brd); }
+    .attn-text{ color:var(--warning-ink); font-weight:600; }
+    .sub-line{ font-size:12px; color:var(--text-muted); margin-top:2px; line-height:1.45; }
+    .ref{ font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12px; white-space:nowrap; color:var(--text-muted); }
+    select.inline-select{ padding:5px 26px 5px 8px; font-size:12px; width:auto; max-width:200px; background-position:right 8px center; }
+    select.attn{ border-color:var(--warning); background-color:var(--warning-bg); }
+    .attn-panel{ border:1px solid var(--warning-brd); border-left:4px solid var(--warning); background:var(--warning-bg); border-radius:8px; padding:12px 14px; }
+    .attn-panel .attn-title{ font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--warning-ink); margin-bottom:6px; }
+    .attn-panel .attn-item{ font-size:13px; color:var(--text); padding:6px 0; border-top:1px solid var(--warning-brd); display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    .attn-panel .attn-item:first-of-type{ border-top:none; }
+    .miles-strip .ms-head{ display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; font-size:13px; }
+    .miles-strip .ms-label{ font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
+    .miles-strip .ms-value{ font-weight:700; color:var(--text); }
+    .miles-strip .bar{ height:6px; background:var(--muted-bg); border-radius:2px; overflow:hidden; margin:6px 0 4px; border:1px solid var(--border); }
+    .miles-strip .bar > div{ height:100%; background:var(--accent); }
+    .miles-strip .ms-sub{ font-size:12px; color:var(--text-muted); }
+    .calc-box{ border:1.5px dashed var(--border); border-radius:6px; padding:8px 11px; font-size:13px; background:var(--muted-bg); min-height:38px; }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:9px 14px; border-radius:6px; font-weight:600; font-size:13px; min-height:38px; }
+    .btn-accent{ background:var(--accent); color:#fff; }
+    .btn-accent:hover{ background:var(--accent-dark); opacity:1; }
+    .btn-outline{ border:1.5px solid var(--border); color:var(--text); background:var(--surface); }
+    .btn-outline:hover{ border-color:var(--accent); color:var(--accent); opacity:1; }
+    .btn-sm{ padding:6px 10px; min-height:32px; font-size:12px; }
+    .link-btn{ color:var(--text-muted); font-size:13px; }
+    .link-btn:hover{ text-decoration:underline; color:var(--text); opacity:1; }
+    .check-label{ display:flex; align-items:center; gap:8px; font-size:13px; min-height:38px; cursor:pointer; }
+    .check-label input{ width:18px; height:18px; -webkit-appearance:auto; appearance:auto; padding:0; flex:none; }
+    .data-table th{ background:var(--muted-bg); color:var(--text-muted); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; padding:8px 10px; text-align:left; }
+    .data-table td{ padding:8px 10px; font-size:13px; vertical-align:top; }
+    .num, .data-table th.num{ text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+    @media (min-width:641px){ #exp-form-card > .grid{ grid-template-columns:repeat(6, minmax(0, 1fr)); } }
+    .data-table input, .data-table select{ padding:6px 8px; font-size:13px; }
+    .data-table tr.total td{ font-weight:700; border-top:2px solid var(--text); }
+    .data-table tr.subtotal td{ font-weight:600; background:var(--muted-bg); font-size:12px; }
+    .settings-card h3{ font-size:15px; font-weight:600; color:var(--text); }
+    .settings-card .help{ font-size:12px; color:var(--text-muted); margin:4px 0 10px; }
+    .report-doc .rep-kicker{ font-size:11px; font-weight:700; letter-spacing:.1em; color:var(--accent-ink); text-transform:uppercase; }
+    .report-doc .rep-title{ font-size:20px; font-weight:700; color:var(--text); margin:2px 0 4px; }
+    .report-doc .rep-meta{ font-size:12px; color:var(--text-muted); }
+    .report-doc .rep-rule{ height:3px; background:var(--accent); margin:12px 0 4px; width:64px; }
+    .report-doc h3.rep-h{ font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text); margin:22px 0 8px; padding-bottom:4px; border-bottom:1px solid var(--border); }
+    .report-doc .rep-note{ font-size:12px; color:var(--text-muted); margin-top:6px; }
+
+    /* Phone: wide tables become one card per row */
+    @media (max-width:640px){
+      .table-cards thead{ display:none; }
+      .table-cards, .table-cards tbody, .table-cards tr, .table-cards td{ display:block; width:100%; }
+      .table-cards tr{ border:1px solid var(--border); border-radius:8px; margin:0 0 10px; padding:6px 10px; background:var(--surface); }
+      .table-cards td{ border:none!important; padding:3px 0!important; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; text-align:right!important; min-height:24px; }
+      .table-cards td::before{ content:attr(data-label); font-weight:600; color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.04em; text-align:left; flex:none; padding-top:2px; }
+      .table-cards td[data-label=""]::before{ content:none; }
+      .table-cards td.na{ display:none; }
+      .table-cards td > div{ text-align:right; }
+      .table-cards tr.total, .table-cards tr.subtotal{ border-width:2px; }
+      .table-cards-wrap{ padding:10px; }
+      tr.row-attn{ border-color:var(--warning)!important; background:var(--warning-bg)!important; }
+      tr.row-attn td:first-child{ box-shadow:none; }
+    }
+
+    /* Print / save as PDF: the monthly report only, always on a light page */
+    @media print{
+      :root,[data-theme="dark"]{ --bg:#fff; --surface:#fff; --text:#111827; --text-muted:#4B5563; --border:#D1D5DB; --muted-bg:#F3F4F6; --accent-light:#E9F7F9; --accent-ink:#1F7F8C; --primary:#374151; --warning-bg:#FFFBEB; --warning-ink:#7A5200; --warning-brd:#FDE68A; --info-brd:#BFE8ED; color-scheme:light; }
+      @page{ size:A4; margin:14mm 12mm; }
+      body{ background:#fff!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+      header.app-header, .no-print, #toast-notification, .modal-overlay{ display:none!important; }
+      main{ padding:0!important; max-width:none!important; }
+      main > section{ display:none!important; }
+      main > section#panel-report{ display:block!important; opacity:1!important; }
+      #report-body{ border:none!important; box-shadow:none!important; padding:0!important; }
+      .report-doc .overflow-x-auto{ overflow:visible!important; }
+      .data-table th, .data-table td{ padding:4px 6px; font-size:8.5pt; }
+      .data-table tr{ break-inside:avoid; }
+      .table-cards{ display:table!important; }
+      .table-cards thead{ display:table-header-group!important; }
+      .table-cards tbody{ display:table-row-group!important; }
+      .table-cards tr{ display:table-row!important; border:none!important; padding:0!important; }
+      .table-cards td{ display:table-cell!important; text-align:left!important; }
+      .table-cards td.num{ text-align:right!important; }
+      .table-cards td::before{ content:none!important; }
+    }
+
     @media (min-width:641px){
       .sm\:col-span-2{grid-column:span 2;} .sm\:col-span-3{grid-column:span 3;} .sm\:col-span-6{grid-column:span 6;}
       .sm\:flex-row{flex-direction:row;} .sm\:w-20{width:80px;}
@@ -322,6 +414,8 @@
           <button id="tab-exp" aria-label="Switch to Expense Tracker tab">Expense Tracker</button>
           <button id="tab-quick" aria-label="Switch to Quick Log tab">🚗 Quick Log</button>
           <button id="tab-review" style="position:relative;" aria-label="Switch to Review Pending tab">📋 Review<span id="review-badge" class="badge-pending" style="display:none;">0</span></button>
+          <button id="tab-report" aria-label="Switch to Monthly Report tab">Monthly Report</button>
+          <button id="tab-settings" aria-label="Switch to Settings tab">Settings</button>
 
           <!-- Action buttons + PDF month selector -->
           <div class="ml-auto flex flex-wrap gap-2 items-center" style="padding:6px 0;">
@@ -342,50 +436,98 @@
   <main class="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
     <!-- Expense Panel -->
     <section id="panel-expenses" class="space-y-5 hidden">
-      <!-- Add Expense Card -->
-      <div class="bg-white rounded-2xl shadow p-3 sm:p-4">
-        <h2 class="text-base sm:text-lg font-semibold mb-3 text-slate-800">Add Expense</h2>
+      <!-- Tax-year business miles (AMAP threshold) -->
+      <div class="bg-white rounded-2xl shadow p-3 sm:p-4" id="miles-strip-exp"></div>
+
+      <!-- Things to fix (unassigned accounts, missing vehicles, mileage top-up) -->
+      <div id="exp-attention" class="hidden"></div>
+
+      <!-- Add / edit expense card -->
+      <div class="bg-white rounded-2xl shadow p-3 sm:p-4" id="exp-form-card">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <h2 id="exp-form-title" class="text-base sm:text-lg font-semibold text-slate-800">Add Expense</h2>
+          <span id="exp-status-preview"></span>
+        </div>
         <div class="grid grid-cols-1 sm:grid-cols-6 gap-2 sm:gap-3 items-end">
           <div>
-            <label class="block text-xs sm:text-sm text-slate-600 mb-1">Date</label>
-            <input id="exp-date" type="date" class="w-full border rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-sm" aria-label="Expense date">
-          </div>
-          <div class="sm:col-span-2">
-            <label class="block text-xs sm:text-sm text-slate-600 mb-1">Description</label>
-            <input id="exp-desc" type="text" placeholder="Description" class="w-full border rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-sm" aria-label="Expense description">
-          </div>
-          <div>
-            <label class="block text-xs sm:text-sm text-slate-600 mb-1">Category</label>
-            <select id="exp-cat" class="w-full border rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-sm" aria-label="Expense category">
-              <option value="travel">Travel</option>
-              <option value="office">Office</option>
+            <label class="field-label" for="exp-cat">Category</label>
+            <select id="exp-cat" aria-label="Expense category">
+              <option value="mileage">Mileage</option>
+              <option value="fuel">Fuel</option>
+              <option value="charging">EV charging</option>
+              <option value="train">Train</option>
+              <option value="travel">Other travel</option>
+              <option value="office">Office supplies</option>
               <option value="software">Software</option>
               <option value="meals">Meals</option>
               <option value="misc">Misc</option>
             </select>
           </div>
           <div>
-            <label class="block text-xs sm:text-sm text-slate-600 mb-1">Miles</label>
-            <input id="exp-miles" type="text" inputmode="decimal" class="w-full border rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-sm" aria-label="Travel miles">
+            <label class="field-label" for="exp-date">Date</label>
+            <input id="exp-date" type="date" aria-label="Expense date">
           </div>
-          <div>
-            <label class="block text-xs sm:text-sm text-slate-600 mb-1">Rate (£/mi)</label>
-            <input id="exp-rate" type="text" inputmode="decimal" class="w-full border rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-sm" aria-label="Mileage rate">
+          <div class="sm:col-span-2">
+            <label class="field-label" for="exp-desc" id="exp-desc-label">Description</label>
+            <input id="exp-desc" type="text" placeholder="Description" aria-label="Expense description">
           </div>
-          <div>
-            <label class="block text-xs sm:text-sm text-slate-600 mb-1">Amount (£)</label>
-            <input id="exp-amount" type="text" inputmode="decimal" class="w-full border rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-sm bg-slate-100" disabled aria-label="Calculated expense amount">
+          <div data-for="train">
+            <label class="field-label" for="exp-from">From</label>
+            <input id="exp-from" type="text" placeholder="e.g. Leeds" aria-label="Train from">
+          </div>
+          <div data-for="train">
+            <label class="field-label" for="exp-to">To</label>
+            <input id="exp-to" type="text" placeholder="e.g. London Kings Cross" aria-label="Train to">
+          </div>
+          <div data-for="train">
+            <label class="field-label" for="exp-ticket">Ticket reference</label>
+            <input id="exp-ticket" type="text" aria-label="Ticket reference">
+          </div>
+          <div data-for="mileage fuel charging">
+            <label class="field-label" for="exp-vehicle">Vehicle</label>
+            <select id="exp-vehicle" aria-label="Vehicle"></select>
+          </div>
+          <div data-for="mileage">
+            <label class="field-label" for="exp-miles">Business miles</label>
+            <input id="exp-miles" type="text" inputmode="decimal" aria-label="Business miles">
+          </div>
+          <div data-for="mileage" id="row-exp-charging">
+            <label class="field-label" for="exp-charging">Charging</label>
+            <select id="exp-charging" aria-label="Charging for this journey">
+              <option value="home">Home</option>
+              <option value="public">Public</option>
+            </select>
+          </div>
+          <div data-for="charging">
+            <label class="field-label" for="exp-chargeloc">Charged at</label>
+            <select id="exp-chargeloc" aria-label="Where the car was charged">
+              <option value="public">Public charger</option>
+              <option value="home">Home</option>
+            </select>
+          </div>
+          <div data-not="mileage">
+            <label class="field-label" for="exp-paidfrom">Paid from</label>
+            <select id="exp-paidfrom" aria-label="Paid from account"></select>
+          </div>
+          <div data-not="mileage">
+            <label class="field-label" for="exp-amount">Amount (£)</label>
+            <input id="exp-amount" type="text" inputmode="decimal" aria-label="Amount paid">
+          </div>
+          <div data-not="mileage">
+            <label class="field-label" for="exp-vat">VAT on receipt (£)</label>
+            <input id="exp-vat" type="text" inputmode="decimal" placeholder="0.00" aria-label="VAT shown on the receipt">
+          </div>
+          <div data-for="charging" id="row-exp-vatheld">
+            <label class="check-label"><input id="exp-vatheld" type="checkbox"> VAT receipt held</label>
+          </div>
+          <div data-for="mileage" class="sm:col-span-2">
+            <label class="field-label">Amount at HMRC rate</label>
+            <div id="exp-amap-preview" class="calc-box"></div>
           </div>
           <div class="col-span-1 sm:col-span-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
-            <button id="btn-add-exp" class="text-white px-3 sm:px-4 py-2 rounded-lg hover:opacity-90 text-sm transition-opacity" style="background-color: var(--accent);" aria-label="Add new expense">Add Expense</button>
-            <label class="flex items-center gap-2 text-xs sm:text-sm text-slate-700 whitespace-nowrap cursor-pointer">
-              <input id="exp-bizpaid" type="checkbox" class="w-4 h-4">
-              Paid by business — don't claim
-            </label>
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2 text-xs sm:text-sm flex-1">
-              <span class="text-slate-500 whitespace-nowrap">Default rate:</span>
-              <input id="default-rate" type="text" inputmode="decimal" class="flex-1 sm:w-20 border rounded-lg px-2 sm:px-3 py-1 text-sm" aria-label="Default mileage rate">
-            </div>
+            <button id="btn-add-exp" class="btn btn-accent" aria-label="Add new expense">Add Expense</button>
+            <button id="btn-cancel-edit" class="btn btn-outline hidden" aria-label="Cancel editing">Cancel</button>
+            <span id="exp-form-hint" class="text-xs text-slate-500"></span>
           </div>
         </div>
       </div>
@@ -393,16 +535,19 @@
       <!-- Expenses Table -->
       <div class="bg-white rounded-2xl shadow">
         <div class="p-3 sm:p-4 border-b"><h3 class="font-semibold text-slate-800 text-sm sm:text-base">Expenses</h3></div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-xs sm:text-sm table-sticky" id="tbl-expenses">
+        <div class="overflow-x-auto table-cards-wrap">
+          <table class="w-full text-xs sm:text-sm table-sticky table-cards" id="tbl-expenses">
             <thead style="background-color: var(--accent);" class="text-white">
               <tr class="text-left">
+                <th class="p-2 sm:p-3">Ref</th>
                 <th class="p-2 sm:p-3">Date</th>
                 <th class="p-2 sm:p-3">Description</th>
                 <th class="p-2 sm:p-3">Category</th>
-                <th class="p-2 sm:p-3">Miles</th>
-                <th class="p-2 sm:p-3">Rate</th>
+                <th class="p-2 sm:p-3">Vehicle</th>
+                <th class="p-2 sm:p-3">Paid from</th>
                 <th class="p-2 sm:p-3">Amount</th>
+                <th class="p-2 sm:p-3">VAT</th>
+                <th class="p-2 sm:p-3">Status</th>
                 <th class="p-2 sm:p-3"></th>
               </tr>
             </thead>
@@ -411,11 +556,11 @@
         </div>
         <div class="p-3 sm:p-4 bg-slate-50 rounded-b-2xl grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div class="text-white rounded-xl p-3 sm:p-4" style="background-color: var(--primary);">
-            <div class="text-xs sm:text-sm opacity-90">Category Totals</div>
+            <div class="text-xs sm:text-sm opacity-90">Claim totals by category</div>
             <ul id="list-cat-totals" class="mt-2 space-y-1 text-xs sm:text-sm"></ul>
           </div>
           <div class="text-white rounded-xl p-3 sm:p-4 sm:col-span-2 flex items-center justify-between" style="background-color: var(--accent);">
-            <div class="text-base sm:text-lg font-semibold">Total</div>
+            <div class="text-base sm:text-lg font-semibold">Claim total, all months</div>
             <div id="grand-total" class="text-xl sm:text-2xl font-bold">£0.00</div>
           </div>
         </div>
@@ -424,6 +569,24 @@
 
     <!-- Quick Log Panel -->
     <section id="panel-quick" class="space-y-4 hidden">
+      <!-- Vehicle for logged trips + tax-year miles -->
+      <div class="bg-white rounded-2xl shadow p-3 sm:p-4">
+        <div id="miles-strip-quick"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+          <div>
+            <label class="field-label" for="quick-vehicle">Vehicle for these trips</label>
+            <select id="quick-vehicle" aria-label="Vehicle for logged trips"></select>
+          </div>
+          <div id="quick-charging-row">
+            <label class="field-label" for="quick-charging">Charging</label>
+            <select id="quick-charging" aria-label="Charging for logged trips">
+              <option value="home">Home</option>
+              <option value="public">Public</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <!-- Return Trip Toggle -->
       <div class="bg-white rounded-2xl shadow p-3 sm:p-4 flex items-center justify-between">
         <div>
@@ -452,7 +615,7 @@
           </div>
           <div>
             <label class="block text-xs sm:text-sm text-slate-600 mb-1">Client / Description</label>
-            <input id="oneoff-desc" type="text" placeholder="e.g. New Client — Site Visit" class="w-full border rounded-lg px-3 py-2 text-sm" aria-label="Trip description">
+            <input id="oneoff-desc" type="text" placeholder="e.g. New client, site visit" class="w-full border rounded-lg px-3 py-2 text-sm" aria-label="Trip description">
           </div>
           <div>
             <label class="block text-xs sm:text-sm text-slate-600 mb-1">Miles</label>
@@ -490,11 +653,29 @@
       <div id="review-content"></div>
     </section>
 
+    <!-- Monthly Report Panel -->
+    <section id="panel-report" class="space-y-4 hidden">
+      <div class="bg-white rounded-2xl shadow p-3 sm:p-4 no-print flex flex-wrap gap-3 items-end">
+        <div>
+          <label class="field-label" for="report-month">Month</label>
+          <input id="report-month" type="month" style="width:auto;" aria-label="Report month">
+        </div>
+        <button id="btn-report-print" class="btn btn-accent" aria-label="Print the report or save it as a PDF">Print or save as PDF</button>
+        <button id="btn-report-csv" class="btn btn-outline" aria-label="Export the report as CSV">Export CSV</button>
+      </div>
+      <div id="report-body" class="bg-white rounded-2xl shadow p-4 sm:p-6 report-doc"></div>
+    </section>
+
+    <!-- Settings Panel -->
+    <section id="panel-settings" class="space-y-4 hidden">
+      <div id="settings-content" class="space-y-4"></div>
+    </section>
+
     <!-- Wage Panel -->
     <section id="panel-wage" class="space-y-4 sm:space-y-5">
       <div class="bg-white rounded-2xl shadow overflow-x-auto">
         <div class="p-3 sm:p-4 border-b flex items-center justify-between">
-          <h2 id="wage-title" class="text-base sm:text-lg font-semibold text-slate-800">Wage Structure — 2026</h2>
+          <h2 id="wage-title" class="text-base sm:text-lg font-semibold text-slate-800">Wage Structure 2026</h2>
           <div class="flex gap-2">
             <button id="btn-defaults" class="px-3 py-1 text-xs sm:text-sm rounded-lg text-white transition-opacity hover:opacity-90" style="background-color: var(--primary);" aria-label="Edit monthly defaults">⚙ Defaults</button>
             <button id="btn-add-month" class="px-3 py-1 text-xs sm:text-sm rounded-lg text-white transition-opacity hover:opacity-90" style="background-color: var(--accent);" aria-label="Add a new month">+ Add Month</button>
@@ -564,7 +745,7 @@
         <h3 class="font-semibold text-sm sm:text-base">How totals are calculated</h3>
         <ul class="mt-2 text-xs sm:text-sm space-y-1 opacity-95">
           <li>Income Total = Wage Payment + Dividend Payment</li>
-          <li>Expenses auto-pulled from Expense Tracker per month (approved only)</li>
+          <li>Expenses auto-pulled from Expense Tracker per month (approved CLAIM items only; VAT ONLY and BUSINESS PAID items are never included)</li>
           <li>Total Payment = Income Total + Total Expenses</li>
           <li>Personal Tax values are tracked separately</li>
         </ul>
@@ -594,7 +775,7 @@
       <p>Are you sure you want to delete this expense? This action cannot be undone.</p>
       <div class="modal-buttons">
         <button class="btn-modal-cancel" onclick="cancelDeleteExpense()">Cancel</button>
-        <button class="btn-modal-confirm" style="background-color: #dc2626;" onclick="confirmDeleteExpense()">Delete</button>
+        <button class="btn-modal-confirm" style="background-color: var(--primary);" onclick="confirmDeleteExpense()">Delete</button>
       </div>
     </div>
   </div>
@@ -606,7 +787,7 @@
       <p id="modal-delete-month-text">Are you sure you want to delete this month? This action cannot be undone.</p>
       <div class="modal-buttons">
         <button class="btn-modal-cancel" onclick="cancelDeleteMonth()">Cancel</button>
-        <button class="btn-modal-confirm" style="background-color: #dc2626;" onclick="confirmDeleteMonth()">Delete</button>
+        <button class="btn-modal-confirm" style="background-color: var(--primary);" onclick="confirmDeleteMonth()">Delete</button>
       </div>
     </div>
   </div>
@@ -622,11 +803,11 @@
       </p>
       <p style="margin-bottom: 14px; font-size: 13px; color: #6b7280;">
         <strong>Replace all</strong> wipes the app's current data and replaces it with the file
-        contents &mdash; only use this when restoring a full backup.
+        contents. Only use this when restoring a full backup.
       </p>
       <div class="modal-buttons">
         <button class="btn-modal-cancel" onclick="cancelImport()">Cancel</button>
-        <button class="btn-modal-cancel" style="border-color:#dc2626;color:#dc2626;" onclick="confirmImport('replace')">Replace all</button>
+        <button class="btn-modal-cancel" style="border-color:var(--primary);color:var(--text);" onclick="confirmImport('replace')">Replace all</button>
         <button class="btn-modal-confirm" onclick="confirmImport('merge')">Merge</button>
       </div>
     </div>
@@ -639,7 +820,7 @@
       <p>Are you sure you want to delete this pending expense?</p>
       <div class="modal-buttons">
         <button class="btn-modal-cancel" onclick="cancelRejectPending()">Cancel</button>
-        <button class="btn-modal-confirm" style="background-color: #dc2626;" onclick="confirmRejectPending()">Reject</button>
+        <button class="btn-modal-confirm" style="background-color: var(--primary);" onclick="confirmRejectPending()">Reject</button>
       </div>
     </div>
   </div>
@@ -703,7 +884,7 @@
         <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">Password</label>
         <input id="login-password" type="password" autocomplete="current-password" class="w-full border rounded-lg px-3 py-2 text-sm" aria-label="Password">
       </div>
-      <div id="login-error" style="display:none; color:#dc2626; font-size:13px; margin-bottom:8px;"></div>
+      <div id="login-error" style="display:none; color:var(--warning-ink); font-size:13px; margin-bottom:8px;"></div>
       <div class="modal-buttons">
         <button id="login-submit" class="btn-modal-confirm" style="width:100%;">Sign in</button>
       </div>
@@ -847,6 +1028,229 @@ function migrateMileageRate(d) {
   return changed;
 }
 
+/* ──────────────────────────────────────────────────────────────────
+ * PAID FROM, CLAIM STATUS AND HMRC RATES (added 31 Oct 2026)
+ * Every entry has a reference (WX-YYYY-MM-NNNN) and a claim status worked
+ * out from its Paid from account and its type:
+ *   CLAIM          paid personally, goes on the expenses claim
+ *   VAT ONLY       fuel / charging paid personally, VAT evidence only
+ *                  (the mileage rate already covers fuel)
+ *   BUSINESS PAID  paid from a business account, never on the claim
+ * Mileage is rated at HMRC AMAP rates from a dated table; the 10,000-mile
+ * threshold counts business miles across all vehicles in the tax year.
+ * All lists and rate tables live in state.settings and are edited in the
+ * Settings tab. Existing entries keep the amount they were claimed at.
+ * ────────────────────────────────────────────────────────────────── */
+const STATUS_LABEL = { claim: 'CLAIM', vat: 'VAT ONLY', business: 'BUSINESS PAID' };
+const BANDS = ['small', 'mid', 'large'];
+const BAND_LABELS = {
+  petrol: ['1400cc or less', '1401cc to 2000cc', 'Over 2000cc'],
+  diesel: ['1600cc or less', '1601cc to 2000cc', 'Over 2000cc']
+};
+const FUEL_LABELS = { petrol: 'Petrol', diesel: 'Diesel', hybrid: 'Hybrid', electric: 'Electric' };
+
+const DEFAULT_SETTINGS = {
+  accounts: [
+    { id: 'monzo-business', name: 'Monzo Business', business: true },
+    { id: 'personal-credit', name: 'Personal credit card', business: false },
+    { id: 'personal-debit', name: 'Personal debit card', business: false },
+    { id: 'joint', name: 'Joint account', business: false }
+  ],
+  vehicles: [
+    { id: 'veh-ev-1', name: "Wife's electric car", reg: '', fuel: 'electric', band: '', hybridFuel: 'petrol' }
+  ],
+  // HMRC Approved Mileage Allowance Payments for cars and vans (all fuel types)
+  amapRates: [
+    { from: '2011-04-06', first: 0.45, after: 0.25, threshold: 10000 },
+    { from: '2026-04-06', first: 0.55, after: 0.25, threshold: 10000 }
+  ],
+  // HMRC Advisory Fuel Rates per mile, from gov.uk/guidance/advisory-fuel-rates
+  // petrol bands: 1400cc or less, 1401cc to 2000cc, over 2000cc
+  // diesel bands: 1600cc or less, 1601cc to 2000cc, over 2000cc
+  afrRates: [
+    { from: '2025-09-01', petrol: [0.12, 0.14, 0.22], diesel: [0.12, 0.13, 0.18] },
+    { from: '2025-12-01', petrol: [0.12, 0.14, 0.22], diesel: [0.12, 0.13, 0.18] },
+    { from: '2026-03-01', petrol: [0.12, 0.14, 0.22], diesel: [0.12, 0.13, 0.18] },
+    { from: '2026-06-01', petrol: [0.14, 0.17, 0.26], diesel: [0.15, 0.17, 0.23] },
+    { from: '2026-09-01', petrol: [0.14, 0.17, 0.27], diesel: [0.15, 0.16, 0.22] }
+  ],
+  // HMRC Advisory Electric Rates per mile for fully electric cars
+  aerRates: [
+    { from: '2025-09-01', home: 0.08, public: 0.14 },
+    { from: '2025-12-01', home: 0.07, public: 0.14 },
+    { from: '2026-03-01', home: 0.07, public: 0.15 },
+    { from: '2026-06-01', home: 0.07, public: 0.15 },
+    { from: '2026-09-01', home: 0.07, public: 0.15 }
+  ],
+  // Business miles in a tax year that are not recorded in this app, keyed by
+  // the year the tax year starts (e.g. "2026" = 6 Apr 2026 to 5 Apr 2027)
+  milesBroughtForward: {},
+  quickVehicleId: 'veh-ev-1',
+  quickCharging: 'home'
+};
+
+let AMAP_BY_ID = new Map();   // entry id -> AMAP split, refreshed by recomputeDerived()
+
+const round2 = (n) => Math.round((Number(n) + Number.EPSILON) * 100) / 100;
+const pence = (r) => `${+(Number(r) * 100).toFixed(2)}p`;
+const fmtMiles = (n) => (+Number(n).toFixed(1)).toLocaleString('en-GB');
+
+function normDate(s) {
+  const m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(String(s || '').trim());
+  return m ? `${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}` : String(s || '');
+}
+function monthOf(date) { return normDate(date).slice(0, 7); }
+function todayISO() {
+  const t = new Date();
+  return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+}
+function ukDate(date) {
+  const d = normDate(date);
+  return /^\d{4}-\d{2}-\d{2}$/.test(d) ? `${d.slice(8)}/${d.slice(5, 7)}/${d.slice(0, 4)}` : d;
+}
+// Tax year runs 6 April to 5 April; returned as the year it starts in.
+function taxYearOf(date) {
+  const d = normDate(date);
+  const y = parseInt(d.slice(0, 4), 10);
+  if (!y || d.length !== 10) return null;
+  return d.slice(5) >= '04-06' ? y : y - 1;
+}
+function taxYearLabel(y) { return `${y}/${String(y + 1).slice(-2)}`; }
+// Latest row in a dated table that applies on the given date.
+function datedRow(rows, date) {
+  let best = null;
+  (rows || []).forEach(r => { if (r && r.from && r.from <= date && (!best || r.from >= best.from)) best = r; });
+  return best;
+}
+
+function accountById(id, s) { return ((s || state.settings).accounts || []).find(a => a.id === id) || null; }
+function vehicleById(id, s) { return ((s || state.settings).vehicles || []).find(v => v.id === id) || null; }
+function vehicleLabel(v) { return v ? (v.reg ? `${v.name} (${v.reg})` : v.name) : ''; }
+
+function entryKind(e) {
+  switch (e.category) {
+    case 'mileage': return 'mileage';
+    case 'mileage-topup': return 'topup';
+    case 'fuel': return 'fuel';
+    case 'charging': return 'charging';
+    case 'train': return 'train';
+  }
+  // Before 31 Oct 2026 mileage was logged as Travel with miles.
+  if (e.category === 'travel' && parseNum(e.miles) > 0 && !e.paidFrom && !e.paidByBusiness) return 'mileage';
+  return 'other';
+}
+function catKey(e) { const k = entryKind(e); return k === 'mileage' ? 'mileage' : e.category; }
+
+function claimStatusOf(e, s) {
+  const acc = accountById(e.paidFrom, s);
+  if (acc && acc.business) return 'business';          // a business account never reaches the claim
+  const k = entryKind(e);
+  if (k === 'mileage' || k === 'topup') return 'claim';
+  if (k === 'fuel' || k === 'charging') return 'vat';    // the mileage rate already covers fuel
+  if (!acc) return e.paidByBusiness ? 'business' : 'claim';   // Unassigned: the old tick box decides until fixed
+  return 'claim';
+}
+
+function needsAccount(e, s) {
+  const k = entryKind(e);
+  return k !== 'mileage' && k !== 'topup' && !accountById(e.paidFrom, s);
+}
+function needsVehicle(e, s) {
+  const k = entryKind(e);
+  return (k === 'mileage' || k === 'fuel' || k === 'charging') && !vehicleById(e.vehicleId, s);
+}
+function vehicleNeedsBand(v) { return !!v && v.fuel !== 'electric' && !BANDS.includes(v.band); }
+
+// AMAP split for every mileage journey, in date order within each tax year,
+// starting from any miles brought forward. Returns Map(entry -> split).
+function computeAmap(expenses, s) {
+  const out = new Map(), byYear = {};
+  expenses.forEach(e => {
+    if (entryKind(e) !== 'mileage') return;
+    const ty = taxYearOf(e.date);
+    if (ty === null) return;
+    (byYear[ty] = byYear[ty] || []).push(e);
+  });
+  Object.keys(byYear).forEach(ty => {
+    let run = parseNum((s.milesBroughtForward || {})[ty]);
+    byYear[ty]
+      .sort((a, b) => normDate(a.date).localeCompare(normDate(b.date)) || String(a.ref || '').localeCompare(String(b.ref || '')))
+      .forEach(e => {
+        const miles = parseNum(e.miles);
+        const r = datedRow(s.amapRates, normDate(e.date)) || DEFAULT_SETTINGS.amapRates[0];
+        const first = parseNum(r.first), after = parseNum(r.after), threshold = parseNum(r.threshold);
+        const firstMiles = Math.max(0, Math.min(miles, +(threshold - run).toFixed(4)));
+        const afterMiles = +(miles - firstMiles).toFixed(4);
+        out.set(e, { taxYear: +ty, before: run, firstMiles, afterMiles, first, after, threshold,
+                     due: round2(firstMiles * first + afterMiles * after) });
+        run = +(run + miles).toFixed(4);
+      });
+  });
+  return out;
+}
+
+// Refreshes everything derived from the entries and settings. New-style
+// mileage (amap: true) is re-rated; older entries keep the amount claimed.
+// paidByBusiness is kept in step with the status so older copies of the app
+// (and the saved-month HTML file) never count a non-claim item.
+function recomputeDerived(d) {
+  const s = d.settings;
+  const amap = computeAmap(d.expenses, s);
+  AMAP_BY_ID = new Map();
+  d.expenses.forEach(e => {
+    const a = amap.get(e);
+    if (a) {
+      AMAP_BY_ID.set(e.id, a);
+      if (e.amap) {
+        const miles = parseNum(e.miles);
+        e.amount = a.due;
+        e.rate = miles ? +(a.due / miles).toFixed(4) : a.first;
+      }
+    }
+    const k = entryKind(e);
+    if (e.paidFrom || k === 'mileage' || k === 'topup') {
+      if (claimStatusOf(e, s) === 'claim') delete e.paidByBusiness; else e.paidByBusiness = true;
+    }
+  });
+}
+
+function nextRef(d, date) {
+  const mk = /^\d{4}-\d{2}$/.test(monthOf(date)) ? monthOf(date) : monthOf(todayISO());
+  const prefix = `WX-${mk}-`;
+  let max = 0;
+  d.expenses.forEach(e => {
+    if (e.ref && e.ref.startsWith(prefix)) max = Math.max(max, parseInt(e.ref.slice(prefix.length), 10) || 0);
+  });
+  return prefix + String(max + 1).padStart(4, '0');
+}
+
+// One-off upgrade of older data. Safe to run on every load: it only fills
+// what is missing. Returns true if anything changed.
+function migrateV5(d) {
+  const before = JSON.stringify([d.settings, d.expenses]);
+  if (!d.settings || typeof d.settings !== 'object') d.settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+  Object.keys(DEFAULT_SETTINGS).forEach(k => {
+    if (d.settings[k] === undefined) d.settings[k] = JSON.parse(JSON.stringify(DEFAULT_SETTINGS[k]));
+  });
+  if (!Array.isArray(d.expenses)) d.expenses = [];
+  d.expenses = d.expenses.filter(e => e && typeof e === 'object');
+  d.expenses.forEach(e => {
+    if (!e.id) e.id = genUID();
+    if (!e.status) e.status = 'approved';
+    if (e.date) e.date = normDate(e.date);
+    // Trips still waiting for review are rated from the HMRC table from now on.
+    if (e.status === 'pending' && entryKind(e) === 'mileage' && !e.amap) e.amap = true;
+  });
+  // References: oldest first so numbers run in date order (the array is newest first).
+  const seen = new Set();
+  d.expenses.forEach(e => { if (e.ref) { if (seen.has(e.ref)) delete e.ref; else seen.add(e.ref); } });
+  d.expenses.map((e, i) => ({ e, i })).filter(x => !x.e.ref)
+    .sort((a, b) => normDate(a.e.date).localeCompare(normDate(b.e.date)) || (b.i - a.i))
+    .forEach(x => { x.e.ref = nextRef(d, x.e.date); });
+  recomputeDerived(d);
+  return JSON.stringify([d.settings, d.expenses]) !== before;
+}
+
 const state = (function loadState() {
   try {
     const raw = localStorage.getItem(LS_KEY);
@@ -913,17 +1317,24 @@ const state = (function loadState() {
       });
     }
 
-    if (migrateMileageRate(data)) localStorage.setItem(LS_KEY, JSON.stringify(data));
+    const rateMoved = migrateMileageRate(data);
+    let upgraded = false;
+    try { upgraded = migrateV5(data); } catch (err) { console.error('Upgrade step failed; data kept as it was', err); }
+    if (upgraded || rateMoved) localStorage.setItem(LS_KEY, JSON.stringify(data));
 
     return data;
   } catch (e) {
-    return { expenses: [], wageData: {}, mileageRate: 0.55, clients: [], monthlyDefaults: { wage: 0, dividend: 0, personalTax: 275, vatPayment: 1000 } };
+    console.error('Could not load saved data', e);
+    const fresh = { expenses: [], wageData: {}, mileageRate: 0.55, clients: [], monthlyDefaults: { wage: 0, dividend: 0, personalTax: 275, vatPayment: 1000 } };
+    migrateV5(fresh);
+    return fresh;
   }
 })();
 
 // persist() saves locally (always, as an offline cache) and — when signed in to
 // the server — pushes the whole state blob up so phone and desktop stay in sync.
 const persist = () => {
+  recomputeDerived(state);
   localStorage.setItem(LS_KEY, JSON.stringify(state));
   if (typeof SYNC !== 'undefined') SYNC.queuePush();
 };
@@ -955,7 +1366,7 @@ const SYNC = (function () {
     if (!pill) return;
     pill.style.display = 'inline-block';
     pill.textContent = text;
-    const styles = { online: ['#e6f7f2', '#0f766e'], offline: ['#fef3c7', '#92400e'], saving: ['#e0f2fe', '#075985'] };
+    const styles = { online: ['#e6f7f2', '#0f766e'], offline: ['#fef3c7', '#7a5200'], saving: ['#e0f2fe', '#075985'] };
     const [bg, fg] = styles[kind] || styles.offline;
     pill.style.backgroundColor = bg;
     pill.style.color = fg;
@@ -1012,14 +1423,7 @@ const SYNC = (function () {
     pushTimer = setTimeout(push, 800);
   }
   function rerenderAll() {
-    try {
-      renderExpenses(); renderWageTable(); renderChart();
-      renderQuickLog(); renderClientManageList(); updatePendingBadge();
-      const dr = document.getElementById('default-rate');
-      const er = document.getElementById('exp-rate');
-      if (dr) dr.value = state.mileageRate;
-      if (er) er.value = state.mileageRate;
-    } catch (e) { console.error('re-render failed', e); }
+    try { renderAll(); } catch (e) { console.error('re-render failed', e); }
   }
   function applyServerState(srv) {
     Object.keys(state).forEach(k => { delete state[k]; });
@@ -1027,7 +1431,8 @@ const SYNC = (function () {
     if (!state.clients) state.clients = [];
     if (!state.expenses) state.expenses = [];
     if (!state.wageData) state.wageData = {};
-    const migrated = migrateMileageRate(state);
+    let migrated = migrateMileageRate(state);
+    try { migrated = migrateV5(state) || migrated; } catch (err) { console.error('Upgrade step failed; data kept as it was', err); }
     if (!state.monthlyDefaults) state.monthlyDefaults = { wage: 0, dividend: 0, personalTax: 275, vatPayment: 1000 };
     localStorage.setItem(LS_KEY, JSON.stringify(state));
     rerenderAll();
@@ -1111,10 +1516,14 @@ const panelWage = document.getElementById('panel-wage');
 const panelExp = document.getElementById('panel-expenses');
 const panelQuick = document.getElementById('panel-quick');
 const panelReview = document.getElementById('panel-review');
+const tabReport = document.getElementById('tab-report');
+const tabSettings = document.getElementById('tab-settings');
+const panelReport = document.getElementById('panel-report');
+const panelSettings = document.getElementById('panel-settings');
 
 function setTab(name) {
-  const allTabs = [tabWage, tabExp, tabQuick, tabReview];
-  const allPanels = [panelWage, panelExp, panelQuick, panelReview];
+  const allTabs = [tabWage, tabExp, tabQuick, tabReview, tabReport, tabSettings];
+  const allPanels = [panelWage, panelExp, panelQuick, panelReview, panelReport, panelSettings];
   allTabs.forEach(t => t.classList.remove('is-active'));
   allPanels.forEach(p => p.classList.add('hidden'));
 
@@ -1132,6 +1541,14 @@ function setTab(name) {
     tabReview.classList.add('is-active');
     panelReview.classList.remove('hidden');
     renderReview();
+  } else if (name === 'report') {
+    tabReport.classList.add('is-active');
+    panelReport.classList.remove('hidden');
+    renderReport();
+  } else if (name === 'settings') {
+    tabSettings.classList.add('is-active');
+    panelSettings.classList.remove('hidden');
+    renderSettings();
   }
 }
 
@@ -1139,6 +1556,23 @@ tabWage.onclick = () => setTab('wage');
 tabExp.onclick = () => setTab('exp');
 tabQuick.onclick = () => setTab('quick');
 tabReview.onclick = () => setTab('review');
+tabReport.onclick = () => setTab('report');
+tabSettings.onclick = () => setTab('settings');
+
+// Redraws every view after a change (cheap: one user, a few hundred entries).
+// skipSettings keeps the Settings tab as it is while a field is being edited.
+function renderAll(skipSettings) {
+  renderExpenseFormOptions();
+  renderExpenses();
+  renderWageTable();
+  renderChart();
+  renderQuickLog();
+  renderClientManageList();
+  updatePendingBadge();
+  if (!panelReview.classList.contains('hidden')) renderReview();
+  if (!panelReport.classList.contains('hidden')) renderReport();
+  if (!skipSettings && !panelSettings.classList.contains('hidden')) renderSettings();
+}
 
 // ===== Pending Badge =====
 function updatePendingBadge() {
@@ -1155,21 +1589,37 @@ const elDate = document.getElementById('exp-date');
 const elDesc = document.getElementById('exp-desc');
 const elCat = document.getElementById('exp-cat');
 const elMiles = document.getElementById('exp-miles');
-const elRate = document.getElementById('exp-rate');
 const elAmount = document.getElementById('exp-amount');
 const elAdd = document.getElementById('btn-add-exp');
-const elDefaultRate = document.getElementById('default-rate');
+const elCancelEdit = document.getElementById('btn-cancel-edit');
+const elVehicle = document.getElementById('exp-vehicle');
+const elCharging = document.getElementById('exp-charging');
+const elChargeLoc = document.getElementById('exp-chargeloc');
+const elVatHeld = document.getElementById('exp-vatheld');
+const elPaidFrom = document.getElementById('exp-paidfrom');
+const elVat = document.getElementById('exp-vat');
+const elFrom = document.getElementById('exp-from');
+const elTo = document.getElementById('exp-to');
+const elTicket = document.getElementById('exp-ticket');
+const elAmapPreview = document.getElementById('exp-amap-preview');
+const elStatusPreview = document.getElementById('exp-status-preview');
+const elFormTitle = document.getElementById('exp-form-title');
+const elFormHint = document.getElementById('exp-form-hint');
 const tbodyExp = document.getElementById('tbody-expenses');
 const listCatTotals = document.getElementById('list-cat-totals');
 const grandTotalEl = document.getElementById('grand-total');
-const elBizPaid = document.getElementById('exp-bizpaid');
 
-// An expense counts towards the wage/expenses claim only if it's approved AND
-// Simon paid it personally. Business-paid items are logged but never claimed.
-function isClaimable(e) { return e.status === 'approved' && !e.paidByBusiness; }
+// The ONE claim filter: approved AND CLAIM status. Business-paid and VAT-only
+// items are recorded for the books but never claimed.
+function isClaimable(e) { return e.status === 'approved' && claimStatusOf(e) === 'claim'; }
 
 const categoryLabels = {
-  travel: 'Travel',
+  mileage: 'Mileage',
+  'mileage-topup': 'Mileage top-up',
+  fuel: 'Fuel',
+  charging: 'EV charging',
+  train: 'Train',
+  travel: 'Other travel',
   office: 'Office Supplies',
   software: 'Software',
   meals: 'Meals',
@@ -1180,84 +1630,237 @@ function catLabel(id) {
   return categoryLabels[id] || 'Misc';
 }
 
-function refreshExpenseAmountField() {
-  const isTravel = elCat.value === 'travel' && !elBizPaid.checked;
-  elAmount.disabled = isTravel;
-  elAmount.classList.toggle('bg-slate-100', isTravel);
-  if (isTravel) {
-    elAmount.value = (parseNum(elMiles.value) * parseNum(elRate.value)).toFixed(2);
-  }
+// Escapes text for use in HTML content and attribute values.
+const esc = (s) => escapeHtml(s == null ? '' : String(s)).replace(/"/g, '&quot;');
+const plural = (n, one, many) => (n === 1 ? one : many);
+
+function statusChip(st) {
+  return `<span class="chip chip-${st}">${STATUS_LABEL[st]}</span>`;
+}
+function optionList(items, selected, blank) {
+  return (blank ? `<option value="">${esc(blank)}</option>` : '') +
+    items.map(([v, label]) => `<option value="${esc(v)}"${String(v) === String(selected) ? ' selected' : ''}>${esc(label)}</option>`).join('');
+}
+function vehicleOptions(selected, blank) {
+  return optionList(state.settings.vehicles.map(v => [v.id, vehicleLabel(v)]), selected, blank);
+}
+function accountOptions(selected, blank) {
+  return optionList(state.settings.accounts.map(a => [a.id, a.name]), selected, blank);
+}
+function firstBusinessAccountId() {
+  const a = state.settings.accounts.find(x => x.business);
+  return a ? a.id : '';
+}
+function flagField(el) {
+  if (!el) return;
+  el.classList.add('error');
+  setTimeout(() => el.classList.remove('error'), 3000);
 }
 
-elCat.addEventListener('change', refreshExpenseAmountField);
-elMiles.addEventListener('input', refreshExpenseAmountField);
-elRate.addEventListener('input', refreshExpenseAmountField);
-elBizPaid.addEventListener('change', refreshExpenseAmountField);
+function describeSplit(a) {
+  if (!a) return '';
+  const total = a.firstMiles + a.afterMiles;
+  if (a.afterMiles <= 0) return `${fmtMiles(total)} mi at ${pence(a.first)}`;
+  if (a.firstMiles <= 0) return `${fmtMiles(total)} mi at ${pence(a.after)} (over ${fmtMiles(a.threshold)} this tax year)`;
+  return `${fmtMiles(a.firstMiles)} mi at ${pence(a.first)} + ${fmtMiles(a.afterMiles)} mi at ${pence(a.after)} (crosses ${fmtMiles(a.threshold)})`;
+}
 
-elDefaultRate.value = state.mileageRate;
-elRate.value = state.mileageRate;
+// ----- Add / edit form -----
+let editingId = null;
 
-elDefaultRate.addEventListener('input', () => {
-  state.mileageRate = parseNum(elDefaultRate.value);
-  elRate.value = state.mileageRate;
-  refreshExpenseAmountField();
-  persist();
-});
+function renderExpenseFormOptions() {
+  const s = state.settings;
+  const vSel = elVehicle.value || s.quickVehicleId || '';
+  elVehicle.innerHTML = vehicleOptions(vehicleById(vSel) ? vSel : '', s.vehicles.length ? 'Choose vehicle' : 'Add a vehicle in Settings');
+  const pSel = elPaidFrom.value;
+  elPaidFrom.innerHTML = accountOptions(accountById(pSel) ? pSel : '', 'Choose account');
+  refreshExpenseForm();
+}
 
-let pendingDeleteExpenseId = null;
+function formValues() {
+  const cat = elCat.value;
+  const kind = entryKind({ category: cat });
+  const e = { date: elDate.value, description: elDesc.value.trim(), category: cat };
+  if (kind === 'mileage') {
+    e.miles = parseNum(elMiles.value);
+    e.vehicleId = elVehicle.value;
+    const v = vehicleById(e.vehicleId);
+    if (v && v.fuel === 'electric') e.charging = elCharging.value;
+  } else {
+    e.miles = 0;
+    e.rate = 0;
+    e.paidFrom = elPaidFrom.value;
+    e.amount = round2(parseNum(elAmount.value));
+    e.vat = round2(parseNum(elVat.value));
+    if (kind === 'fuel' || kind === 'charging') e.vehicleId = elVehicle.value;
+    if (kind === 'charging') {
+      e.chargeLocation = elChargeLoc.value;
+      if (e.chargeLocation === 'home') e.vatReceiptHeld = elVatHeld.checked;
+    }
+    if (kind === 'train') {
+      e.fromPlace = elFrom.value.trim();
+      e.toPlace = elTo.value.trim();
+      e.ticketRef = elTicket.value.trim();
+    }
+  }
+  return e;
+}
 
-elAdd.onclick = () => {
-  if (!elDate.value) {
-    elDate.classList.add('error');
-    elDate.focus();
-    setTimeout(() => elDate.classList.remove('error'), 3000);
+// AMAP for the journey in the form, as if it were saved now.
+function previewAmap(f) {
+  const editing = editingId ? state.expenses.find(x => x.id === editingId) : null;
+  const t = Object.assign({}, f, { ref: editing ? editing.ref : 'WX-9999', amap: true });
+  const others = state.expenses.filter(x => x.id !== editingId);
+  return computeAmap(others.concat([t]), state.settings).get(t);
+}
+
+function refreshExpenseForm() {
+  const cat = elCat.value;
+  const kind = entryKind({ category: cat });
+  document.querySelectorAll('#exp-form-card [data-for]').forEach(el => {
+    el.classList.toggle('hidden', !el.dataset.for.split(' ').includes(cat));
+  });
+  document.querySelectorAll('#exp-form-card [data-not]').forEach(el => {
+    el.classList.toggle('hidden', el.dataset.not.split(' ').includes(cat));
+  });
+  const v = vehicleById(elVehicle.value);
+  document.getElementById('row-exp-charging').classList.toggle('hidden', !(kind === 'mileage' && v && v.fuel === 'electric'));
+  document.getElementById('row-exp-vatheld').classList.toggle('hidden', !(kind === 'charging' && elChargeLoc.value === 'home'));
+  const descLabel = (kind === 'mileage' || kind === 'train') ? 'Purpose / client' : 'Description';
+  document.getElementById('exp-desc-label').textContent = descLabel;
+  elDesc.placeholder = descLabel;
+
+  const f = formValues();
+  elStatusPreview.innerHTML = statusChip(claimStatusOf(f));
+
+  let hint = '';
+  if (kind === 'mileage') {
+    const editing = editingId ? state.expenses.find(x => x.id === editingId) : null;
+    const kept = editing && !editing.amap && entryKind(editing) === 'mileage' &&
+      normDate(editing.date) === f.date && parseNum(editing.miles) === f.miles;
+    if (kept) {
+      elAmapPreview.innerHTML = `<strong>${fmt(editing.amount)}</strong> <span class="sub-line">as claimed at ${pence(editing.rate)}. Changing the date or miles re-rates it at the HMRC rate.</span>`;
+    } else if (!f.date || !(f.miles > 0)) {
+      elAmapPreview.textContent = 'Enter the date and miles';
+    } else {
+      const a = previewAmap(f);
+      elAmapPreview.innerHTML = a ? `<strong>${fmt(a.due)}</strong> <span class="sub-line">${describeSplit(a)}</span>` : 'Enter the date and miles';
+    }
+    hint = 'Mileage is always CLAIM. The rate covers the fuel for the journey.';
+  } else if (kind === 'fuel' || kind === 'charging') {
+    hint = 'Fuel and charging are kept as VAT evidence and never go on the claim, because mileage covers them.';
+  } else if (kind === 'train') {
+    hint = 'UK rail fares are zero-rated, so VAT is normally £0.';
+  }
+  const acc = accountById(f.paidFrom);
+  if (acc && acc.business && kind !== 'mileage') {
+    hint = `Paid from ${acc.name}: recorded for the books, never on the claim.`;
+    if (kind === 'fuel' || kind === 'charging') hint += ' The business paying for fuel for a private car as well as mileage pays for that fuel twice, so check this one.';
+  }
+  elFormHint.textContent = hint;
+}
+
+function saveExpenseForm() {
+  const f = formValues();
+  const kind = entryKind(f);
+  const bad = [];
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(f.date)) bad.push(elDate);
+  if (kind === 'mileage') {
+    if (!vehicleById(f.vehicleId)) bad.push(elVehicle);
+    if (!(f.miles > 0)) bad.push(elMiles);
+  } else {
+    if (!accountById(f.paidFrom)) bad.push(elPaidFrom);
+    if (!(f.amount > 0)) bad.push(elAmount);
+    if (f.vat < 0 || f.vat > f.amount) bad.push(elVat);
+    if ((kind === 'fuel' || kind === 'charging') && !vehicleById(f.vehicleId)) bad.push(elVehicle);
+  }
+  if (bad.length) {
+    bad.forEach(flagField);
+    bad[0].focus();
+    showToast(bad.includes(elVat) && bad.length === 1 ? 'VAT cannot be more than the amount' : 'Fill in the highlighted fields');
     return;
   }
 
-  const bizPaid = elBizPaid.checked;
-  const typedAmount = parseNum(elAmount.value);
-  const exp = {
-    id: genUID(),
-    date: elDate.value,
-    description: elDesc.value || '',
-    category: elCat.value,
-    miles: parseNum(elMiles.value),
-    rate: parseNum(elRate.value),
-    amount: parseFloat(
-      (
-        elCat.value === 'travel' && !(bizPaid && typedAmount)
-          ? parseNum(elMiles.value) * parseNum(elRate.value)
-          : typedAmount
-      ).toFixed(2)
-    ),
-    status: 'approved'
-  };
-  if (bizPaid) exp.paidByBusiness = true;
-  state.expenses.unshift(exp);
+  if (editingId) {
+    const idx = state.expenses.findIndex(x => x.id === editingId);
+    const old = state.expenses[idx];
+    if (!old) { resetExpenseForm(); return; }
+    const next = Object.assign({ id: old.id, ref: old.ref, status: old.status }, f);
+    if (old.createdAt) next.createdAt = old.createdAt;
+    if (kind === 'mileage') {
+      const kept = !old.amap && entryKind(old) === 'mileage' && normDate(old.date) === f.date && parseNum(old.miles) === f.miles;
+      if (kept) { next.amount = old.amount; next.rate = old.rate; }   // keep what was claimed
+      else next.amap = true;
+    }
+    state.expenses[idx] = next;
+    showToast(`Saved ${old.ref}`);
+  } else {
+    const e = Object.assign({ id: genUID(), ref: nextRef(state, f.date), status: 'approved', createdAt: new Date().toISOString() }, f);
+    if (kind === 'mileage') e.amap = true;
+    state.expenses.unshift(e);
+    showToast(`Added ${e.ref}`);
+  }
   persist();
-  renderExpenses();
-  renderWageTable();
-  renderChart();
-
-  elDate.value = '';
-  elDesc.value = '';
-  elCat.value = 'travel';
-  elMiles.value = '';
-  elRate.value = state.mileageRate;
-  elAmount.value = '';
-  elBizPaid.checked = false;
-  refreshExpenseAmountField();
-};
-
-function toggleBizPaid(expenseId) {
-  const e = state.expenses.find(x => x.id === expenseId);
-  if (!e) return;
-  if (e.paidByBusiness) delete e.paidByBusiness; else e.paidByBusiness = true;
-  persist();
-  renderExpenses();
-  renderWageTable();
-  renderChart();
+  resetExpenseForm();
+  renderAll();
 }
+
+function resetExpenseForm() {
+  editingId = null;
+  elFormTitle.textContent = 'Add Expense';
+  elAdd.textContent = 'Add Expense';
+  elCancelEdit.classList.add('hidden');
+  [elDesc, elMiles, elAmount, elVat, elFrom, elTo, elTicket].forEach(el => { el.value = ''; });
+  elDate.value = todayISO();
+  elVatHeld.checked = false;
+  if (elCat.value === 'train') applyTrainDefaults();
+  refreshExpenseForm();
+}
+
+function applyTrainDefaults() {
+  const biz = firstBusinessAccountId();
+  if (biz) elPaidFrom.value = biz;
+  elVat.value = '0';
+}
+
+function startEditExpense(id) {
+  const e = state.expenses.find(x => x.id === id);
+  if (!e || entryKind(e) === 'topup') return;
+  setTab('exp');
+  editingId = id;
+  const kind = entryKind(e);
+  elCat.value = kind === 'mileage' ? 'mileage' : (categoryLabels[e.category] ? e.category : 'misc');
+  renderExpenseFormOptions();
+  elDate.value = normDate(e.date);
+  elDesc.value = e.description || '';
+  elMiles.value = kind === 'mileage' ? (e.miles || '') : '';
+  elVehicle.value = vehicleById(e.vehicleId) ? e.vehicleId : '';
+  elCharging.value = e.charging === 'public' ? 'public' : 'home';
+  elChargeLoc.value = e.chargeLocation === 'home' ? 'home' : 'public';
+  elVatHeld.checked = !!e.vatReceiptHeld;
+  elPaidFrom.value = accountById(e.paidFrom) ? e.paidFrom : '';
+  elAmount.value = kind === 'mileage' ? '' : (e.amount != null ? e.amount : '');
+  elVat.value = e.vat != null ? e.vat : '';
+  elFrom.value = e.fromPlace || '';
+  elTo.value = e.toPlace || '';
+  elTicket.value = e.ticketRef || '';
+  elFormTitle.textContent = `Edit ${e.ref}${e.status === 'pending' ? ' (waiting for review)' : ''}`;
+  elAdd.textContent = 'Save changes';
+  elCancelEdit.classList.remove('hidden');
+  refreshExpenseForm();
+  document.getElementById('exp-form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+elCat.addEventListener('change', () => {
+  if (elCat.value === 'train' && !editingId) applyTrainDefaults();
+  refreshExpenseForm();
+});
+[elDate, elDesc, elMiles, elAmount, elVat, elFrom, elTo, elTicket].forEach(el => el.addEventListener('input', refreshExpenseForm));
+[elVehicle, elCharging, elChargeLoc, elPaidFrom, elVatHeld, elDate].forEach(el => el.addEventListener('change', refreshExpenseForm));
+elAdd.onclick = saveExpenseForm;
+elCancelEdit.onclick = resetExpenseForm;
+
+let pendingDeleteExpenseId = null;
 
 function requestDeleteExpense(expenseId) {
   pendingDeleteExpenseId = expenseId;
@@ -1267,10 +1870,9 @@ function requestDeleteExpense(expenseId) {
 function confirmDeleteExpense() {
   if (pendingDeleteExpenseId) {
     state.expenses = state.expenses.filter((x) => x.id !== pendingDeleteExpenseId);
+    if (editingId === pendingDeleteExpenseId) resetExpenseForm();
     persist();
-    renderExpenses();
-    renderWageTable();
-    renderChart();
+    renderAll();
     closeModal('modal-delete-expense');
     pendingDeleteExpenseId = null;
   }
@@ -1281,43 +1883,152 @@ function cancelDeleteExpense() {
   closeModal('modal-delete-expense');
 }
 
+// ----- Mileage claimed below the HMRC rate (e.g. 2026/27 journeys at 45p) -----
+function toppedUpFor(id) {
+  let t = 0;
+  state.expenses.forEach(x => { if (x.topUpParts && x.topUpParts[id]) t += parseNum(x.topUpParts[id]); });
+  return round2(t);
+}
+// Positive: still owed at the HMRC rate. Negative: claimed above it.
+function mileageResidual(e) {
+  if (e.amap || e.status !== 'approved' || entryKind(e) !== 'mileage') return 0;
+  const a = AMAP_BY_ID.get(e.id);
+  if (!a) return 0;
+  return round2(a.due - parseNum(e.amount) - toppedUpFor(e.id));
+}
+function topUpCandidates() { return state.expenses.filter(e => mileageResidual(e) >= 0.01); }
+
+function addTopUpClaim() {
+  const list = topUpCandidates();
+  if (!list.length) return;
+  const parts = {};
+  let total = 0;
+  list.forEach(e => { const r = mileageResidual(e); parts[e.id] = r; total += r; });
+  total = round2(total);
+  const refs = list.map(e => e.ref).sort();
+  if (!confirm(`Add a top-up claim of ${fmt(total)} for ${list.length} ${plural(list.length, 'journey', 'journeys')} claimed below the HMRC rate? It goes on this month's claim, dated today.`)) return;
+  const date = todayISO();
+  const t = {
+    id: genUID(), ref: nextRef(state, date), date, category: 'mileage-topup',
+    description: `HMRC mileage rate top-up for ${list.length} ${plural(list.length, 'journey', 'journeys')} (${refs[0]}${refs.length > 1 ? ' to ' + refs[refs.length - 1] : ''})`,
+    miles: 0, rate: 0, amount: total, vat: 0, status: 'approved', topUpParts: parts, createdAt: new Date().toISOString()
+  };
+  state.expenses.unshift(t);
+  persist();
+  renderAll();
+  showToast(`Top-up ${t.ref} added: ${fmt(total)}`);
+}
+
+// ----- Entries table -----
+function entryNeedsFix(e) {
+  const v = vehicleById(e.vehicleId);
+  return needsAccount(e) || needsVehicle(e) ||
+    (entryKind(e) === 'mileage' && !!v && v.fuel === 'electric' && !e.charging);
+}
+
+function entryDetailLines(e) {
+  const k = entryKind(e), lines = [];
+  if (k === 'mileage') {
+    const a = AMAP_BY_ID.get(e.id), v = vehicleById(e.vehicleId);
+    let t = e.amap && a ? describeSplit(a) : `${fmtMiles(e.miles)} mi claimed at ${pence(e.rate)}`;
+    if (v && v.fuel === 'electric') t += e.charging ? `, ${e.charging} charging` : ', charging not set';
+    lines.push(esc(t));
+    const res = mileageResidual(e);
+    if (res >= 0.01) lines.push(`<span class="attn-text">Below the HMRC rate of ${pence(a.first)}: top-up owed ${fmt(res)}</span>`);
+    else if (res <= -0.01) lines.push(`<span class="attn-text">${fmt(-res)} more than the HMRC rate allows</span>`);
+    const tu = toppedUpFor(e.id);
+    if (tu > 0) {
+      const by = state.expenses.filter(x => x.topUpParts && x.topUpParts[e.id]).map(x => x.ref).join(', ');
+      lines.push(`Topped up ${fmt(tu)} on ${esc(by)}`);
+    }
+  } else if (k === 'topup') {
+    lines.push(`Difference between the amounts claimed and the HMRC rate for ${Object.keys(e.topUpParts || {}).length} journeys`);
+  } else if (k === 'train') {
+    const route = [e.fromPlace, e.toPlace].filter(Boolean).join(' to ');
+    const parts = [route, e.ticketRef ? `ticket ${e.ticketRef}` : ''].filter(Boolean);
+    if (parts.length) lines.push(esc(parts.join(', ')));
+  } else if (k === 'charging') {
+    lines.push(e.chargeLocation === 'home'
+      ? (e.vatReceiptHeld ? 'Home charging, VAT receipt held' : 'Home charging, no VAT receipt (not counted as VAT cover)')
+      : 'Public charger');
+  }
+  if (needsAccount(e) && e.paidByBusiness) lines.push('Was marked "paid by business"');
+  return lines.map(l => `<div class="sub-line">${l}</div>`).join('');
+}
+
+function vehicleCell(e) {
+  const k = entryKind(e);
+  if (k !== 'mileage' && k !== 'fuel' && k !== 'charging') return '<span class="text-slate-500">-</span>';
+  const v = vehicleById(e.vehicleId);
+  if (v) return esc(vehicleLabel(v));
+  return `<select class="inline-select attn" onchange="setEntryField('${e.id}','vehicleId',this.value)" aria-label="Choose vehicle">${vehicleOptions('', 'Choose vehicle')}</select>`;
+}
+
+function paidFromCell(e) {
+  const k = entryKind(e);
+  if (k === 'mileage' || k === 'topup') return '<span class="text-slate-500">Mileage allowance</span>';
+  const a = accountById(e.paidFrom);
+  if (a) return esc(a.name);
+  return `<select class="inline-select attn" onchange="setEntryField('${e.id}','paidFrom',this.value)" aria-label="Choose the Paid from account">${accountOptions('', 'Unassigned')}</select>`;
+}
+
+function setEntryField(id, field, value) {
+  const e = state.expenses.find(x => x.id === id);
+  if (!e || !value) return;
+  e[field] = value;
+  if (field === 'vehicleId') {
+    const v = vehicleById(value);
+    if (v && v.fuel === 'electric' && entryKind(e) === 'mileage' && !e.charging) e.charging = 'home';
+  }
+  persist();
+  renderAll();
+}
+
+function expenseRowHtml(e) {
+  const k = entryKind(e), st = claimStatusOf(e);
+  const noVat = k === 'mileage' || k === 'topup';
+  const actions = (k === 'topup' ? '' : `<button class="link-btn" style="margin-right:14px" onclick="startEditExpense('${e.id}')" aria-label="Edit this expense">Edit</button>`) +
+    `<button class="link-btn" onclick="requestDeleteExpense('${e.id}')" aria-label="Delete this expense">Delete</button>`;
+  return `<tr class="border-t${entryNeedsFix(e) ? ' row-attn' : ''}">
+    <td class="p-3" data-label="Ref"><span class="ref">${esc(e.ref)}</span></td>
+    <td class="p-3 whitespace-nowrap" data-label="Date">${esc(ukDate(e.date))}</td>
+    <td class="p-3" data-label="Description"><div>${esc(e.description) || '<span class="text-slate-500">No description</span>'}${entryDetailLines(e)}</div></td>
+    <td class="p-3" data-label="Category">${esc(catLabel(catKey(e)))}</td>
+    <td class="p-3${['mileage', 'fuel', 'charging'].includes(k) ? '' : ' na'}" data-label="Vehicle">${vehicleCell(e)}</td>
+    <td class="p-3" data-label="Paid from">${paidFromCell(e)}</td>
+    <td class="p-3 num${st === 'claim' ? ' font-medium text-teal' : ''}" data-label="Amount">${fmt(e.amount)}</td>
+    <td class="p-3 num${noVat ? ' na' : ''}" data-label="VAT">${noVat ? '<span class="text-slate-500">-</span>' : fmt(e.vat)}</td>
+    <td class="p-3" data-label="Status">${statusChip(st)}</td>
+    <td class="p-3 text-right whitespace-nowrap" data-label="">${actions}</td>
+  </tr>`;
+}
+
 function renderExpenses() {
-  tbodyExp.innerHTML = '';
+  renderMilesStrips();
+  renderAttention();
+  const approved = state.expenses.filter(e => e.status === 'approved');
 
-  const approvedExpenses = state.expenses.filter(e => e.status === 'approved');
-
-  if (approvedExpenses.length === 0) {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td class="p-3 text-slate-500" colspan="7">
+  if (approved.length === 0) {
+    tbodyExp.innerHTML = `<tr><td class="p-3 text-slate-500" colspan="10" data-label="">
       <div class="empty-state">
         <div class="empty-state-icon">📋</div>
         <div class="empty-state-title">No approved expenses yet</div>
         <div class="empty-state-text">Add an expense or approve pending expenses to see them here.</div>
       </div>
-    </td>`;
-    tbodyExp.appendChild(tr);
+    </td></tr>`;
   } else {
-    approvedExpenses.forEach((e) => {
-      const tr = document.createElement('tr');
-      tr.className = 'border-t animate-slide-in';
-      tr.innerHTML = `
-        <td class="p-3">${e.date}</td>
-        <td class="p-3">${e.description}${e.paidByBusiness ? '<div class="text-xs font-semibold uppercase tracking-wide text-slate-500 mt-1">Paid by business · not claimed</div>' : ''}</td>
-        <td class="p-3">${catLabel(e.category)}</td>
-        <td class="p-3">${e.miles || '-'}</td>
-        <td class="p-3">${e.miles ? e.rate.toFixed(2) : '-'}</td>
-        <td class="p-3 font-medium text-teal"${e.paidByBusiness ? ' style="color:#94a3b8;text-decoration:line-through"' : ''}>${fmt(e.amount)}</td>
-        <td class="p-3 text-right whitespace-nowrap"><button class="text-slate-600 hover:underline" style="margin-right:14px" onclick="toggleBizPaid('${e.id}')" aria-label="Switch between claim and paid by business">${e.paidByBusiness ? 'Claim it' : 'Business paid'}</button><button class="text-red-600 hover:text-red-800 hover:underline transition-colors" onclick="requestDeleteExpense('${e.id}')" aria-label="Delete this expense">Delete</button></td>`;
-      tbodyExp.appendChild(tr);
-    });
+    tbodyExp.innerHTML = approved.map(expenseRowHtml).join('');
   }
 
   const catTotals = {};
-  let grand = 0, bizTotal = 0;
-  approvedExpenses.forEach((e) => {
-    if (e.paidByBusiness) { bizTotal += e.amount; return; }
-    catTotals[e.category] = (catTotals[e.category] || 0) + e.amount;
-    grand += e.amount;
+  let grand = 0, vatOnly = 0, bizTotal = 0;
+  approved.forEach((e) => {
+    const st = claimStatusOf(e), amt = parseNum(e.amount);
+    if (st === 'vat') { vatOnly += amt; return; }
+    if (st === 'business') { bizTotal += amt; return; }
+    const key = catKey(e);
+    catTotals[key] = (catTotals[key] || 0) + amt;
+    grand += amt;
   });
 
   listCatTotals.innerHTML = '';
@@ -1330,17 +2041,146 @@ function renderExpenses() {
     Object.entries(catTotals).forEach(([k, v]) => {
       const li = document.createElement('li');
       li.className = 'flex justify-between';
-      li.innerHTML = `<span>${catLabel(k)}</span><span class="font-semibold">${fmt(v)}</span>`;
+      li.innerHTML = `<span>${esc(catLabel(k))}</span><span class="font-semibold">${fmt(v)}</span>`;
       listCatTotals.appendChild(li);
     });
   }
   grandTotalEl.textContent = fmt(grand);
-  if (bizTotal > 0) {
+  [['VAT ONLY receipts (not claimed)', vatOnly], ['Business paid (not claimed)', bizTotal]].forEach(([label, v]) => {
+    if (v <= 0) return;
     const li = document.createElement('li');
-    li.className = 'flex justify-between opacity-80 border-t border-white/30 pt-1 mt-1';
-    li.innerHTML = `<span>Paid by business (not claimed)</span><span class="font-semibold">${fmt(bizTotal)}</span>`;
+    li.className = 'flex justify-between opacity-80 border-t pt-1 mt-1';
+    li.style.borderColor = 'rgba(255,255,255,.3)';
+    li.innerHTML = `<span>${label}</span><span class="font-semibold">${fmt(v)}</span>`;
     listCatTotals.appendChild(li);
+  });
+}
+
+// ----- Needs attention panel -----
+function renderAttention() {
+  const el = document.getElementById('exp-attention');
+  const s = state.settings, all = state.expenses;
+  const items = [];
+
+  const noAcc = all.filter(e => needsAccount(e));
+  if (noAcc.length) {
+    items.push(`<div class="attn-item"><span><strong>${noAcc.length}</strong> ${plural(noAcc.length, 'entry has', 'entries have')} no Paid from account and ${plural(noAcc.length, 'shows', 'show')} as Unassigned. Pick the account on each highlighted row.</span></div>`);
   }
+
+  const noVeh = all.filter(e => entryKind(e) === 'mileage' && needsVehicle(e));
+  if (noVeh.length) {
+    items.push(`<div class="attn-item"><span><strong>${noVeh.length}</strong> mileage ${plural(noVeh.length, 'journey has', 'journeys have')} no vehicle. Set ${plural(noVeh.length, 'it', 'them all')} to</span>
+      <select id="bulk-vehicle" class="inline-select" onchange="refreshBulkCharging()" aria-label="Vehicle for journeys with none">${vehicleOptions(vehicleById(s.quickVehicleId) ? s.quickVehicleId : '', 'Choose vehicle')}</select>
+      <select id="bulk-charging" class="inline-select" aria-label="Charging for those journeys"><option value="home">Home charging</option><option value="public">Public charging</option></select>
+      <button class="btn btn-outline btn-sm" onclick="applyBulkVehicle()">Apply</button></div>`);
+  }
+
+  const noCharge = all.filter(e => { const v = vehicleById(e.vehicleId); return entryKind(e) === 'mileage' && v && v.fuel === 'electric' && !e.charging; });
+  if (noCharge.length) {
+    items.push(`<div class="attn-item"><span><strong>${noCharge.length}</strong> electric car ${plural(noCharge.length, 'journey has', 'journeys have')} no charging type. Set ${plural(noCharge.length, 'it', 'them')} to</span>
+      <select id="bulk-charge-only" class="inline-select" aria-label="Charging type"><option value="home">Home charging</option><option value="public">Public charging</option></select>
+      <button class="btn btn-outline btn-sm" onclick="applyBulkCharging()">Apply</button></div>`);
+  }
+
+  const tops = topUpCandidates();
+  if (tops.length) {
+    const owed = round2(tops.reduce((t, e) => t + mileageResidual(e), 0));
+    const years = [...new Set(tops.map(e => taxYearLabel(taxYearOf(e.date))))].join(', ');
+    items.push(`<div class="attn-item"><span><strong>${tops.length}</strong> ${years} ${plural(tops.length, 'journey was', 'journeys were')} claimed below the HMRC rate (for example at 45p instead of 55p). Top-up owed: <strong>${fmt(owed)}</strong>.</span>
+      <button class="btn btn-accent btn-sm" onclick="addTopUpClaim()">Add top-up to this month's claim</button></div>`);
+  }
+
+  const bandless = s.vehicles.filter(vehicleNeedsBand);
+  const noReg = s.vehicles.filter(v => !String(v.reg || '').trim());
+  if (bandless.length || noReg.length) {
+    const bits = [];
+    if (bandless.length) bits.push(`${bandless.map(v => esc(v.name)).join(', ')} ${plural(bandless.length, 'needs', 'need')} an engine size so the fuel element can be worked out`);
+    if (noReg.length) bits.push(`${noReg.map(v => esc(v.name)).join(', ')} ${plural(noReg.length, 'has', 'have')} no registration`);
+    items.push(`<div class="attn-item"><span>${bits.join('. ')}.</span> <button class="btn btn-outline btn-sm" onclick="setTab('settings')">Open Settings</button></div>`);
+  }
+
+  // Journeys before the first one in the app would be missing from the 10,000 count.
+  const ty = taxYearOf(todayISO());
+  const bf = parseNum((s.milesBroughtForward || {})[ty]);
+  const firstDate = all.filter(e => entryKind(e) === 'mileage' && taxYearOf(e.date) === ty).map(e => normDate(e.date)).sort()[0];
+  if (!bf && firstDate && firstDate > `${ty}-04-30`) {
+    items.push(`<div class="attn-item"><span>The first ${taxYearLabel(ty)} journey in the app is dated ${ukDate(firstDate)}. If you drove on business between 6 April and then, add those miles as miles brought forward so the 10,000-mile count is right.</span> <button class="btn btn-outline btn-sm" onclick="setTab('settings')">Open Settings</button></div>`);
+  }
+
+  if (!items.length) { el.className = 'hidden'; el.innerHTML = ''; return; }
+  el.className = 'attn-panel';
+  el.innerHTML = `<div class="attn-title">Needs attention</div>${items.join('')}`;
+  refreshBulkCharging();
+}
+
+function refreshBulkCharging() {
+  const vs = document.getElementById('bulk-vehicle'), ch = document.getElementById('bulk-charging');
+  if (!vs || !ch) return;
+  const v = vehicleById(vs.value);
+  ch.classList.toggle('hidden', !(v && v.fuel === 'electric'));
+}
+
+function applyBulkVehicle() {
+  const vs = document.getElementById('bulk-vehicle');
+  const v = vehicleById(vs && vs.value);
+  if (!v) { flagField(vs); showToast('Choose a vehicle first'); return; }
+  const ch = document.getElementById('bulk-charging').value === 'public' ? 'public' : 'home';
+  let n = 0;
+  state.expenses.forEach(e => {
+    if (entryKind(e) === 'mileage' && needsVehicle(e)) {
+      e.vehicleId = v.id;
+      if (v.fuel === 'electric' && !e.charging) e.charging = ch;
+      n++;
+    }
+  });
+  persist();
+  renderAll();
+  showToast(`${n} ${plural(n, 'journey', 'journeys')} set to ${v.name}`);
+}
+
+function applyBulkCharging() {
+  const ch = document.getElementById('bulk-charge-only').value === 'public' ? 'public' : 'home';
+  let n = 0;
+  state.expenses.forEach(e => {
+    const v = vehicleById(e.vehicleId);
+    if (entryKind(e) === 'mileage' && v && v.fuel === 'electric' && !e.charging) { e.charging = ch; n++; }
+  });
+  persist();
+  renderAll();
+  showToast(`${n} ${plural(n, 'journey', 'journeys')} set to ${ch} charging`);
+}
+
+// ----- Tax-year business miles (shown on Expense Tracker and Quick Log) -----
+function taxYearMiles(ty, uptoDate) {
+  let miles = parseNum((state.settings.milesBroughtForward || {})[ty]);
+  state.expenses.forEach(e => {
+    if (entryKind(e) === 'mileage' && taxYearOf(e.date) === ty && (!uptoDate || normDate(e.date) <= uptoDate)) miles += parseNum(e.miles);
+  });
+  return +miles.toFixed(1);
+}
+
+function milesStripHtml() {
+  const today = todayISO(), ty = taxYearOf(today);
+  const r = datedRow(state.settings.amapRates, today) || DEFAULT_SETTINGS.amapRates[1];
+  const thr = parseNum(r.threshold), miles = taxYearMiles(ty);
+  const bf = parseNum((state.settings.milesBroughtForward || {})[ty]);
+  const pct = thr ? Math.min(100, (miles / thr) * 100) : 0;
+  const left = +(thr - miles).toFixed(1);
+  const sub = left > 0
+    ? `${fmtMiles(left)} miles left at ${pence(r.first)}, then ${pence(r.after)} a mile`
+    : `Over ${fmtMiles(thr)} miles: further journeys are ${pence(r.after)} a mile`;
+  return `<div class="miles-strip">
+    <div class="ms-head"><span class="ms-label">${taxYearLabel(ty)} business miles to date</span><span class="ms-value">${fmtMiles(miles)} of ${fmtMiles(thr)}</span></div>
+    <div class="bar"><div style="width:${pct.toFixed(1)}%"></div></div>
+    <div class="ms-sub">${sub}.${bf ? ` Includes ${fmtMiles(bf)} miles brought forward.` : ''} All vehicles, 6 April to 5 April.</div>
+  </div>`;
+}
+
+function renderMilesStrips() {
+  ['miles-strip-exp', 'miles-strip-quick'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = milesStripHtml();
+  });
 }
 
 // ===== Toast Notification =====
@@ -1361,7 +2201,36 @@ function showToast(message) {
 }
 
 // ===== Quick Log Functions =====
+function renderQuickVehicle() {
+  const s = state.settings;
+  const sel = document.getElementById('quick-vehicle');
+  const vid = vehicleById(s.quickVehicleId) ? s.quickVehicleId : '';
+  sel.innerHTML = vehicleOptions(vid, s.vehicles.length ? 'Choose vehicle' : 'Add a vehicle in Settings');
+  sel.classList.toggle('attn', !vid);
+  const v = vehicleById(vid);
+  document.getElementById('quick-charging-row').classList.toggle('hidden', !(v && v.fuel === 'electric'));
+  document.getElementById('quick-charging').value = s.quickCharging === 'public' ? 'public' : 'home';
+}
+
+// A pending mileage trip for the Quick Log vehicle, rated at the HMRC rate.
+function quickTripEntry(date, description, miles) {
+  const s = state.settings, v = vehicleById(s.quickVehicleId);
+  if (!v) {
+    const sel = document.getElementById('quick-vehicle');
+    flagField(sel);
+    sel.focus();
+    showToast('Choose the vehicle for these trips first');
+    return null;
+  }
+  const e = { id: genUID(), ref: nextRef(state, date), date, description, category: 'mileage', miles, vehicleId: v.id,
+              amap: true, status: 'pending', createdAt: new Date().toISOString() };
+  if (v.fuel === 'electric') e.charging = s.quickCharging === 'public' ? 'public' : 'home';
+  return e;
+}
+
 function renderQuickLog() {
+  renderMilesStrips();
+  renderQuickVehicle();
   const container = document.getElementById('client-quick-list');
   if (state.clients.length === 0) {
     container.innerHTML = `<div class="text-center py-8 text-slate-400">
@@ -1381,7 +2250,7 @@ function renderQuickLog() {
           <span class="font-semibold text-slate-800">${escapeHtml(client.name)}</span>
         </div>
         <div class="text-xs text-amber-600 mt-2" style="padding:8px;background:#FEF3C7;border-radius:6px;">
-          ⚠ No sites added yet — go to <strong>Manage Clients</strong> below to add a site with miles for this client.
+          ⚠ No sites added yet. Go to <strong>Manage Clients</strong> below to add a site with miles for this client.
         </div>
       </div>`;
     } else if (client.sites.length === 1) {
@@ -1442,23 +2311,13 @@ function logClientTrip(clientId, siteId) {
 
   const isReturn = document.getElementById('return-trip-toggle').checked;
   const miles = isReturn ? site.miles * 2 : site.miles;
-  const rate = state.mileageRate;
 
-  const exp = {
-    id: genUID(),
-    date: new Date().toISOString().split('T')[0],
-    description: `${client.name} — ${site.name}${isReturn ? ' (return)' : ''}`,
-    category: 'travel',
-    miles: miles,
-    rate: rate,
-    amount: parseFloat((miles * rate).toFixed(2)),
-    status: 'pending'
-  };
+  const exp = quickTripEntry(todayISO(), `${client.name}, ${site.name}${isReturn ? ' (return)' : ''}`, miles);
+  if (!exp) return;
   state.expenses.unshift(exp);
   persist();
-  renderQuickLog();
-  updatePendingBadge();
-  showToast(`✓ Trip logged: ${client.name} — ${site.name}, ${miles} miles`);
+  renderAll();
+  showToast(`✓ Trip logged: ${client.name}, ${site.name}, ${fmtMiles(miles)} miles, ${fmt(exp.amount)}`);
 }
 
 // ===== One-off Trip Logging =====
@@ -1471,27 +2330,18 @@ function logOneoffTrip() {
   if (!desc) { alert('Please enter a description'); return; }
   if (miles <= 0) { alert('Please enter miles'); return; }
 
-  const rate = state.mileageRate;
   const isReturn = document.getElementById('return-trip-toggle').checked;
   const actualMiles = isReturn ? miles * 2 : miles;
 
-  const exp = {
-    id: genUID(),
-    date: date,
-    description: desc + (isReturn ? ' (return)' : ''),
-    category: 'travel',
-    miles: actualMiles,
-    rate: rate,
-    amount: parseFloat((actualMiles * rate).toFixed(2)),
-    status: 'pending'
-  };
+  const exp = quickTripEntry(date, desc + (isReturn ? ' (return)' : ''), actualMiles);
+  if (!exp) return;
   state.expenses.unshift(exp);
   persist();
 
   document.getElementById('oneoff-desc').value = '';
   document.getElementById('oneoff-miles').value = '';
-  updatePendingBadge();
-  showToast(`✓ Trip logged: ${desc}, ${actualMiles} miles`);
+  renderAll();
+  showToast(`✓ Trip logged: ${desc}, ${fmtMiles(actualMiles)} miles, ${fmt(exp.amount)}`);
 }
 
 // ===== Client Management Functions =====
@@ -1579,7 +2429,7 @@ function renderClientManageList() {
       <div class="space-y-1">
         ${client.sites.map(site => `
           <div class="flex items-center justify-between bg-slate-50 rounded-lg px-3 py-2 text-sm">
-            <span>${escapeHtml(site.name)} — ${site.miles} miles</span>
+            <span>${escapeHtml(site.name)}: ${site.miles} miles</span>
             <button class="text-red-600 text-xs hover:underline" onclick="deleteSite('${client.id}','${site.id}')">×</button>
           </div>
         `).join('')}
@@ -1610,14 +2460,20 @@ function renderReview() {
       </div>
     `;
   } else {
-    reviewContent.innerHTML = pending.map((exp, idx) => `
-      <div class="review-card">
+    reviewContent.innerHTML = pending.map((exp) => {
+      const v = vehicleById(exp.vehicleId), a = AMAP_BY_ID.get(exp.id);
+      const isMileage = entryKind(exp) === 'mileage';
+      const vehicleLine = v
+        ? esc(vehicleLabel(v)) + (v.fuel === 'electric' ? `, ${exp.charging === 'public' ? 'public' : 'home'} charging` : '')
+        : '<span class="attn-text">No vehicle. Use Edit to choose one.</span>';
+      return `
+      <div class="review-card${entryNeedsFix(exp) ? ' row-attn' : ''}">
         <div class="review-card-header">
           <div class="review-card-info">
-            <div class="review-card-title">${exp.description}</div>
+            <div class="review-card-title">${esc(exp.description) || 'No description'} ${statusChip(claimStatusOf(exp))}</div>
             <div class="review-card-meta">
-              <div>📅 Date: ${exp.date}</div>
-              <div>📏 Miles: ${exp.miles} @ £${exp.rate.toFixed(2)}/mi</div>
+              <div>📅 ${esc(ukDate(exp.date))} · <span class="ref">${esc(exp.ref)}</span></div>
+              ${isMileage ? `<div>🚗 ${vehicleLine}</div><div>📏 ${a ? esc(describeSplit(a)) : fmtMiles(exp.miles) + ' mi'}</div>` : ''}
               <div>💷 Amount: <strong>${fmt(exp.amount)}</strong></div>
             </div>
           </div>
@@ -1627,8 +2483,8 @@ function renderReview() {
           <button class="btn-edit" onclick="editPending('${exp.id}')" aria-label="Edit this pending expense">✎ Edit</button>
           <button class="btn-reject" onclick="requestRejectPending('${exp.id}')" aria-label="Reject this pending expense">✕ Reject</button>
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   }
 }
 
@@ -1637,35 +2493,14 @@ function approvePending(expenseId) {
   if (exp) {
     exp.status = 'approved';
     persist();
-    renderExpenses();
-    renderWageTable();
-    renderChart();
-    updatePendingBadge();
+    renderAll();
     renderReview();
   }
 }
 
+// Pending trips are edited in the same form as everything else.
 function editPending(expenseId) {
-  const exp = state.expenses.find(e => e.id === expenseId);
-  if (!exp) return;
-
-  const newDate = prompt('Date (YYYY-MM-DD):', exp.date);
-  if (newDate === null) return;
-  const newDesc = prompt('Description:', exp.description);
-  if (newDesc === null) return;
-  const newMiles = prompt('Miles:', exp.miles);
-  if (newMiles === null) return;
-  const newRate = prompt('Rate (£/mi):', exp.rate);
-  if (newRate === null) return;
-
-  exp.date = newDate;
-  exp.description = newDesc;
-  exp.miles = parseNum(newMiles);
-  exp.rate = parseNum(newRate);
-  exp.amount = parseFloat((exp.miles * exp.rate).toFixed(2));
-
-  persist();
-  renderReview();
+  startEditExpense(expenseId);
 }
 
 function requestRejectPending(expenseId) {
@@ -1676,8 +2511,9 @@ function requestRejectPending(expenseId) {
 function confirmRejectPending() {
   if (pendingRejectId) {
     state.expenses = state.expenses.filter(e => e.id !== pendingRejectId);
+    if (editingId === pendingRejectId) resetExpenseForm();
     persist();
-    updatePendingBadge();
+    renderAll();
     renderReview();
     closeModal('modal-reject-pending');
     pendingRejectId = null;
@@ -1695,7 +2531,7 @@ const tbodyWage = document.getElementById('tbody-wage');
 const summaryRow = document.getElementById('summary-row');
 
 const currentYear = new Date().getFullYear();
-wageTitle.textContent = `Wage Structure — ${currentYear}`;
+wageTitle.textContent = `Wage Structure ${currentYear}`;
 
 function getWage(k) {
   return state.wageData[k] || { wage: 0, dividend: 0, personalTax: 0, vatPayment: 0 };
@@ -1852,8 +2688,9 @@ function renderAnalytics() {
     const totals = {};
     let grand = 0;
     state.expenses.filter(isClaimable).forEach(e => {
-      totals[e.category] = (totals[e.category] || 0) + e.amount;
-      grand += e.amount;
+      const key = catKey(e);
+      totals[key] = (totals[key] || 0) + parseNum(e.amount);
+      grand += parseNum(e.amount);
     });
     const entries = Object.entries(totals).sort((a, b) => b[1] - a[1]);
     if (entries.length === 0) {
@@ -1945,6 +2782,516 @@ function renderChart() {
   svg += `<text x="${padding + 118}" y="20" class="chart-legend-text">Expenses</text>`;
 
   chartSvg.innerHTML = svg;
+}
+
+// ===== Settings tab: Paid from accounts, vehicles, HMRC rate tables =====
+// Field edits save on change without redrawing the tab (so focus is kept);
+// adding or removing a row, or a change that alters the layout, redraws it.
+function settingsChanged(rebuild) {
+  persist();
+  renderAll(true);
+  if (rebuild) renderSettings();
+}
+
+function sortRateTables() {
+  ['amapRates', 'afrRates', 'aerRates'].forEach(t => state.settings[t].sort((a, b) => String(a.from).localeCompare(String(b.from))));
+}
+
+function bandLabelFor(v, i) {
+  const diesel = v.fuel === 'diesel' || (v.fuel === 'hybrid' && v.hybridFuel === 'diesel');
+  return BAND_LABELS[diesel ? 'diesel' : 'petrol'][i];
+}
+
+function penceInput(value, onchange, label) {
+  return `<input type="text" inputmode="decimal" value="${+(parseNum(value) * 100).toFixed(2)}" onchange="${onchange}" aria-label="${esc(label)}" style="width:76px; text-align:right;">`;
+}
+
+function renderSettings() {
+  const s = state.settings;
+  sortRateTables();
+  const el = document.getElementById('settings-content');
+  const usedAcc = id => state.expenses.filter(e => e.paidFrom === id).length;
+  const usedVeh = id => state.expenses.filter(e => e.vehicleId === id).length;
+
+  const years = new Set([taxYearOf(todayISO())]);
+  state.expenses.forEach(e => { if (entryKind(e) === 'mileage') { const y = taxYearOf(e.date); if (y !== null) years.add(y); } });
+  Object.keys(s.milesBroughtForward || {}).forEach(y => years.add(+y));
+  const yearRows = [...years].sort((a, b) => b - a).map(y => {
+    const bf = parseNum((s.milesBroughtForward || {})[y]);
+    const inApp = +(taxYearMiles(y) - bf).toFixed(1);
+    return `<tr>
+      <td data-label="Tax year">${taxYearLabel(y)}</td>
+      <td class="num" data-label="In the app">${fmtMiles(inApp)}</td>
+      <td class="num" data-label="Brought forward"><input type="text" inputmode="decimal" value="${bf || ''}" placeholder="0" onchange="updateBroughtForward(${y}, this.value)" aria-label="Miles brought forward for ${taxYearLabel(y)}" style="width:100px; text-align:right;"></td>
+      <td class="num" data-label="Total">${fmtMiles(inApp + bf)}</td>
+    </tr>`;
+  }).join('');
+
+  const removeBtn = (fn) => `<button class="link-btn" onclick="${fn}">Remove</button>`;
+
+  el.innerHTML = `
+  <div class="bg-white rounded-2xl shadow p-3 sm:p-4 settings-card">
+    <h3>Paid from accounts</h3>
+    <p class="help">Every expense records the account it was paid from. Anything paid from a business account is BUSINESS PAID and can never go on your expenses claim.</p>
+    <div class="overflow-x-auto"><table class="data-table table-cards">
+      <thead><tr><th>Account</th><th>Type</th><th class="num">Entries</th><th></th></tr></thead>
+      <tbody>${s.accounts.map((a, i) => `<tr>
+        <td data-label="Account"><input type="text" value="${esc(a.name)}" onchange="updateAccount(${i},'name',this.value)" aria-label="Account name"></td>
+        <td data-label="Type"><select onchange="updateAccount(${i},'business',this.value==='1')" aria-label="Account type">${optionList([['1', 'Business (never on the claim)'], ['0', 'Personal']], a.business ? '1' : '0')}</select></td>
+        <td class="num" data-label="Entries">${usedAcc(a.id)}</td>
+        <td data-label="">${removeBtn(`removeAccount(${i})`)}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+    <button class="btn btn-outline btn-sm mt-2" onclick="addAccount()">+ Add account</button>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow p-3 sm:p-4 settings-card">
+    <h3>Vehicles</h3>
+    <p class="help">Private cars used on business (none are company cars), so journeys are claimed at the HMRC mileage rate. The fuel type and engine size set the advisory fuel rate used for the VAT fuel element. Hybrids use the petrol or diesel rate for their engine.</p>
+    <div class="overflow-x-auto"><table class="data-table table-cards">
+      <thead><tr><th>Name</th><th>Registration</th><th>Fuel type</th><th>Engine size</th><th class="num">Entries</th><th></th></tr></thead>
+      <tbody>${s.vehicles.map((v, i) => `<tr${vehicleNeedsBand(v) || !String(v.reg || '').trim() ? ' class="row-attn"' : ''}>
+        <td data-label="Name"><input type="text" value="${esc(v.name)}" onchange="updateVehicle(${i},'name',this.value)" aria-label="Vehicle name"></td>
+        <td data-label="Registration"><input type="text" value="${esc(v.reg)}" placeholder="e.g. AB12 CDE" onchange="updateVehicle(${i},'reg',this.value)" aria-label="Registration" style="text-transform:uppercase; min-width:110px;"></td>
+        <td data-label="Fuel type"><select onchange="updateVehicle(${i},'fuel',this.value)" aria-label="Fuel type">${optionList(Object.entries(FUEL_LABELS), v.fuel)}</select></td>
+        <td data-label="Engine size">${v.fuel === 'electric'
+          ? '<span class="text-slate-500">Not needed</span>'
+          : `<div><select class="${BANDS.includes(v.band) ? '' : 'attn'}" onchange="updateVehicle(${i},'band',this.value)" aria-label="Engine size">${optionList(BANDS.map((b, j) => [b, bandLabelFor(v, j)]), v.band, 'Choose engine size')}</select>${v.fuel === 'hybrid'
+            ? `<select style="margin-top:6px;" onchange="updateVehicle(${i},'hybridFuel',this.value)" aria-label="Hybrid engine fuel">${optionList([['petrol', 'Petrol engine'], ['diesel', 'Diesel engine']], v.hybridFuel || 'petrol')}</select>` : ''}</div>`}</td>
+        <td class="num" data-label="Entries">${usedVeh(v.id)}</td>
+        <td data-label="">${removeBtn(`removeVehicle(${i})`)}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+    <button class="btn btn-outline btn-sm mt-2" onclick="addVehicle()">+ Add vehicle</button>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow p-3 sm:p-4 settings-card">
+    <h3>Mileage rates (HMRC approved mileage allowance)</h3>
+    <p class="help">Cars and vans, the same for petrol, diesel, hybrid and electric. Each journey uses the latest row dated on or before the journey. The threshold counts business miles across all vehicles in the tax year (6 April to 5 April), and a journey that crosses it is split between the two rates. Pence per mile.</p>
+    <div class="overflow-x-auto"><table class="data-table table-cards">
+      <thead><tr><th>From</th><th class="num">Up to threshold</th><th class="num">Over threshold</th><th class="num">Threshold (miles)</th><th></th></tr></thead>
+      <tbody>${s.amapRates.map((r, i) => `<tr>
+        <td data-label="From"><input type="date" value="${esc(r.from)}" onchange="updateRate('amapRates',${i},'from',this.value)" aria-label="Rate applies from"></td>
+        <td class="num" data-label="Up to threshold">${penceInput(r.first, `updateRate('amapRates',${i},'first',this.value)`, 'Pence per mile up to the threshold')}</td>
+        <td class="num" data-label="Over threshold">${penceInput(r.after, `updateRate('amapRates',${i},'after',this.value)`, 'Pence per mile over the threshold')}</td>
+        <td class="num" data-label="Threshold"><input type="text" inputmode="decimal" value="${parseNum(r.threshold)}" onchange="updateRate('amapRates',${i},'threshold',this.value)" aria-label="Threshold miles" style="width:90px; text-align:right;"></td>
+        <td data-label="">${removeBtn(`removeRate('amapRates',${i})`)}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+    <button class="btn btn-outline btn-sm mt-2" onclick="addRate('amapRates')">+ Add rate change</button>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow p-3 sm:p-4 settings-card">
+    <h3>Business miles brought forward</h3>
+    <p class="help">Business miles driven in a tax year that are not recorded in this app, for example journeys before you started logging them here. They count towards the 10,000-mile threshold but are not claimed again.</p>
+    <div class="overflow-x-auto"><table class="data-table table-cards">
+      <thead><tr><th>Tax year</th><th class="num">Miles in the app</th><th class="num">Miles brought forward</th><th class="num">Total</th></tr></thead>
+      <tbody>${yearRows}</tbody>
+    </table></div>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow p-3 sm:p-4 settings-card">
+    <h3>Advisory fuel rates (petrol, diesel and hybrid)</h3>
+    <p class="help">Used to work out the fuel element of mileage for VAT. HMRC updates these on 1 March, 1 June, 1 September and 1 December at gov.uk/guidance/advisory-fuel-rates. Add a row when they change. Pence per mile.</p>
+    <div class="overflow-x-auto"><table class="data-table table-cards">
+      <thead><tr><th>From</th>${BAND_LABELS.petrol.map(b => `<th class="num">Petrol ${b}</th>`).join('')}${BAND_LABELS.diesel.map(b => `<th class="num">Diesel ${b}</th>`).join('')}<th></th></tr></thead>
+      <tbody>${s.afrRates.map((r, i) => `<tr>
+        <td data-label="From"><input type="date" value="${esc(r.from)}" onchange="updateRate('afrRates',${i},'from',this.value)" aria-label="Rates apply from"></td>
+        ${[0, 1, 2].map(j => `<td class="num" data-label="Petrol ${BAND_LABELS.petrol[j]}">${penceInput((r.petrol || [])[j], `updateRate('afrRates',${i},'petrol.${j}',this.value)`, 'Petrol ' + BAND_LABELS.petrol[j])}</td>`).join('')}
+        ${[0, 1, 2].map(j => `<td class="num" data-label="Diesel ${BAND_LABELS.diesel[j]}">${penceInput((r.diesel || [])[j], `updateRate('afrRates',${i},'diesel.${j}',this.value)`, 'Diesel ' + BAND_LABELS.diesel[j])}</td>`).join('')}
+        <td data-label="">${removeBtn(`removeRate('afrRates',${i})`)}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+    <button class="btn btn-outline btn-sm mt-2" onclick="addRate('afrRates')">+ Add new rates</button>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow p-3 sm:p-4 settings-card">
+    <h3>Advisory electric rates (fully electric cars)</h3>
+    <p class="help">The fuel element for electric car journeys, by where the car was charged. Same source and dates as the fuel rates. Pence per mile.</p>
+    <div class="overflow-x-auto"><table class="data-table table-cards">
+      <thead><tr><th>From</th><th class="num">Home charging</th><th class="num">Public charging</th><th></th></tr></thead>
+      <tbody>${s.aerRates.map((r, i) => `<tr>
+        <td data-label="From"><input type="date" value="${esc(r.from)}" onchange="updateRate('aerRates',${i},'from',this.value)" aria-label="Rates apply from"></td>
+        <td class="num" data-label="Home charging">${penceInput(r.home, `updateRate('aerRates',${i},'home',this.value)`, 'Home charging pence per mile')}</td>
+        <td class="num" data-label="Public charging">${penceInput(r.public, `updateRate('aerRates',${i},'public',this.value)`, 'Public charging pence per mile')}</td>
+        <td data-label="">${removeBtn(`removeRate('aerRates',${i})`)}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+    <button class="btn btn-outline btn-sm mt-2" onclick="addRate('aerRates')">+ Add new rates</button>
+  </div>`;
+}
+
+function updateAccount(i, field, value) {
+  const a = state.settings.accounts[i];
+  if (!a) return;
+  if (field === 'name') { value = String(value).trim(); if (!value) { renderSettings(); return; } }
+  a[field] = value;
+  settingsChanged(field === 'business');
+}
+function addAccount() {
+  state.settings.accounts.push({ id: 'acc-' + genUID().slice(0, 8), name: 'New account', business: false });
+  settingsChanged(true);
+}
+function removeAccount(i) {
+  const a = state.settings.accounts[i];
+  if (!a) return;
+  const n = state.expenses.filter(e => e.paidFrom === a.id).length;
+  if (n) { showToast(`${a.name} is used by ${n} ${plural(n, 'entry', 'entries')}. Change those first.`); return; }
+  if (!confirm(`Remove ${a.name}?`)) return;
+  state.settings.accounts.splice(i, 1);
+  settingsChanged(true);
+}
+
+function updateVehicle(i, field, value) {
+  const v = state.settings.vehicles[i];
+  if (!v) return;
+  if (field === 'name') { value = String(value).trim(); if (!value) { renderSettings(); return; } }
+  if (field === 'reg') value = String(value).trim().toUpperCase();
+  v[field] = value;
+  if (field === 'fuel' && value === 'electric') v.band = '';
+  settingsChanged(field === 'fuel' || field === 'hybridFuel' || field === 'band');
+}
+function addVehicle() {
+  state.settings.vehicles.push({ id: 'veh-' + genUID().slice(0, 8), name: 'New vehicle', reg: '', fuel: 'petrol', band: '', hybridFuel: 'petrol' });
+  settingsChanged(true);
+}
+function removeVehicle(i) {
+  const v = state.settings.vehicles[i];
+  if (!v) return;
+  const n = state.expenses.filter(e => e.vehicleId === v.id).length;
+  if (n) { showToast(`${v.name} is used by ${n} ${plural(n, 'entry', 'entries')}. Change those first.`); return; }
+  if (!confirm(`Remove ${v.name}?`)) return;
+  state.settings.vehicles.splice(i, 1);
+  if (state.settings.quickVehicleId === v.id) state.settings.quickVehicleId = '';
+  settingsChanged(true);
+}
+
+function updateRate(table, i, field, value) {
+  const r = state.settings[table][i];
+  if (!r) return;
+  if (field === 'from') {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) { renderSettings(); return; }
+    r.from = value;
+    settingsChanged(true);   // the row may move
+    return;
+  }
+  const [key, idx] = field.split('.');
+  const n = key === 'threshold' ? parseNum(value) : round2(parseNum(value)) / 100;
+  if (idx !== undefined) { r[key] = (r[key] || [0, 0, 0]).slice(); r[key][+idx] = +n.toFixed(4); }
+  else r[key] = key === 'threshold' ? n : +n.toFixed(4);
+  settingsChanged(false);
+}
+function addRate(table) {
+  const rows = state.settings[table];
+  const last = rows[rows.length - 1];
+  const copy = last ? JSON.parse(JSON.stringify(last)) : JSON.parse(JSON.stringify(DEFAULT_SETTINGS[table][DEFAULT_SETTINGS[table].length - 1]));
+  copy.from = todayISO();
+  rows.push(copy);
+  settingsChanged(true);
+}
+function removeRate(table, i) {
+  const rows = state.settings[table];
+  if (table === 'amapRates' && rows.length <= 1) { showToast('Keep at least one mileage rate'); return; }
+  if (!rows[i] || !confirm(`Remove the rates from ${ukDate(rows[i].from)}?`)) return;
+  rows.splice(i, 1);
+  settingsChanged(true);
+}
+function updateBroughtForward(y, value) {
+  const s = state.settings;
+  if (!s.milesBroughtForward) s.milesBroughtForward = {};
+  const n = parseNum(value);
+  if (n > 0) s.milesBroughtForward[y] = n; else delete s.milesBroughtForward[y];
+  settingsChanged(true);
+}
+
+// ===== VAT on the fuel element of mileage, per month =====
+// Fuel element = business miles x HMRC advisory rate for the vehicle.
+// VAT reclaimable = fuel element / 6, capped at the VAT on the personally paid
+// fuel and charging receipts for the month. Home charging receipts only count
+// when "VAT receipt held" is ticked. Business-paid fuel is not counted as
+// cover because its VAT is already in the business-paid line.
+function advisoryRateFor(e) {
+  const s = state.settings, v = vehicleById(e.vehicleId);
+  if (!v) return null;
+  const date = normDate(e.date);
+  if (v.fuel === 'electric') {
+    const r = datedRow(s.aerRates, date);
+    return r ? parseNum(e.charging === 'public' ? r.public : r.home) : null;
+  }
+  const idx = BANDS.indexOf(v.band), r = datedRow(s.afrRates, date);
+  if (!r || idx < 0) return null;
+  const fuel = (v.fuel === 'diesel' || (v.fuel === 'hybrid' && v.hybridFuel === 'diesel')) ? 'diesel' : 'petrol';
+  return parseNum((r[fuel] || [])[idx]);
+}
+
+function fuelVatForMonth(mk) {
+  const res = { miles: 0, element: 0, noRateMiles: 0, vatDue: 0, cover: 0, homeExcluded: 0, bizFuelVat: 0, reclaim: 0, shortfall: 0 };
+  state.expenses.forEach(e => {
+    if (e.status !== 'approved' || monthOf(e.date) !== mk) return;
+    const k = entryKind(e);
+    if (k === 'mileage') {
+      const miles = parseNum(e.miles), rate = advisoryRateFor(e);
+      if (rate === null) { res.noRateMiles += miles; return; }
+      res.miles += miles;
+      res.element += miles * rate;
+    } else if (k === 'fuel' || k === 'charging') {
+      const vat = parseNum(e.vat);
+      if (claimStatusOf(e) !== 'vat') { res.bizFuelVat += vat; return; }
+      if (k === 'charging' && e.chargeLocation === 'home' && !e.vatReceiptHeld) { res.homeExcluded += vat; return; }
+      res.cover += vat;
+    }
+  });
+  res.miles = +res.miles.toFixed(1);
+  res.noRateMiles = +res.noRateMiles.toFixed(1);
+  res.element = round2(res.element);
+  res.vatDue = round2(res.element / 6);
+  res.cover = round2(res.cover);
+  res.homeExcluded = round2(res.homeExcluded);
+  res.bizFuelVat = round2(res.bizFuelVat);
+  res.reclaim = Math.min(res.vatDue, res.cover);
+  res.shortfall = round2(Math.max(0, res.vatDue - res.cover));
+  return res;
+}
+
+// ===== Monthly reference report (screen, print / PDF and CSV share one build) =====
+function monthLabelLong(mk) {
+  const [y, m] = mk.split('-');
+  return new Date(+y, +m - 1, 1).toLocaleString('en-GB', { month: 'long', year: 'numeric' });
+}
+
+function reportGroupOf(e) {
+  const k = entryKind(e);
+  if (k === 'mileage' || k === 'topup') return { key: '~mileage', label: 'Mileage allowance (not paid from an account)', short: 'Mileage allowance', order: 1e6 };
+  const i = state.settings.accounts.findIndex(a => a.id === e.paidFrom);
+  if (i < 0) return { key: '~unassigned', label: 'Unassigned', short: 'Unassigned', order: 1e6 - 1 };
+  const a = state.settings.accounts[i];
+  return { key: a.id, label: a.name, short: a.name, order: i };
+}
+
+function reportDescription(e) {
+  const k = entryKind(e);
+  let d = e.description || '';
+  if (k === 'mileage') d += `${d ? ' ' : ''}(${fmtMiles(e.miles)} mi)`;
+  if (k === 'train') {
+    const route = [e.fromPlace, e.toPlace].filter(Boolean).join(' to ');
+    const extra = [route, e.ticketRef ? `ticket ${e.ticketRef}` : ''].filter(Boolean).join(', ');
+    if (extra) d += `${d ? ', ' : ''}${extra}`;
+  }
+  return d;
+}
+
+function buildMonthReport(mk) {
+  const sum = (arr, f) => round2(arr.reduce((t, x) => t + f(x), 0));
+  const items = state.expenses
+    .filter(e => e.status === 'approved' && monthOf(e.date) === mk)
+    .map(e => {
+      const kind = entryKind(e);
+      return { e, kind, status: claimStatusOf(e), group: reportGroupOf(e),
+               amount: round2(parseNum(e.amount)), vat: (kind === 'mileage' || kind === 'topup') ? 0 : round2(parseNum(e.vat)) };
+    })
+    .sort((a, b) => a.group.order - b.group.order || normDate(a.e.date).localeCompare(normDate(b.e.date)) || String(a.e.ref).localeCompare(String(b.e.ref)));
+
+  const groups = [], byKey = {};
+  items.forEach(it => {
+    let g = byKey[it.group.key];
+    if (!g) {
+      g = byKey[it.group.key] = { key: it.group.key, label: it.group.label, short: it.group.short, items: [], count: 0, amount: 0, vat: 0 };
+      groups.push(g);
+    }
+    g.items.push(it);
+  });
+  groups.forEach(g => { g.count = g.items.length; g.amount = sum(g.items, x => x.amount); g.vat = sum(g.items, x => x.vat); });
+
+  const claimItems = items.filter(it => it.status === 'claim');
+  const mileage = claimItems.filter(it => it.kind === 'mileage' || it.kind === 'topup');
+  const other = claimItems.filter(it => !(it.kind === 'mileage' || it.kind === 'topup'));
+  const claim = {
+    mileage: sum(mileage, x => x.amount),
+    journeys: mileage.filter(x => x.kind === 'mileage').length,
+    topups: mileage.filter(x => x.kind === 'topup').length,
+    miles: +mileage.reduce((t, x) => t + parseNum(x.e.miles), 0).toFixed(1),
+    other: sum(other, x => x.amount),
+    otherCount: other.length
+  };
+  claim.total = round2(claim.mileage + claim.other);
+
+  const fuel = fuelVatForMonth(mk);
+  const vat = {
+    business: sum(items.filter(it => it.status === 'business'), x => x.vat),
+    claimed: sum(other, x => x.vat),
+    fuel
+  };
+  vat.total = round2(vat.business + vat.claimed + fuel.reclaim);
+
+  const monthEnd = `${mk}-31`;
+  const ty = taxYearOf(monthEnd);
+  const amap = datedRow(state.settings.amapRates, monthEnd) || DEFAULT_SETTINGS.amapRates[1];
+  return {
+    mk, items, groups, claim, vat,
+    totals: { count: items.length, amount: sum(items, x => x.amount), vat: sum(items, x => x.vat) },
+    pending: state.expenses.filter(e => e.status === 'pending' && monthOf(e.date) === mk).length,
+    toFix: items.filter(it => entryNeedsFix(it.e)).length,
+    ty, tyMiles: taxYearMiles(ty, monthEnd), broughtForward: parseNum((state.settings.milesBroughtForward || {})[ty]),
+    threshold: parseNum(amap.threshold)
+  };
+}
+
+function renderReport() {
+  const input = document.getElementById('report-month');
+  if (!input.value) input.value = monthOf(todayISO());
+  const r = buildMonthReport(input.value);
+  const f = r.vat.fuel;
+  const month = monthLabelLong(r.mk);
+  const notes = [];
+  if (r.pending) notes.push(`${r.pending} ${plural(r.pending, 'trip is', 'trips are')} waiting for review and ${plural(r.pending, 'is', 'are')} not included.`);
+  if (r.toFix) notes.push(`${r.toFix} ${plural(r.toFix, 'item needs', 'items need')} a Paid from account or vehicle (highlighted). Fix ${plural(r.toFix, 'it', 'them')} in the Expense Tracker before relying on this report.`);
+
+  const groupRows = r.groups.map(g => `<tr${g.key === '~unassigned' ? ' class="row-attn"' : ''}>
+      <td data-label="Paid from">${esc(g.label)}</td>
+      <td class="num" data-label="Items">${g.count}</td>
+      <td class="num" data-label="Total">${fmt(g.amount)}</td>
+      <td class="num" data-label="VAT">${g.key === '~mileage' ? '-' : fmt(g.vat)}</td></tr>`).join('');
+
+  const itemRows = r.groups.map(g => g.items.map(it => {
+    const v = vehicleById(it.e.vehicleId);
+    return `<tr${entryNeedsFix(it.e) ? ' class="row-attn"' : ''}>
+      <td data-label="Date" class="whitespace-nowrap">${esc(ukDate(it.e.date))}</td>
+      <td data-label="Reference"><span class="ref">${esc(it.e.ref)}</span></td>
+      <td data-label="Description">${esc(reportDescription(it.e))}</td>
+      <td data-label="Category">${esc(catLabel(catKey(it.e)))}</td>
+      <td data-label="Vehicle"${v ? '' : ' class="na"'}>${v ? esc(vehicleLabel(v)) : '-'}</td>
+      <td data-label="Paid from">${esc(g.short)}</td>
+      <td class="num" data-label="Amount">${fmt(it.amount)}</td>
+      <td class="num${it.kind === 'mileage' || it.kind === 'topup' ? ' na' : ''}" data-label="VAT">${it.kind === 'mileage' || it.kind === 'topup' ? '-' : fmt(it.vat)}</td>
+      <td data-label="Status">${statusChip(it.status)}</td></tr>`;
+  }).join('') + `<tr class="subtotal">
+      <td colspan="6" data-label="">Subtotal: ${esc(g.short)} (${g.count} ${plural(g.count, 'item', 'items')})</td>
+      <td class="num" data-label="Amount">${fmt(g.amount)}</td>
+      <td class="num" data-label="VAT">${g.key === '~mileage' ? '-' : fmt(g.vat)}</td>
+      <td data-label=""></td></tr>`).join('');
+
+  const fuelNotes = [];
+  if (f.homeExcluded > 0) fuelNotes.push(`${fmt(f.homeExcluded)} VAT on home charging without a VAT receipt is not counted as cover.`);
+  if (f.noRateMiles > 0) fuelNotes.push(`${fmtMiles(f.noRateMiles)} miles have no vehicle, engine size or advisory rate, so they are not in the fuel element.`);
+  if (f.bizFuelVat > 0) fuelNotes.push(`${fmt(f.bizFuelVat)} VAT on fuel or charging paid from a business account is included under business-paid items, not as cover.`);
+
+  document.getElementById('report-body').innerHTML = `
+    <div class="rep-head">
+      <div class="rep-kicker">AHS Compliance Consulting Ltd</div>
+      <h2 class="rep-title">Expenses and VAT reference: ${esc(month)}</h2>
+      <div class="rep-meta">Prepared ${ukDate(todayISO())}. Approved entries dated in ${esc(month)}. Amounts in pounds sterling.</div>
+      <div class="rep-rule"></div>
+    </div>
+    ${notes.map(n => `<p class="rep-note attn-text">${esc(n)}</p>`).join('')}
+
+    <h3 class="rep-h">1. Summary by account</h3>
+    <div class="overflow-x-auto"><table class="data-table table-cards">
+      <thead><tr><th>Paid from</th><th class="num">Items</th><th class="num">Total</th><th class="num">VAT</th></tr></thead>
+      <tbody>${groupRows || '<tr><td colspan="4" data-label="">No approved entries this month.</td></tr>'}
+        <tr class="total"><td data-label="">Total</td><td class="num" data-label="Items">${r.totals.count}</td><td class="num" data-label="Total">${fmt(r.totals.amount)}</td><td class="num" data-label="VAT">${fmt(r.totals.vat)}</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 class="rep-h">2. Expenses claim</h3>
+    <div class="overflow-x-auto"><table class="data-table table-cards">
+      <tbody>
+        <tr><td data-label="">Mileage at HMRC rates: ${r.claim.journeys} ${plural(r.claim.journeys, 'journey', 'journeys')}, ${fmtMiles(r.claim.miles)} business miles${r.claim.topups ? `, plus ${r.claim.topups} rate top-up` : ''}</td><td class="num" data-label="Amount">${fmt(r.claim.mileage)}</td></tr>
+        <tr><td data-label="">Other expenses: ${r.claim.otherCount} ${plural(r.claim.otherCount, 'item', 'items')}</td><td class="num" data-label="Amount">${fmt(r.claim.other)}</td></tr>
+        <tr class="total"><td data-label="">Total to claim</td><td class="num" data-label="Amount">${fmt(r.claim.total)}</td></tr>
+      </tbody>
+    </table></div>
+    <p class="rep-note">CLAIM items only. VAT ONLY and BUSINESS PAID items are never claimed. Business miles in ${taxYearLabel(r.ty)} to the end of ${esc(month)}: ${fmtMiles(r.tyMiles)} of the ${fmtMiles(r.threshold)}-mile threshold, all vehicles${r.broughtForward ? `, including ${fmtMiles(r.broughtForward)} brought forward` : ''}.</p>
+
+    <h3 class="rep-h">3. VAT summary</h3>
+    <div class="overflow-x-auto"><table class="data-table table-cards">
+      <tbody>
+        <tr><td data-label="">VAT on business-paid items</td><td class="num" data-label="Amount">${fmt(r.vat.business)}</td></tr>
+        <tr><td data-label="">VAT on claimed expenses (receipts held)</td><td class="num" data-label="Amount">${fmt(r.vat.claimed)}</td></tr>
+        <tr><td data-label="">Mileage fuel element: ${fmtMiles(f.miles)} miles at HMRC advisory rates</td><td class="num" data-label="Amount">${fmt(f.element)}</td></tr>
+        <tr><td data-label="">VAT in the fuel element (one sixth)</td><td class="num" data-label="Amount">${fmt(f.vatDue)}</td></tr>
+        <tr><td data-label="">VAT on fuel and charging receipts held (cover)</td><td class="num" data-label="Amount">${fmt(f.cover)}</td></tr>
+        <tr><td data-label="">VAT reclaimable on the mileage fuel element (lower of the two)</td><td class="num" data-label="Amount">${fmt(f.reclaim)}</td></tr>
+        ${f.shortfall > 0
+          ? `<tr class="row-attn"><td data-label="">Shortfall: receipts do not cover the fuel element VAT (not reclaimable)</td><td class="num" data-label="Amount">${fmt(f.shortfall)}</td></tr>`
+          : `<tr><td data-label="">Shortfall</td><td class="num" data-label="Amount">${fmt(0)}</td></tr>`}
+        <tr class="total"><td data-label="">Total VAT reclaimable</td><td class="num" data-label="Amount">${fmt(r.vat.total)}</td></tr>
+      </tbody>
+    </table></div>
+    ${fuelNotes.map(n => `<p class="rep-note">${esc(n)}</p>`).join('')}
+
+    <h3 class="rep-h">4. Itemised list</h3>
+    <div class="overflow-x-auto"><table class="data-table table-cards">
+      <thead><tr><th>Date</th><th>Reference</th><th>Description</th><th>Category</th><th>Vehicle</th><th>Paid from</th><th class="num">Amount</th><th class="num">VAT</th><th>Status</th></tr></thead>
+      <tbody>${itemRows || '<tr><td colspan="9" data-label="">No approved entries this month.</td></tr>'}
+        <tr class="total"><td colspan="6" data-label="">Total (${r.totals.count} ${plural(r.totals.count, 'item', 'items')})</td><td class="num" data-label="Amount">${fmt(r.totals.amount)}</td><td class="num" data-label="VAT">${fmt(r.totals.vat)}</td><td data-label=""></td></tr>
+      </tbody>
+    </table></div>
+    <p class="rep-note">Sorted by account, then date. Use the reference to match each item against the bank or card statement.</p>`;
+}
+
+function exportReportCsv() {
+  const mk = document.getElementById('report-month').value || monthOf(todayISO());
+  const r = buildMonthReport(mk), f = r.vat.fuel;
+  const csv = [];
+  const escape = (v) => {
+    if (v == null) return '';
+    const s = String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const row = (...cells) => csv.push(cells.map(escape).join(','));
+  const m2 = (n) => round2(n).toFixed(2);
+
+  row('AHS Compliance Consulting Ltd', 'Expenses and VAT reference');
+  row('Month', monthLabelLong(mk));
+  row('Prepared', ukDate(todayISO()));
+  row('Basis', 'Approved entries dated in the month. Amounts in GBP.');
+  if (r.pending) row('Note', `${r.pending} trips waiting for review are not included`);
+  if (r.toFix) row('Note', `${r.toFix} items need a Paid from account or vehicle`);
+  row('');
+  row('1. SUMMARY BY ACCOUNT');
+  row('Paid from', 'Items', 'Total (GBP)', 'VAT (GBP)');
+  r.groups.forEach(g => row(g.label, g.count, m2(g.amount), g.key === '~mileage' ? '' : m2(g.vat)));
+  row('TOTAL', r.totals.count, m2(r.totals.amount), m2(r.totals.vat));
+  row('');
+  row('2. EXPENSES CLAIM');
+  row('Mileage at HMRC rates', `${r.claim.journeys} journeys, ${r.claim.miles} miles${r.claim.topups ? `, ${r.claim.topups} top-up` : ''}`, m2(r.claim.mileage));
+  row('Other expenses', `${r.claim.otherCount} items`, m2(r.claim.other));
+  row('TOTAL TO CLAIM', '', m2(r.claim.total));
+  row(`Business miles ${taxYearLabel(r.ty)} to month end`, r.tyMiles, `threshold ${r.threshold}`);
+  row('');
+  row('3. VAT SUMMARY');
+  row('VAT on business-paid items', '', m2(r.vat.business));
+  row('VAT on claimed expenses (receipts held)', '', m2(r.vat.claimed));
+  row('Mileage fuel element at HMRC advisory rates', `${f.miles} miles`, m2(f.element));
+  row('VAT in the fuel element (one sixth)', '', m2(f.vatDue));
+  row('VAT on fuel and charging receipts held (cover)', '', m2(f.cover));
+  row('VAT reclaimable on the mileage fuel element', '', m2(f.reclaim));
+  row('Shortfall (not reclaimable)', '', m2(f.shortfall));
+  row('TOTAL VAT RECLAIMABLE', '', m2(r.vat.total));
+  row('');
+  row('4. ITEMISED LIST');
+  row('Date', 'Reference', 'Description', 'Category', 'Vehicle', 'Paid from', 'Amount (GBP)', 'VAT (GBP)', 'Status');
+  r.groups.forEach(g => g.items.forEach(it => {
+    const v = vehicleById(it.e.vehicleId);
+    row(ukDate(it.e.date), it.e.ref, reportDescription(it.e), catLabel(catKey(it.e)), v ? vehicleLabel(v) : '', g.short,
+        m2(it.amount), it.kind === 'mileage' || it.kind === 'topup' ? '' : m2(it.vat), STATUS_LABEL[it.status]);
+  }));
+  row('TOTAL', '', '', '', '', '', m2(r.totals.amount), m2(r.totals.vat), `${r.totals.count} items`);
+
+  const blob = new Blob(['﻿' + csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `expenses-vat-reference-${mk}.csv`;
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  setTimeout(() => { document.body.removeChild(link); URL.revokeObjectURL(link.href); }, 0);
+  showToast(`CSV exported for ${monthLabelLong(mk)}`);
+}
+
+function printReport() {
+  renderReport();
+  window.print();
 }
 
 // ===== Modal Functions =====
@@ -2145,23 +3492,29 @@ function generateExcelExport() {
 
   // Expenses
   row('EXPENSES');
-  row('Date', 'Description', 'Category', 'Miles', 'Rate (GBP)', 'Amount (GBP)', 'Status');
+  row('Date', 'Reference', 'Description', 'Category', 'Vehicle', 'Paid from', 'Miles', 'Rate (GBP)', 'Amount (GBP)', 'VAT (GBP)', 'Claim status', 'Review');
   let expTotal = 0, mileTotal = 0;
   exps.forEach(e => {
+    const k = entryKind(e), st = claimStatusOf(e), acc = accountById(e.paidFrom);
     row(
       e.date || '',
+      e.ref || '',
       e.description || '',
-      e.category || '',
-      e.miles != null ? e.miles : '',
-      e.rate  != null ? e.rate  : '',
+      catLabel(catKey(e)),
+      vehicleLabel(vehicleById(e.vehicleId)),
+      (k === 'mileage' || k === 'topup') ? 'Mileage allowance' : (acc ? acc.name : 'Unassigned'),
+      k === 'mileage' ? e.miles : '',
+      k === 'mileage' && e.rate != null ? e.rate : '',
       e.amount != null ? Number(e.amount).toFixed(2) : '',
-      e.paidByBusiness ? 'paid by business (not claimed)' : (e.status || '')
+      (k === 'mileage' || k === 'topup') ? '' : parseNum(e.vat).toFixed(2),
+      STATUS_LABEL[st],
+      e.status || ''
     );
-    if (typeof e.amount === 'number' && !e.paidByBusiness) expTotal += e.amount;
-    if (typeof e.miles  === 'number') mileTotal += e.miles;
+    if (isClaimable(e)) expTotal += parseNum(e.amount);
+    if (k === 'mileage') mileTotal += parseNum(e.miles);
   });
   if (exps.length === 0) row('(no expenses in period)');
-  row('', '', 'TOTAL', mileTotal, '', expTotal.toFixed(2), exps.length + ' expense' + (exps.length === 1 ? '' : 's'));
+  row('', '', '', 'TOTAL', '', '', +mileTotal.toFixed(1), '', expTotal.toFixed(2), '', 'claim total (approved CLAIM items)', exps.length + ' expense' + (exps.length === 1 ? '' : 's'));
   row('');
 
   // Wages
@@ -2262,14 +3615,11 @@ function confirmImport(mode) {
   } else {
     summary = mergeImportedData(pendingImportData);
   }
+  // Imported entries get references, dates tidied and claim status like any other.
+  try { migrateV5(state); } catch (err) { console.error('Upgrade step failed after import', err); }
 
   persist();
-  renderExpenses();
-  renderWageTable();
-  renderChart();
-  renderQuickLog();
-  renderClientManageList();
-  updatePendingBadge();
+  renderAll();
   closeModal('modal-import-confirm');
   pendingImportData = null;
   document.getElementById('file-import-input').value = '';
@@ -2343,7 +3693,7 @@ function mergeImportedData(imported) {
     });
   }
 
-  // mileageRate is intentionally NOT overwritten on merge — current value wins.
+  // mileageRate and settings are intentionally NOT overwritten on merge — current values win.
 
   return [
     'Import complete (merge mode):',
@@ -2352,7 +3702,7 @@ function mergeImportedData(imported) {
     '  Wage months: ' + monAdded + ' added, ' + monKept + ' kept (already on file)',
     '  Clients: ' + cliAdded + ' added, ' + cliMatched + ' matched (' + siteAdded + ' new sites)',
     '',
-    'Mileage rate left unchanged.',
+    'Settings (accounts, vehicles and rates) left unchanged.',
   ].join('\n');
 }
 
@@ -2384,11 +3734,25 @@ document.querySelectorAll('input[type="text"][inputmode="decimal"]').forEach((el
     persist();
   }
 
-  document.getElementById('default-rate').value = state.mileageRate;
-  document.getElementById('exp-rate').value = state.mileageRate;
+  document.getElementById('oneoff-date').value = todayISO();
 
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('oneoff-date').value = today;
+  // Quick Log vehicle + charging are remembered in settings
+  document.getElementById('quick-vehicle').addEventListener('change', (ev) => {
+    state.settings.quickVehicleId = ev.target.value;
+    persist();
+    renderQuickVehicle();
+    renderExpenseFormOptions();
+  });
+  document.getElementById('quick-charging').addEventListener('change', (ev) => {
+    state.settings.quickCharging = ev.target.value === 'public' ? 'public' : 'home';
+    persist();
+  });
+
+  // Monthly report
+  document.getElementById('report-month').value = monthOf(todayISO());
+  document.getElementById('report-month').addEventListener('change', renderReport);
+  document.getElementById('btn-report-print').addEventListener('click', printReport);
+  document.getElementById('btn-report-csv').addEventListener('click', exportReportCsv);
 
   const btnAddMonth = document.getElementById('btn-add-month');
   if (btnAddMonth) {
@@ -2420,21 +3784,21 @@ document.querySelectorAll('input[type="text"][inputmode="decimal"]').forEach((el
   if (btnTheme) btnTheme.addEventListener('click', toggleTheme);
 
   document.querySelectorAll('.modal-overlay').forEach(modal => {
+    // Close on a backdrop click only when the press also started on the
+    // backdrop, so selecting text in a field and releasing outside never closes it.
+    let downOnBackdrop = false;
+    modal.addEventListener('mousedown', function(e) { downOnBackdrop = e.target === this; });
     modal.addEventListener('click', function(e) {
       // The login modal is deliberately not dismissible by backdrop click.
-      if (e.target === this && this.id !== 'modal-login') {
+      if (e.target === this && downOnBackdrop && this.id !== 'modal-login') {
         this.classList.remove('active');
       }
+      downOnBackdrop = false;
     });
   });
 
-  renderExpenses();
-  renderWageTable();
-  renderChart();
-  renderQuickLog();
-  renderClientManageList();
-  refreshExpenseAmountField();
-  updatePendingBadge();
+  renderAll();
+  resetExpenseForm();
   setTab('wage');
 
   // Wire the sign-in UI and start server sync (no-op / offline when run as a local file).
@@ -2611,14 +3975,15 @@ async function generatePDFReport() {
   const approvedExpenses = state.expenses.filter(isClaimable);
   if (approvedExpenses.length > 0) {
     const tableData = approvedExpenses.map((exp) => [
-      exp.date,
+      ukDate(exp.date),
+      exp.ref || '',
       exp.description,
-      exp.category,
+      catLabel(catKey(exp)),
       fmt(exp.amount)
     ]);
 
     doc.autoTable({
-      head: [['Date', 'Description', 'Category', 'Amount']],
+      head: [['Date', 'Reference', 'Description', 'Category', 'Amount']],
       body: tableData,
       startY: yPos,
       margin: margin,
@@ -2626,7 +3991,7 @@ async function generatePDFReport() {
       headStyles: { fillColor: [91, 192, 203], textColor: [85, 85, 85], fontStyle: 'bold', halign: 'left' },
       bodyStyles: { textColor: [30, 30, 30] },
       columnStyles: {
-        3: { halign: 'right' }
+        4: { halign: 'right' }
       }
     });
 
@@ -2890,7 +4255,7 @@ function expensesByMonth() {
 }
 
 function catLabel(id) {
-  return ({travel:'Travel', office:'Office Supplies', software:'Software', meals:'Meals', misc:'Misc'})[id] || 'Misc';
+  return ({mileage:'Mileage', 'mileage-topup':'Mileage top-up', fuel:'Fuel', charging:'EV charging', train:'Train', travel:'Travel', office:'Office Supplies', software:'Software', meals:'Meals', misc:'Misc'})[id] || 'Misc';
 }
 
 function renderExpenses() {
